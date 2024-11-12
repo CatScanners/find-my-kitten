@@ -34,3 +34,6 @@ However, compared to the previous simulators, the photorealism and performance a
 
 
 [![PX4 SITL Gazebo Demo](http://i3.ytimg.com/vi/eRzdGD2vgkU/hqdefault.jpg)](https://youtu.be/eRzdGD2vgkU)
+
+## Other links
+- [Air Learning](https://opensynthetics.com/dataset/air-learning/): Open-source simulator and a gym environment for deep reinforcement learning research on resource-constrained aerial robots.
