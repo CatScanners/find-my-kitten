@@ -29,10 +29,14 @@ After everything is done, do a simple `sudo apt-get update` and `sudo apt-get up
 For setting up docker & an NVMe SSD, look at [this](<https://www.jetson-ai-lab.com/tips_ssd-docker.html>).
 
 # WIP
-## Installing ROS2
-Based on [ROS2 Installation docs](<https://docs.ros.org/en/iron/Installation.html>)
+## Installing ROS2 Humble
+NOTE: proper installation might require following Isaac ROS installation to utilize Docker and not the SD card. See:
+- https://nvidia-isaac-ros.github.io/getting_started/hardware_setup/compute/jetson_storage.html
+- https://nvidia-isaac-ros.github.io/getting_started/dev_env_setup.html
 
-Verify utf-8 locale:
+Based on [ROS2 Installation docs](<https://docs.ros.org/en/humble/Installation.html>)
+
+Verify utf-8 locale (need to change if not):
 ```
 locale
 ```
@@ -46,25 +50,28 @@ sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o
 
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
-sudo apt update && sudo apt install ros-dev-tools
-
 sudo apt update
 sudo apt upgrade
 ```
 
 Installing the full, development version
 ```
-sudo apt install ros-iron-desktop
+sudo apt install ros-humble-desktop
 ```
 
 For deployment, we might want to consider the barebones, without GUI tools
 ```
-sudo apt install ros-iron-ros-base
+sudo apt install ros-humble-ros-base
+```
+
+Dev tools
+```
+sudo apt install ros-dev-tools
 ```
 
 Set up the environment
 ```
-source /opt/ros/iron/setup.bash
+source /opt/ros/humble/setup.bash
 ```
 
 ## isaac_ros
@@ -79,4 +86,42 @@ https://docs.nvidia.com/jetson/jetpack/install-setup/index.html
 Set the Jetson to maximum performance
 ```
 sudo /usr/bin/jetson_clocks
+```
+
+# SSH server (wip)
+Host key on the device
+```
+ssh-keygen -t rsa -b 4096
+```
+
+Create new config file
+
+```
+sudo vim /etc/ssh/sshd_config.d/disable_root_login.conf
+```
+
+Press insert to use edit mode and write the following:
+
+```
+ChallengeResponseAuthentication no
+PasswordAuthentication no
+UsePam no
+PermitRootLogin
+```
+
+Press esc to exit edit mode, then ":wq" to save and quit
+
+
+Add users to authorized keys
+
+```
+sudo apt-get-install ssh-import-id
+ssh-import-id gh:<username>
+```
+
+Reload SSH
+
+```
+sudo systemctl reload ssh
+sudo systemctl reload sshd
 ```
