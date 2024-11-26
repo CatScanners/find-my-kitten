@@ -111,7 +111,6 @@ PermitRootLogin
 
 Press esc to exit edit mode, then ":wq" to save and quit
 
-
 Add users to authorized keys
 
 ```
@@ -119,9 +118,16 @@ sudo apt-get-install ssh-import-id
 ssh-import-id gh:<username>
 ```
 
-Reload SSH
+Enable & reload SSH
 
 ```
+sudo systemctl enable ssh
 sudo systemctl reload ssh
 sudo systemctl reload sshd
+```
+
+Verify the active config
+
+```
+sudo sshd -T | grep -E "passwordauthentication|pubkeyauthentication|usepam|permitrootlogin"
 ```
