@@ -69,9 +69,9 @@ Dev tools
 sudo apt install ros-dev-tools
 ```
 
-Set up the environment
+Add sourcing to shell startup script
 ```
-source /opt/ros/humble/setup.bash
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 ```
 
 ## isaac_ros
