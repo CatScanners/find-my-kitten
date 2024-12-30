@@ -12,4 +12,10 @@ Example of the result we should expect:
 <img width="786" alt="image" src="https://github.com/user-attachments/assets/5a60fc0a-68d9-486a-bc75-b8b6e90be06b" />
 
 
-## Upload it to connected Pixhawk
+## Upload it to connected Pixhawk (run in PX4-Autopilot folder)
+1. Change configurations (add modules that you have created via examples-selection in the boardconfig window): ```make px4_fmu-v6c_default boardconfig```
+2. Build PX4 locally: ```make px4_fmu-v6c_default```
+3. Upload PX4 build to Pixhawk: ```make px4_fmu-v6c_default```
+4. Open mavlink shell for debugging: ```./Tools/mavlink_shell.py /dev/ttyACM0```
+
+
