@@ -16,6 +16,7 @@ Example of the result we should expect:
 1. Change configurations (add modules that you have created via examples-selection in the boardconfig window): ```make px4_fmu-v6c_default boardconfig```
 2. Build PX4 locally: ```make px4_fmu-v6c_default```
 3. Upload PX4 build to Pixhawk: ```make px4_fmu-v6c_default```
-4. Open mavlink shell for debugging: ```./Tools/mavlink_shell.py /dev/ttyACM0```
+4. Open mavlink shell for debugging: ```./Tools/mavlink_shell.py /dev/ttyACM0``` (second part perhaps optional/does not work)
 
+There is already an example app built this way. You can launch it by running ```px4_simple_app``` in mavlink shell.
 
