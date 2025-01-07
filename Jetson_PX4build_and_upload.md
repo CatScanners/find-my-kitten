@@ -20,3 +20,6 @@ Example of the result we should expect:
 
 There is already an example app built this way. You can launch it by running ```px4_simple_app``` in mavlink shell.
 
+## Pixhawk system architecture
+
+<img width="740" alt="image" src="https://github.com/user-attachments/assets/d8117235-353b-487f-88eb-b40df67cea8f" />
