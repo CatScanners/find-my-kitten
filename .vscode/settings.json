@@ -1,3 +1,7 @@
 {
-    "ros.distro": "humble"
+    "ros.distro": "humble",
+    "files.associations": {
+        "*.py": "python",
+        "functional": "cpp"
+    }
 }

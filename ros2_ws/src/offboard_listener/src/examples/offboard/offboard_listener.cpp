@@ -6,6 +6,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <stdint.h>
 
+#include "std_msgs/msg/string.hpp"
 #include <chrono>
 #include <iostream>
 
@@ -18,10 +19,11 @@ class OffboardControl : public rclcpp::Node
 public:
 	OffboardControl() : Node("offboard_control")
 	{
-
 		offboard_control_mode_publisher_ = this->create_publisher<OffboardControlMode>("/fmu/in/offboard_control_mode", 10);
 		trajectory_setpoint_publisher_ = this->create_publisher<TrajectorySetpoint>("/fmu/in/trajectory_setpoint", 10);
 		vehicle_command_publisher_ = this->create_publisher<VehicleCommand>("/fmu/in/vehicle_command", 10);
+
+		command_subscription_ = this->create_subscription<std_msgs::msg::String>("command", 10, std::bind(&OffboardControl::command_callback, this, std::placeholders::_1));
 
 		offboard_setpoint_counter_ = 0;
 
@@ -30,7 +32,6 @@ public:
 			if (offboard_setpoint_counter_ == 10) {
 				// Change to Offboard mode after 10 setpoints
 				this->publish_vehicle_command(VehicleCommand::VEHICLE_CMD_DO_SET_MODE, 1, 6);
-
 				// Arm the vehicle
 				this->arm();
 			}
@@ -47,13 +48,14 @@ public:
 			rmw_qos_profile_t qos_profile = rmw_qos_profile_sensor_data;
 			auto qos = rclcpp::QoS(rclcpp::QoSInitialization(qos_profile.history, 5), qos_profile);
 			
+			// Print the altitude
 			subscription_ = this->create_subscription<px4_msgs::msg::SensorGps>("/fmu/out/vehicle_gps_position", qos,
 			[this](const px4_msgs::msg::SensorGps::UniquePtr msg) {
-				std::cout << "\n\n";
+				std::cout << "\n";
 				std::cout << "alt: " << msg->altitude_msl_m  << std::endl;
 			});
 		};
-		timer_ = this->create_wall_timer(1000ms, timer_callback);
+		timer_ = this->create_wall_timer(2000ms, timer_callback);
 	}
 
 	void arm();
@@ -74,6 +76,12 @@ private:
 	void publish_offboard_control_mode();
 	void publish_trajectory_setpoint();
 	void publish_vehicle_command(uint16_t command, float param1 = 0.0, float param2 = 0.0);
+	// callback method for published commands
+	void command_callback(const std_msgs::msg::String::SharedPtr msg) const
+    {
+      RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
+    }
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr command_subscription_;
 };
 
 /**
@@ -82,7 +90,6 @@ private:
 void OffboardControl::arm()
 {
 	publish_vehicle_command(VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM, 1.0);
-
 	RCLCPP_INFO(this->get_logger(), "Arm command send");
 }
 
@@ -92,7 +99,6 @@ void OffboardControl::arm()
 void OffboardControl::disarm()
 {
 	publish_vehicle_command(VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM, 0.0);
-
 	RCLCPP_INFO(this->get_logger(), "Disarm command send");
 }
 

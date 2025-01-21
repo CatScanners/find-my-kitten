@@ -25,6 +25,8 @@ find_package(px4_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(rclpy REQUIRED)
+find_package(std_msgs REQUIRED)
+
 
 #################
 # Setup targets #
@@ -42,8 +44,15 @@ target_include_directories(frame_transforms PUBLIC
 
 # examples/offboard/offboard_listener
 add_executable(offboard_listener src/examples/offboard/offboard_listener.cpp)
-ament_target_dependencies(offboard_listener rclcpp px4_msgs)
+ament_target_dependencies(offboard_listener rclcpp px4_msgs std_msgs)
 install(TARGETS offboard_listener DESTINATION lib/${PROJECT_NAME})
+
+# xamples/offboard/offboard_publisher
+add_executable(offboard_publisher src/examples/offboard/offboard_publisher.cpp)
+ament_target_dependencies(offboard_publisher rclcpp std_msgs)
+install(TARGETS
+  offboard_publisher
+  DESTINATION lib/${PROJECT_NAME})
 
 ############
 # Install ##
