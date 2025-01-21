@@ -37,8 +37,8 @@ public:
 			}
 
 			// offboard_control_mode needs to be paired with trajectory_setpoint
-			publish_offboard_control_mode();
-			publish_trajectory_setpoint();
+			//this->publish_offboard_control_mode();
+			//this->publish_trajectory_setpoint(10.);
 
 			// stop the counter after reaching 11
 			if (offboard_setpoint_counter_ < 11) {
@@ -74,12 +74,15 @@ private:
 	uint64_t offboard_setpoint_counter_;   //!< counter for the number of setpoints sent
 
 	void publish_offboard_control_mode();
-	void publish_trajectory_setpoint();
+	void publish_trajectory_setpoint(float height);
 	void publish_vehicle_command(uint16_t command, float param1 = 0.0, float param2 = 0.0);
 	// callback method for published commands
-	void command_callback(const std_msgs::msg::String::SharedPtr msg) const
+	void command_callback(const std_msgs::msg::String::SharedPtr msg)
     {
       RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
+	  float new_height = std::stof(msg->data.c_str());
+	  this->publish_offboard_control_mode();
+	  this->publish_trajectory_setpoint(new_height);
     }
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr command_subscription_;
 };
@@ -123,10 +126,10 @@ void OffboardControl::publish_offboard_control_mode()
  *        For this example, it sends a trajectory setpoint to make the
  *        vehicle hover at 5 meters with a yaw angle of 180 degrees.
  */
-void OffboardControl::publish_trajectory_setpoint()
+void OffboardControl::publish_trajectory_setpoint(float height)
 {
 	TrajectorySetpoint msg{};
-	msg.position = {0.0, 0.0, -50.0};
+	msg.position = {0.0, 0.0, height};
 	msg.yaw = -3.14; // [-PI:PI]
 	msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
 	trajectory_setpoint_publisher_->publish(msg);

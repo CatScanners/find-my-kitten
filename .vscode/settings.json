@@ -2,6 +2,11 @@
     "ros.distro": "humble",
     "files.associations": {
         "*.py": "python",
-        "functional": "cpp"
+        "functional": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "ranges": "cpp",
+        "ostream": "cpp"
     }
 }
