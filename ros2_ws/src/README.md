@@ -1,5 +1,15 @@
 # Build and run py_pubsub-example
 
+## Run XRCE bridge
+```bash
+MicroXRCEAgent udp4 -p 8888
+```
+
+## Run Gazebo simulation
+```bash
+make px4_sitl gz_x500
+```
+
 ## Check dependencies
 ```bash
 rosdep install -i --from-path src --rosdistro humble -y & rosdep init & rosdep update
