@@ -42,8 +42,9 @@ private:
             cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
 
             // Display the image in a window
-            cv::imshow("RGB Camera Feed", cv_ptr->image);
-            std::cout << "Received" << std::endl; // Printing received message for debug purposes. 
+	    cv::imshow("RGB Camera Feed", cv_ptr->image);
+	    cv::waitKey(1);  // Display image and wait for key press (to refresh the window)
+	    std::cout << "Received" << std::endl; // Printing received message for debug purposes. 
         
         }
         catch (const cv_bridge::Exception& e)
