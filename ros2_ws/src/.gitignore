@@ -1,2 +1,3 @@
-px4_msgs
-px4_ros_com
+./px4_msgs/
+./px4_ros_com/
+log
