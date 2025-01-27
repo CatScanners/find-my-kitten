@@ -8,6 +8,13 @@ Resources:
 
 ## Pre-setup in local environment
 
+Go to the ISAAC ROS workspace and set version to release-3.2
+
+```
+cd ${ISAAC_ROS_WS}/src/isaac_ros_common && git pull
+git checkout release-3.2
+```
+
 Installing libraries (outside container)
 
 ```
@@ -76,13 +83,6 @@ from ultralytics import YOLO
 model = YOLO('yolov8s.pt')
 model.export(format='onnx')
 quit()
-```
-
-Go to the ISAAC ROS workspace and set version to release-3.2
-
-```
-cd ${ISAAC_ROS_WS}/src/isaac_ros_common && git pull
-git checkout release-3.2
 ```
 
 Copy the onnx model inside the workspace
