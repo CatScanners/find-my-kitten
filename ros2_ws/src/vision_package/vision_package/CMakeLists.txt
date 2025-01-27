@@ -3,7 +3,9 @@ project(vision_package)
 
 # Require ROS 2 dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -11,9 +13,7 @@ find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
 
 #Include directories inside vision_package/include/*
-include_directories(
-  include
-)
+include_directories(include)
 
 # Declare the executable
 add_executable(image_publisher src/image_publisher.cpp)
@@ -47,5 +47,14 @@ install(TARGETS
   image_subscriber
   DESTINATION lib/${PROJECT_NAME}
 )
+
+# Install Python modules
+ament_python_install_package(${PROJECT_NAME})
+
+# Install Python executables
+#install(PROGRAMS
+#  vision_package/object_recognizer.py
+#  DESTINATION lib/${PROJECT_NAME}
+#)
 # ament package setup
 ament_package()

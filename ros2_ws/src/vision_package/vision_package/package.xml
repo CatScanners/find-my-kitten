@@ -4,19 +4,25 @@
   <name>vision_package</name>
   <version>0.0.1</version>
   <description>Machine vision package for find my kitten project</description>
-  <maintainer email="kaius.koivisto@gmail.com">Kaius</maintainer>
+  <maintainer email="kaius.koivisto@aalto.fi">Kaius</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
   <depend>rclcpp</depend>
+  <depend>rclpy</depend>
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>cv_bridge</depend>
   <depend>image_transport</depend>
 
+  <exec_depend>opencv-python</exec_depend>
+  <exec_depend>torch</exec_depend>
+  <exec_depend>torchvision</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  
   <export>
     <build_type>ament_cmake</build_type>
   </export>
