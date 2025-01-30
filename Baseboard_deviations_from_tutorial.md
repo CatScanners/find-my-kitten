@@ -150,3 +150,9 @@ network:
 Where ADDR denotes the first parts of the IPV4 address under enP8p1s0 when displaying `ip addr show`, i.e. `222.222.222.55` -> `ADDR = 222.222.222`. Note the subdomain `/25`, which might be different in your case.
 
 Notice that the PX4 parameters may have to be re-configured when updating/reflashing.
+
+Instead of the given `pip install --user -U empy==3.3.4 pyros-genmsg setuptools`, the following were used:
+```
+sudo apt-get install python3-genmsg
+sudo apt-get install python3-setuptools
+```
