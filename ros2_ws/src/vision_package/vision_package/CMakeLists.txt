@@ -52,9 +52,10 @@ install(TARGETS
 ament_python_install_package(${PROJECT_NAME})
 
 # Install Python executables
-#install(PROGRAMS
-#  vision_package/object_recognizer.py
-#  DESTINATION lib/${PROJECT_NAME}
-#)
+install(PROGRAMS
+  vision_package/object_recognizer.py
+  vision_package/video_publisher.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 # ament package setup
 ament_package()

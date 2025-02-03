@@ -21,8 +21,8 @@ class ImagePublisher: public rclcpp::Node
         {
 
             // declare parameters & open video stream
-            this -> get_parameter(vision_package::RGB_IMAGE_TOPIC, cam_id);
-            cap = open_stream(cam_id);
+            this -> get_parameter(vision_package::RGB_CAMERA_ID, cam_id);
+            cap = open_stream(0);
 
             //create the image publisher and timer
             _image_publisher_ = image_transport::create_publisher(this, vision_package::RGB_IMAGE_TOPIC);
