@@ -7,72 +7,71 @@ from cv_bridge import CvBridge
 import cv2
 import torch
 import numpy as np
-from pathlib import Path
-from yolov5.models.common import DetectMultiBackend  # Required for local model loading
 
-class YoloObjectDetectionNode(Node):
+class ObjectDetectionNode(Node):
     def __init__(self):
-        super().__init__('yolo_object_detection_node')
+        super().__init__('object_detection_node')
 
-        # Path to the local YOLO model (.pt file)
-        model_path = Path("/home/jalowpeura/workspaces/find-my-kitten/ros2_ws/src/vision_package/vision_package/yolov5s.pt")  # Update this path!
+        # Load the PyTorch model
+        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5s.pt')  # Replace with your .pt file path
+        self.model.conf = 0.5  # Confidence threshold
 
-        # Select device (CPU or CUDA)
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-        # Load YOLO model without ultralytics dependency
-        self.model = DetectMultiBackend(model_path, device=device)  # ✅ Fixed
-        self.model.eval()
-
-        # Initialize CV bridge
+        # Initialize CV Bridge
         self.bridge = CvBridge()
 
         # Subscribe to the image topic
-        self.image_subscriber = self.create_subscription(
+        self.subscription = self.create_subscription(
             Image,
-            'image_topic',
+            'image_topic',  # Replace with your image topic name
             self.image_callback,
-            10  # QoS
+            10
         )
 
-        cv2.namedWindow("Detected Image", cv2.WINDOW_NORMAL)
+        # Publisher for detected objects
+        self.detection_pub = self.create_publisher(
+            Image,  # Replace with a custom message type if needed
+            'detected_objects_topic',  # Replace with your output topic name
+            10
+        )
 
-        self.get_logger().info(f"Loaded local YOLO model from {model_path} on {device}")
+        # OpenCV window for displaying images
+        cv2.namedWindow('Object Detection', cv2.WINDOW_NORMAL)
 
     def image_callback(self, msg):
-            # Convert ROS image message to OpenCV format
+        try:
+            # Convert ROS Image message to OpenCV image
             cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
-            # Convert image to tensor (YOLO expects torch tensor input)
-            img_tensor = torch.from_numpy(cv_image).permute(2, 0, 1).float().unsqueeze(0) / 255.0
-            img_tensor = img_tensor.to(self.model.device)  # Move tensor to the correct device
+            # Perform object detection
+            results = self.model(cv_image)
 
-            pred = self.model(img_tensor)  # Run model inference correctly
-            detections = pred[0].cpu().numpy()  # Convert to NumPy (first batch)
+            # Parse detection results
+            detections = results.xyxy[0].cpu().numpy()  # Get detections as numpy array
 
+            # Draw bounding boxes and labels on the image
+            for detection in detections:
+                x1, y1, x2, y2, conf, cls = detection
+                label = f"{self.model.names[int(cls)]} {conf:.2f}"
+                cv2.rectangle(cv_image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+                cv2.putText(cv_image, label, (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
 
-            for det in detections:
-                if len(det) < 6:  # Ensure detection has expected format
-                    continue
-                x_min, y_min, x_max, y_max, confidence, class_id = det[:6]
+                # Publish detected objects (customize this part as needed)
+                self.get_logger().info(f"Detected: {label} at ({x1}, {y1}, {x2}, {y2})")
 
-                label = f"{self.model.names[int(class_id)]} {confidence:.2f}"
-
-                # Draw bounding box and label
-                cv2.rectangle(cv_image, (int(x_min), int(y_min)), (int(x_max), int(y_max)), (0, 255, 0), 2)
-                cv2.putText(cv_image, label, (int(x_min), int(y_min) - 10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
-
-                self.get_logger().info(f"Detected: {label} at ({x_min}, {y_min}) - ({x_max}, {y_max})")
-
-            # Display the processed image
-            cv2.imshow("Detected Image", cv_image)
+            # Display the image with bounding boxes
+            cv2.imshow('Object Detection', cv_image)
             cv2.waitKey(1)
 
+            # Publish the annotated image (optional)
+            annotated_msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='bgr8')
+            self.detection_pub.publish(annotated_msg)
+
+        except Exception as e:
+            self.get_logger().error(f"Error processing image: {e}")
 
 def main(args=None):
     rclpy.init(args=args)
-    node = YoloObjectDetectionNode()
+    node = ObjectDetectionNode()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
@@ -80,4 +79,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-
