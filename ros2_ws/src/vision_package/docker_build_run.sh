@@ -1,4 +1,4 @@
-docker build . -t vision_package
+docker build . -t --no-cache vision_package
 
 xhost -local:docker
 
