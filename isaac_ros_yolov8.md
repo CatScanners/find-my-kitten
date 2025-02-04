@@ -99,6 +99,7 @@ cd ${ISAAC_ROS_WS}/src && \
 git clone --recurse-submodules https://github.com/stereolabs/zed-ros2-wrapper
 ```
 
+**TODO**: Specify a version/commit for the zed-ros2-wrapper
 
 ## In the docker workspace/container
 
@@ -115,11 +116,26 @@ If it fails to launch with `docker: Error response from daemon: failed to create
 sudo nvidia-ctk cdi generate --mode=csv --output=/etc/cdi/nvidia.yaml
 ```
 
+### Option 1. Setup script
+
 ```
-sudo apt-get update && sudo apt update && rosdep update
+sudo chmod +x ${ISAAC_ROS_WS}/src/isaac_ros_common/docker/scripts/install-zed-aarch64.sh && \
+${ISAAC_ROS_WS}/src/isaac_ros_common/docker/scripts/install-zed-aarch64.sh
+
+cd ${ISAAC_ROS_WS} && \
+sudo apt-get update && sudo apt update && rosdep update && \
+sudo apt-get install -y ros-humble-isaac-ros-yolov8 ros-humble-isaac-ros-dnn-image-encoder ros-humble-isaac-ros-tensor-rt
+sudo apt-get install -y ros-humble-isaac-ros-examples ros-humble-isaac-ros-stereo-image-proc ros-humble-isaac-ros-zed
+
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install --cmake-args=-DCMAKE_BUILD_TYPE=Release --parallel-workers $(nproc)
+echo source $(pwd)/install/local_setup.bash >> ~/.bashrc
+source ~/.bashrc
 ```
 
-### ZED setup
+### Option 2. Setup with explanations
+
+#### 2.1 ZED setup
 
 [Nvidia docs](<https://nvidia-isaac-ros.github.io/getting_started/hardware_setup/sensors/zed_setup.html>)
 
@@ -135,6 +151,7 @@ Install ZED wrapper dependencies
 
 ```
 cd ${ISAAC_ROS_WS} && \
+apt get update && rosdep update && \
 rosdep install --from-paths src/zed-ros2-wrapper --ignore-src -r -y && \
 colcon build --symlink-install --packages-up-to zed_wrapper
 ```
@@ -146,10 +163,11 @@ Try launching the ZED Explorer GUI
 ```
 
 
-### Yolov8 setup
+#### 2.2 Yolov8 setup
 
 General dependencies
 ```
+sudo apt-get update && \
 sudo apt-get install -y ros-humble-isaac-ros-yolov8 ros-humble-isaac-ros-dnn-image-encoder ros-humble-isaac-ros-tensor-rt
 ```
 
@@ -166,7 +184,7 @@ echo source $(pwd)/install/local_setup.bash >> ~/.bashrc
 source ~/.bashrc
 ```
 
-### Running the YOLOv8 example
+### Running YOLOv8
 
 Launch the isaac_ros_examples node:
 ```
@@ -202,5 +220,18 @@ ros2 run rqt_image_view rqt_image_view /yolov8_processed_image
 **WIP** node (needs images redirect from camera):
 
 ```
-ros2 launch isaac_ros_yolov8 isaac_ros_yolov8_visualize.launch.py model_file_path:=${ISAAC_ROS_WS}/isaac_ros_assets/models/yolov8/yolov8s.onnx engine_file_path:=${ISAAC_ROS_WS}/isaac_ros_assets/models/yolov8/yolov8s.plan input_binding_names:=['images'] output_binding_names:=['output0'] network_image_width:=640 network_image_height:=640 force_engine_update:=False image_mean:=[0.0,0.0,0.0] image_stddev:=[1.0,1.0,1.0] input_image_width:=640 input_image_height:=640 confidence_threshold:=0.25 nms_threshold:=0.45 interface_specs_file:=${ISAAC_ROS_WS}/isaac_ros_assets/isaac_ros_yolov8/zed2_quickstart_interface_specs.json`
+ros2 launch isaac_ros_yolov8 isaac_ros_yolov8_visualize.launch.py \
+model_file_path:=${ISAAC_ROS_WS}/isaac_ros_assets/models/yolov8/yolov8s.onnx \
+engine_file_path:=${ISAAC_ROS_WS}/isaac_ros_assets/models/yolov8/yolov8s.plan \
+input_binding_names:=['images'] \
+output_binding_names:=['output0'] \
+network_image_width:=640 \
+network_image_height:=640 \
+force_engine_update:=False \
+image_mean:=[0.0,0.0,0.0] \
+image_stddev:=[1.0,1.0,1.0] \
+input_image_width:=640 \
+input_image_height:=640 \
+confidence_threshold:=0.25 \
+nms_threshold:=0.45
 ```
