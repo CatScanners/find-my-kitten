@@ -1,5 +1,0 @@
-ros-humble-base \
-ros-humble-opencv3 \ 
-ros-dev-tools \
-ros-humble-image-transport \
-python3-opencv \

@@ -46,9 +46,9 @@ RUN sudo apt-get update && sudo apt-get install -y \
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 RUN /bin/bash -c "source ~/.bashrc"
 
-# Copy visual_package
-COPY . /visual_package/
-WORKDIR /visual_package
+# Copy vision_package
+COPY . /vision_package/
+WORKDIR /vision_package
 
 # Remove possible local install files
 RUN rm -R log/ install/ build/

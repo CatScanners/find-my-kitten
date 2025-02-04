@@ -3,3 +3,4 @@ opencv-python
 torch
 torchvision
 numpy
+pandas
