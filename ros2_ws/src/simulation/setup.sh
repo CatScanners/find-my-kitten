@@ -54,6 +54,11 @@ cd px4_msgs
 git pull origin main
 cd ..
 
+# Pull the latest updates for px4_ros_com
+cd px4_ros_com
+git pull origin main
+cd ..
+
 # Build the workspace.
 cd ../
 
