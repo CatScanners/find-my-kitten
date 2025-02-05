@@ -1,0 +1,9 @@
+Metadata-Version: 2.1
+Name: py_pubsub
+Version: 0.0.0
+Summary: TODO: Package description
+Maintainer: catscanners
+Maintainer-email: jetson-dev@aalto.fi
+License: Apache-2.0
+License-File: LICENSE
+Requires-Dist: setuptools
