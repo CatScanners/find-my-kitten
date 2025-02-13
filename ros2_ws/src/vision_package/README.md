@@ -25,7 +25,12 @@ Ultralytics pretrained yolov5 model based object recognizer node. Listens to /im
 ``` 
 ros2 run vision_package object_recognizer.py
 ```
-### Ros2 base nodes + Depthai included nodes
+### Depthai-ros included nodes
+DepthAI-ROS is a optional include  in vision_package Dockerfile. Documentaion of it is poor but node names are descriptive enough and can be seen here: https://github.com/luxonis/depthai-ros/tree/humble .
+Using Depthai-ros example RGB camera node:
+```
+ros2 run depthai_examples rgb_stereo_node
+```
 
 ## How to use Docker container
 
