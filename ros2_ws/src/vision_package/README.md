@@ -19,12 +19,37 @@ sudo apt install -y python3-opencv
 
 How to use Docker container
 
-docker build . -t vision_package
+docker build -t vision_package --build-arg DEPTHAI=true .
 
-xhost -local:docker
+xhost +local:docker
 
-docker run --privileged -it \
+docker run -it \
+    --privileged \
+    -v /dev/bus/usb:/dev/bus/usb \
+    --device-cgroup-rule='c 189:* rmw' \
     -e DISPLAY=$DISPLAY \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
-    visual_package
+    --network host \
+    vision_package
 
+Check containers
+docker ps -a
+
+Start and attach stopped container
+docker start [name]
+docker attach [name]
+
+Open a new shell to container
+docker exec -it [name] /bin/bash
+
+Nodes included in vision_package:
+
+image_publisher
+
+video_publisher.py
+
+image_subscriber
+
+object_recogniser.py
+
+Ros2 base nodes + Depthai included nodes
