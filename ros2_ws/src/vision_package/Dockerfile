@@ -4,6 +4,9 @@ FROM ubuntu:22.04
 # Avoid prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Build argument for including DepthAI ROS package. Defaults to false
+ARG DEPTHAI=false
+
 # Update apt-get and install basic dependencies
 RUN  apt-get update && apt-get upgrade -y && apt-get install -y \
     sudo \
@@ -39,8 +42,11 @@ RUN sudo apt-get update && sudo apt-get install -y \
    ros-humble-ament-cmake \
    ros-humble-ament-cmake-python \
    libopencv-dev \
-   ros-humble-cv-bridge
+   ros-humble-cv-bridge \
+   ros-humble-depthai-ros
 
+# Install depthai ros binaries if the flag is set as true
+RUN if [ "$DEPTHAI" = "true" ]; then apt install -y ros-humble-depthai-ros; fi 
 
  # Set up ROS 2 environment
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
@@ -49,9 +55,6 @@ RUN /bin/bash -c "source ~/.bashrc"
 # Copy vision_package
 COPY . /vision_package/
 WORKDIR /vision_package
-
-# Remove possible local install files
-RUN rm -R log/ install/ build/
 
 # Install pip dependencies listed in requirements.txt
 RUN pip3 install -r requirements.txt
@@ -73,9 +76,7 @@ RUN  source /opt/ros/humble/setup.bash && \
     colcon build --symlink-install && \
     source install/setup.bash
 
-# Expose the required port (Optional, depending on ROS setup)
-#EXPOSE 11311
 
-# Entry point (customizable, depending on your use case)
+# Entry point 
 CMD ["/bin/bash"]
 
