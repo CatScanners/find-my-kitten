@@ -2,7 +2,7 @@
 
 First, MavProxy must be installed: https://ardupilot.org/mavproxy/. Note that the software is under the GPL liscence. 
 MavProxy offers both the ability to route mavLink messages between different endpoints, and a built-in NTRIP client (to fetch RTK corrections from a remote station). This makes it convenient for our use case,
-in which we need to "inject" RTK corrections to QGrounControl's messages.
+in which we need to "inject" RTK corrections in addition to QGroundControl's messages.
 
 Before starting QGroundControl, plug the telemetry radio or other physical serial link to the laptop, and power on the pixhawk and GPS receiver (the "rover"). Find out what this connection is named in software (e.g. /dev/tty0 on Linux, or COM3 on Windows).
 This can be done in Linux by listing the devices `ls /dev/`, and finding the device that shows up after connecting. 
