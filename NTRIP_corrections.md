@@ -1,4 +1,4 @@
-## This file contains a short tutorial on how to inject RTK corrections via MavProxy's builtin NTRIP client.
+## This file contains a short tutorial on how to inject RTK corrections to the messaging from QGroundControl via MavProxy's builtin NTRIP client.
 
 First, MavProxy must be installed: https://ardupilot.org/mavproxy/. Note that the software is under the GPL liscence. 
 MavProxy offers both the ability to route mavLink messages between different endpoints, and a built-in NTRIP client (to fetch RTK corrections from a remote station). This makes it convenient for our use case,
