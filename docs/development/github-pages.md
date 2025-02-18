@@ -1,3 +1,9 @@
+---
+parent: Development
+---
+
+# Creating documentation with GitHub pages
+
 The markdown files under `/docs/` of the find-my-kitten repository use GitHub pages with a remote theme defined in `_config.yml`.
 ```yml
 # contents of _config.yml

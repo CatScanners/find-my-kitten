@@ -1,3 +1,7 @@
+---
+parent: Pixhawk, PX4 and QGroundControl
+---
+
 # Instructions for Printing "Hello World" on Pixhawk 4
 
 These instructions guide you through the process of building and flashing a custom "Hello World" example on the Pixhawk 4. I was using Ubuntu (version 2404.1.66.0) on a Windows 10 computer.
