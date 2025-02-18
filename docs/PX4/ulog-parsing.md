@@ -120,7 +120,7 @@ pip install -r requirements.txt
 python DataCometsLocal.py
 ```
 
-DataComets will then run on your local host and can be accessed by going to http://localhost:5000/ with your browser.
+DataComets will then run on your local host and can be accessed by going to <http://localhost:5000/> with your browser.
 
 **Note:** if error occurs regarding numpy and pandas import, upgrade the packages.
 ```

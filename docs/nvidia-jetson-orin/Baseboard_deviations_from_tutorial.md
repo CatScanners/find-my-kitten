@@ -4,7 +4,7 @@ parent: Jetson Orin (Devkit, Baseboard)
 
 # Baseboard setup - deviations from tutorial
 
-The following tutorial was used for the baseboard setup, and ethernet link between the Jetson and the baseboard: https://docs.px4.io/main/en/companion_computer/holybro_pixhawk_jetson_baseboard.html.
+The following tutorial was used for the baseboard setup, and ethernet link between the Jetson and the baseboard: <https://docs.px4.io/main/en/companion_computer/holybro_pixhawk_jetson_baseboard.html>.
 
 The goals were achieved, albeit with slightly different configurations.
 

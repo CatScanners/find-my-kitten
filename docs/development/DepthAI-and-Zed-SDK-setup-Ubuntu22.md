@@ -7,7 +7,7 @@ parent: Development
 Dependecies 
 - Cuda 12
 - zstd
-- GPU with Nvidia compute capacity of =<5.3 (https://developer.nvidia.com/cuda-gpus#compute)
+- GPU with Nvidia compute capacity of =<5.3 (<https://developer.nvidia.com/cuda-gpus#compute>)
 
 Dowload and run the installer
 
@@ -35,12 +35,12 @@ Note that since the API is installed with sudo you'll need to run python scripts
 Else module pyzed.sl won't be found. 
 
 Links
-- https://www.stereolabs.com/docs/installation/linux
-- https://www.stereolabs.com/en-fi/developers/release
-- https://www.stereolabs.com/docs/app-development/python/install
-- https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=22.04&target_type=deb_network
-- https://www.stereolabs.com/docs/installation/specifications
-- https://github.com/stereolabs/zed-sdk
+- <https://www.stereolabs.com/docs/installation/linux>
+- <https://www.stereolabs.com/en-fi/developers/release>
+- <https://www.stereolabs.com/docs/app-development/python/install>
+- <https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=22.04&target_type=deb_network>
+- <https://www.stereolabs.com/docs/installation/specifications>
+- <https://github.com/stereolabs/zed-sdk>
 
 # DepthAI on Ubuntu22
 Install dependencies and DepthAI
@@ -80,7 +80,7 @@ And finally test the RGB camera
 python3 ColorCamera/rgb_preview.py
 ```
 Links
-- https://docs.luxonis.com/software/depthai/manual-install/
-- https://docs.anaconda.com/miniconda/miniconda-install/
-- https://docs.luxonis.com/software/api/python/
+- <https://docs.luxonis.com/software/depthai/manual-install/>
+- <https://docs.anaconda.com/miniconda/miniconda-install/>
+- <https://docs.luxonis.com/software/api/python/>
   

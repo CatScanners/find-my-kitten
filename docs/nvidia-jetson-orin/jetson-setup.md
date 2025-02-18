@@ -34,8 +34,8 @@ For setting up docker & an NVMe SSD, look at [this](<https://www.jetson-ai-lab.c
 # WIP
 ## Installing ROS2 Humble
 NOTE: proper installation might require following Isaac ROS installation to utilize Docker and not the SD card. See:
-- https://nvidia-isaac-ros.github.io/getting_started/hardware_setup/compute/jetson_storage.html
-- https://nvidia-isaac-ros.github.io/getting_started/dev_env_setup.html
+- <https://nvidia-isaac-ros.github.io/getting_started/hardware_setup/compute/jetson_storage.html>
+- <https://nvidia-isaac-ros.github.io/getting_started/dev_env_setup.html>
 
 Based on [ROS2 Installation docs](<https://docs.ros.org/en/humble/Installation.html>)
 
@@ -83,7 +83,7 @@ Based on [Nvidia Isaac ROS Getting Started](<https://nvidia-isaac-ros.github.io/
 
 It appears isaac_ros is already set up out of the box?
 
-https://docs.nvidia.com/jetson/jetpack/install-setup/index.html
+<https://docs.nvidia.com/jetson/jetpack/install-setup/index.html>
 
 
 Set the Jetson to maximum performance
