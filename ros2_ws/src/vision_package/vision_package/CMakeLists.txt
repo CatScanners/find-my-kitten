@@ -12,6 +12,16 @@ find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
 
+# Custom message declarations
+find_package(rosidl_default_generators REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/detected_objects.msg"
+  "msg/tracker_objects.msg"
+  DEPENDENCIES 
+)
+
+
 #Include directories inside vision_package/include/*
 include_directories(include)
 
