@@ -1,7 +1,7 @@
 # ULog parsing
 PX4 uses ULog file format to log uORB topics. Parsing is needed to get the logs in readable format.
 
-There are several choices for parsing. Here is presented two of them that seem most relevant for our project.
+There are several choices for parsing. Here is presented ones that seem most relevant for our project.
 
 ## pyulog
 
@@ -104,3 +104,21 @@ You can have multiple data inputs on a same graph or you can have data divided o
 You can save your graph layouts on a layout file. Layout file can be used to display the data in same way for every ULog file.
 
 When saving layout to be used for other ULog files be sure to uncheck "Save data source" in the "Save as" window.
+
+
+## DataComets
+[DataComets](https://github.com/dsaffo/DataComets?tab=readme-ov-file) gives good overview of the log data. Simple graphs for all data topics are shown which allows quick analysis and comparison. Flight path is also drawn on a map.
+
+#### Install and Run
+Clone the [repo](https://github.com/dsaffo/DataComets?tab=readme-ov-file) and run following commands in the directory.
+```
+pip install -r requirements.txt
+python DataCometsLocal.py
+```
+
+DataComets will then run on your local host and can be accessed by going to http://localhost:5000/ with your browser.
+
+**Note:** if error occurs regarding numpy and pandas import, upgrade the packages.
+```
+pip install --upgrade numpy pandas
+```
