@@ -114,6 +114,36 @@ chmod +x repair_db.sh  # Make the script executable
 ./repair_db.sh rosbag2_2025_02_06-14_06_02_0.db3  # Run the script with the corrupted database
 ```
 
-## Conclusion
-The **ROS2 recording system** provides an efficient way to store and manage sensor data, with each recording being easily identifiable by its topic and timestamp. However, dealing with corrupted databases can be a slow process, especially when the data size is substantial. The repair process for the **67GB database** is still ongoing, but once completed, the repaired database will hopefully be usable for further analysis and testing.
+## Updates and Further Attempts
+
+Based on the database's state, the metadata file was updated:
+
+- `nanoseconds_since_epoch`: Timestamp of the last entry.
+- `duration`: Time difference between the last and first entries.
+- `message_count`: Total number of entries.
+
+After modifying the metadata to reflect accurate timestamps and message counts, I securely transferred the repaired database to the remote machine via SCP, renaming the old file just in case. Then I attempted to play the bag video over a remote connection but encountered issues. The steps taken to troubleshoot included:
+
+1. **Publishing a Simple String**: Debugging by publishing a string message showed that my local machine (as a subscriber) was not listening to the published topic on the remote machine.
+   ```bash
+   ros2 topic pub /test std_msgs/String "data: test"
+   ```
+2. **Setting Up Remote ROS 2 Environment**:
+   I set up the remote ROS 2 environment as follows:
+   ```bash
+   export ROS_DOMAIN_ID=42
+   export ROS_IP=<your_ip>  # local and remote ip correspondingly
+   export ROS_HOSTNAME=<your_local_ip>
+   ```
+3. **Router Port Forwarding**:
+   I configured a port forwarding rule for port `11311` on my router.
+4. **DDS Implementation Consistency**:
+   I set both machines to use the same DDS implementation:
+   ```bash
+   export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+   ```
+
+Despite these efforts, I couldn’t play the video. Fortunately, we are a team. After collaborating with Kaius, we confirmed that the video located in `~/find-my-kitten/ros2_ws/src/vision_package/rosbag/rosbag2_2025_02_06-14_06_0` was repaired and could now be played:
+
+![A demonstration of the video](./assets/Figure_3.jpg)
 
