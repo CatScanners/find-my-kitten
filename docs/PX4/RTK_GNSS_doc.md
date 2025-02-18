@@ -1,3 +1,7 @@
+---
+parent: Pixhawk, PX4 and QGroundControl
+---
+
 # RTK GNSS Integration for UAV Systems
 
 This document outlines the hardware and software requirements for integrating RTK GNSS with a UAV system, along with an overview of RTK correction services in Finland.

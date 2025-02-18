@@ -1,3 +1,9 @@
+---
+parent: Development
+---
+
+# Information about hardware, licensing and possible libraries
+
 [Jetson Orin Nano Developer Kit](<https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-nano/product-development/>):
 - 1024-core NVIDIA Ampere architecture GPU with 32 Tensor Cores @ 625 MHz
 - 6-core Arm® Cortex®-A78AE v8.2 64-bit CPU

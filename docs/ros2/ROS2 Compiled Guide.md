@@ -1,3 +1,7 @@
+---
+parent: ROS2
+---
+
 # ROS2 Compiled Guide
 
 ## Table of Contents

@@ -1,3 +1,7 @@
+---
+parent: Pixhawk, PX4 and QGroundControl
+---
+
 # ULog parsing
 PX4 uses ULog file format to log uORB topics. Parsing is needed to get the logs in readable format.
 

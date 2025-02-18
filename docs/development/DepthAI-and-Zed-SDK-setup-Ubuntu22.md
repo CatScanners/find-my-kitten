@@ -1,3 +1,7 @@
+---
+parent: Development
+---
+
 # ZedSDK on Ubuntu22
 
 Dependecies 

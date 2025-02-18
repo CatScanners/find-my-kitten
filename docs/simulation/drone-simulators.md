@@ -1,3 +1,7 @@
+---
+parent: Simulation
+---
+
 # Relevant Drone Simulators
 This is a quick overview of potentially useful simulators for the project. Please, add any other relevant information.
 

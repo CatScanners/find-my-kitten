@@ -1,3 +1,6 @@
+---
+parent: Jetson Orin (Devkit, Baseboard)
+---
 
 # Setting up the hardware
 
