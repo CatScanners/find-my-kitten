@@ -147,3 +147,7 @@ Despite these efforts, I couldn’t play the video. Fortunately, we are a team. 
 
 ![A demonstration of the video](./assets/Figure_3.jpg)
 
+Related:
+
+- [RViz User Guide](https://docs.ros.org/en/rolling/Tutorials/Intermediate/RViz/RViz-User-Guide/RViz-User-Guide.html)
+- [RoboStack installation](https://robostack.github.io/GettingStarted.html)
