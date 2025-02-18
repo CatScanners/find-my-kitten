@@ -1,5 +1,5 @@
 ---
-parent: ROS2
+parent: Pixhawk, PX4 and QGroundControl
 ---
 
 # How to build PX4 code
