@@ -67,7 +67,7 @@ class ObjectDetectionNode(Node):
             self.detection_pub.publish(annotated_msg)
 
         except Exception as e:
-            self.get_logger().error(f"Error processing image: {e}")
+           # self.get_logger().error(f"Error processing image: {e}")
 
 def main(args=None):
     rclpy.init(args=args)
