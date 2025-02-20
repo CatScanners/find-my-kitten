@@ -1,3 +1,7 @@
+---
+parent: ROS2
+---
+
 # PX4 and Jetson communication via uXRCE-DDS guide
 
 Prerequisites are to setup ROS 2 based on [jetson-setup.md](https://github.com/CatScanners/find-my-kitten/blob/main/jetson-setup.md)
