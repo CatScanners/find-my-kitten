@@ -1,3 +1,9 @@
+---
+parent: Development
+---
+
+# Information about hardware, licensing and possible libraries
+
 [Jetson Orin Nano Developer Kit](<https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-nano/product-development/>):
 - 1024-core NVIDIA Ampere architecture GPU with 32 Tensor Cores @ 625 MHz
 - 6-core Arm® Cortex®-A78AE v8.2 64-bit CPU
@@ -26,9 +32,9 @@ Isaac ROS 2.0 is a software stack for [ROS2](<https://github.com/ros2>) (Apache 
 
 It is made up of open source (Apache 2.0) [packages on GitHub](<https://github.com/NVIDIA-ISAAC-ROS>)
 
-https://developer.nvidia.com/embedded/jetpack
+<https://developer.nvidia.com/embedded/jetpack>
 
-https://nvidia-isaac-ros.github.io/performance/index.html
+<https://nvidia-isaac-ros.github.io/performance/index.html>
 
 # Object Detection
 

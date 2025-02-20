@@ -1,3 +1,7 @@
+---
+parent: Pixhawk, PX4 and QGroundControl
+---
+
 # Telemetry radio setup for serial communication
 
 With antennas connected, plug the two transmitter/receivers into your computer's USB ports. Wait for the LEDs to turn a solid green (The model of radio on which this has been tested is the Sik Telemetry Radio V3- 100mW 915Mhz, which is simply plug-and-play).

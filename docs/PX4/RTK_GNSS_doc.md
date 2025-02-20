@@ -1,3 +1,7 @@
+---
+parent: Pixhawk, PX4 and QGroundControl
+---
+
 # RTK GNSS Integration for UAV Systems
 
 This document outlines the hardware and software requirements for integrating RTK GNSS with a UAV system, along with an overview of RTK correction services in Finland.
@@ -145,7 +149,7 @@ Currently, the account is made and request for connecting the NLS is sent. The r
 - Community-driven RTK service.
 - Coverage depends on user-provided base stations (quality varies).
 
-Here is the instructions on how to get corrections from base stations (taken from: http://rtk2go.com/how-to-connect/):
+Here is the instructions on how to get corrections from base stations (taken from: <http://rtk2go.com/how-to-connect/>):
 Connecting as a Data User…   (users, rovers, tractors)
 When connecting to RTK2go as an NTRIP Client no log-on account is required (for the user name just provide a valid email and and the password value is ignored).
 

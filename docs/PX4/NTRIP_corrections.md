@@ -1,6 +1,12 @@
+---
+parent: Pixhawk, PX4 and QGroundControl
+---
+
+# RTK corrections via NTRIP
+
 ## This file contains a short tutorial on how to inject RTK corrections to the messaging from QGroundControl via MavProxy's builtin NTRIP client.
 
-First, MavProxy must be installed: https://ardupilot.org/mavproxy/. Note that the software is under the GPL liscence. 
+First, MavProxy must be installed: <https://ardupilot.org/mavproxy/>. Note that the software is under the GPL liscence. 
 MavProxy offers both the ability to route mavLink messages between different endpoints, and a built-in NTRIP client (to fetch RTK corrections from a remote station). This makes it convenient for our use case,
 in which we need to "inject" RTK corrections in addition to QGroundControl's messages.
 
@@ -29,4 +35,4 @@ Here, the capitalized words denote values specified by the specific NTRIP caster
 If all goes well, RTK should show up on the QGroundControl GPS info, provided sufficient visibility of satellites and that the GPS is on.´
 
 The starting command sequence can be automated by appending these commands to the end of the C:\Users\OMISTAJA\AppData\Local\.mavproxy\.mavinit.scr file on Windows, or the /home/username/.mavinit.scr file on Linux. 
-See https://ardupilot.org/mavproxy/docs/getting_started/mavinit.html for further details.
+See <https://ardupilot.org/mavproxy/docs/getting_started/mavinit.html> for further details.

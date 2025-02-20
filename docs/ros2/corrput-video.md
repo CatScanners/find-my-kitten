@@ -1,3 +1,7 @@
+---
+parent: ROS2
+---
+
 # Report: ROS2 Recording System and Corrupted Database Recovery
 
 ## Introduction
@@ -63,7 +67,7 @@ on the machine **baseboard@82.130.11.125**.
 3. **Storage Format**:  
    The database utilizes **SQLite3** to store the messages. This backend was chosen for its ability to handle large amounts of data and facilitate easy querying.
 
-![Structure of the database](./assets/Figure_1.png)
+![Structure of the database](../assets/Figure_1.png)
 
 4. **File Storage**:  
    The bag file is stored as `rosbag2_2025_02_06-15_02_00_0.db3`. This file contains both the **video data** (in the `data` column as BLOBs) and relevant metadata, including timestamps and topic names.
@@ -82,7 +86,7 @@ on the machine **baseboard@82.130.11.125**.
 ## Corrupted Database and Repair Process
 The database file **rosbag2_2025_02_06-14_06_02_0.db3** was found to be corrupted during an import attempt. Initially, it was thought to be missing metadata, but further investigation revealed that the database itself was damaged.
 
-![The corrupted database cannot be imported](./assets/Figure_2.png)
+![The corrupted database cannot be imported](../assets/Figure_2.png)
 
 To ensure that other members can also reproduce this process, the corrupted file, along with a pair of intact files and their metadata, have been securely transferred to a local machine via SCP. The files have not been modified in any way.
 
@@ -145,7 +149,7 @@ After modifying the metadata to reflect accurate timestamps and message counts, 
 
 Despite these efforts, I couldn’t play the video. Fortunately, we are a team. After collaborating with Kaius, we confirmed that the video located in `~/find-my-kitten/ros2_ws/src/vision_package/rosbag/rosbag2_2025_02_06-14_06_0` was repaired and could now be played:
 
-![A demonstration of the video](./assets/Figure_3.jpg)
+![A demonstration of the video](../assets/Figure_3.jpg)
 
 ## References
 
