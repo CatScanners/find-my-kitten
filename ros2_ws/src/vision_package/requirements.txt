@@ -5,3 +5,4 @@ torchvision
 numpy
 pandas
 yt-dlp
+supervision
