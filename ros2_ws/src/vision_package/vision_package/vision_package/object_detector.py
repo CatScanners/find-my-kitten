@@ -13,6 +13,12 @@ class ObjectDetectionNode(Node):
     def __init__(self):
         super().__init__('object_detection_node')
 
+        self.declare_parameter("input_topic_name", "image_topic")
+        self.declare_parameter("output_topic_name", "detected_objects_topic")
+        
+        self.input_topic_name = self.get_parameter("input_topic_name").value
+        self.output_topic_name = self.get_parameter("output_topic_name").value
+
         # Load the PyTorch model
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5s.pt')  # Replace with your .pt file path
         self.model.conf = 0.5  # Confidence threshold
@@ -23,7 +29,7 @@ class ObjectDetectionNode(Node):
         # Subscribe to the image topic
         self.subscription = self.create_subscription(
             Image,
-            'image_topic',  # Replace with your image topic name
+            self.input_topic_name,
             self.image_callback,
             10
         )
@@ -31,7 +37,7 @@ class ObjectDetectionNode(Node):
         # Publisher for detected objects
         self.detection_pub = self.create_publisher(
             Detection2DArray,
-            'detected_objects_topic',  # Replace with your output topic name
+            self.output_topic_name,
             10
         )
 

@@ -2,28 +2,45 @@
 Quick and dirty documentation for vision_package so yall maybe can use this too! 
 ## Nodes and quick explanations
 
-Nodes included in vision_package:
+Nodes included in vision_package (where given ros arguments are the default values):
 
 ### image_publisher
-Publishes regular webcam from /dev/video0 as images in the topic **/image_topic** . Video number can be configured from variables.hpp file in vision_package/include/variables.hpp . 
+Publishes regular webcam from /dev/video0 as images in the topic **/image_topic** by default. See the arguments for default values and their types.
 ``` 
-ros2 run vision_package image_publisher
+ros2 run vision_package image_publisher --ros-args \
+  -p topic_name:="image_topic" \
+  -p camera_id:=0 \
+  -p res_width:=1920 \
+  -p res_width:=1080 \
+  -p pub_time:=0.05
 ```
-
-### video_publisher.py
+## video_publisher.py
 Publishes video or images from local files or links. Online videos are youtube and example of specifying a source can be seen below.  
 ``` 
-ros2 run vision_package video_publisher.py --ros-args -p input_source:="LINK/PATH"
+ros2 run vision_package video_publisher.py --ros-args \
+  -p topic_name:="image_topic" \
+  -p input_source:="LINK/PATH" \
+  -p pub_time:=0.1
 ```
 ### image_subscriber
 Subscribes to the topic to which image_publisher publishes images. This nodes opens a window in which it displays images it receives. 
 ``` 
-ros2 run vision_package image_subscriber
+ros2 run vision_package image_subscriber --ros-args \
+  -p topic_name:="image_topic"
 ```
 ### object_detector.py
 Ultralytics pretrained yolov5 model based object detector node. Listens to /image_topic for input. Outputs yolo bounding box positions in terminal and displays a window where the image and rendered bounding boxes can be seen. 
 ``` 
-ros2 run vision_package object_detector.py
+ros2 run vision_package object_detector.py --ros-args \
+  -p input_topic_name:="image_topic" \
+  -p output_topic_name"="detected_objects_topic"
+```
+### object_tracker.py
+Node which uses detections from
+```
+ros2 run vision_package object_tracker.py --ros-args \
+  -p input_topic_name:="detected_objects_topic" \
+  -p output_topic_name:="tracked_objects_topic"
 ```
 ### Depthai-ros included nodes
 DepthAI-ROS is a optional include  in vision_package Dockerfile. Documentaion of it is poor but node names are descriptive enough and can be seen here: https://github.com/luxonis/depthai-ros/tree/humble .
@@ -98,3 +115,10 @@ Use numpy 1.24.1 if ROS2 package "CV_bridge" or others come up with errors about
 
 Do not use pip packages of opencv pyhton. Apt works best
 sudo apt install -y python3-opencv
+
+For yt-dlp eg. video publisher ~/.local/bin needs to be exported to shell. Add the following command to your ~/.bashrc
+```
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+```

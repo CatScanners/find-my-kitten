@@ -10,6 +10,12 @@ from supervision.detection.core import Detections
 class ObjectTrackerNode(Node):
     def __init__(self):
         super().__init__('object_tracker_node')
+        
+        self.declare_parameter("input_topic_name", "detected_objects_topic")         
+        self.declare_parameter("output_topic_name", "tracked_objects_topic")
+
+        self.input_topic_name = self.get_parameter("input_topic_name").value
+        self.output_topic_name = self.get_parameter("output_topic_name").value
 
         # Initialize the tracker
         self.tracker = sv.ByteTrack()
@@ -17,7 +23,7 @@ class ObjectTrackerNode(Node):
         # Subscriber to the detected objects topic
         self.subscription = self.create_subscription(
             Detection2DArray,  # Use Detection2DArray
-            'detected_objects_topic',
+            self.input_topic_name,
             self.detection_callback,
             10
         )
@@ -25,7 +31,7 @@ class ObjectTrackerNode(Node):
         # Publisher to the tracked objects topic
         self.publisher = self.create_publisher(
             Detection2DArray,  # Publish tracked objects as Detection2DArray
-            'tracked_objects_topic',
+            self.output_topic_name,
             10
         )
 
