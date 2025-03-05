@@ -19,6 +19,7 @@ class ObjectDetectionNode(Node):
         self.input_topic_name = self.get_parameter("input_topic_name").value
         self.output_topic_name = self.get_parameter("output_topic_name").value
 
+
         # Load the PyTorch model
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5s.pt')  # Replace with your .pt file path
         self.model.conf = 0.5  # Confidence threshold

@@ -10,21 +10,30 @@ from vision_msgs.msg import Detection2DArray
 class TrackedImagePublisher(Node):
     def __init__(self):
         super().__init__('tracked_image_publisher')
+       
+
+        self.declare_parameter("input_images", "image_topic")
+        self.declare_parameter("input_tracks", "tracked_objects_topic")
+        self.declare_parameter("output_topic_name", "tracked_image_topic")
         
+        self.input_images = self.get_parameter("input_images").value
+        self.input_tracks = self.get_parameter("input_tracks").value
+        self.output_topic_name = self.get_parameter("output_topic_name").value
+
         # Initialize CV Bridge
         self.bridge = CvBridge()
         
         # Subscribe to the image and tracked objects topics
         self.image_sub = self.create_subscription(
             Image,
-            'image_topic',  # Change to your image topic name
+            self.input_images,
             self.image_callback,
             10
         )
         
         self.tracked_objects_sub = self.create_subscription(
             Detection2DArray,
-            'tracked_objects_topic',
+            self.input_tracks,
             self.tracked_objects_callback,
             10
         )
@@ -32,7 +41,7 @@ class TrackedImagePublisher(Node):
         # Publisher for the annotated image
         self.image_pub = self.create_publisher(
             Image,
-            'tracked_image_topic',
+            self.output_topic_name,
             10
         )
         
