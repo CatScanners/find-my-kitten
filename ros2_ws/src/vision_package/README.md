@@ -20,10 +20,10 @@ Subscribes to the topic to which image_publisher publishes images. This nodes op
 ``` 
 ros2 run vision_package image_subscriber
 ```
-### object_recogniser.py
-Ultralytics pretrained yolov5 model based object recognizer node. Listens to /image_topic for input. Outputs yolo bounding box positions in terminal and displays a window where the image and rendered bounding boxes can be seen. 
+### object_detector.py
+Ultralytics pretrained yolov5 model based object detector node. Listens to /image_topic for input. Outputs yolo bounding box positions in terminal and displays a window where the image and rendered bounding boxes can be seen. 
 ``` 
-ros2 run vision_package object_recognizer.py
+ros2 run vision_package object_detector.py
 ```
 ### Depthai-ros included nodes
 DepthAI-ROS is a optional include  in vision_package Dockerfile. Documentaion of it is poor but node names are descriptive enough and can be seen here: https://github.com/luxonis/depthai-ros/tree/humble .

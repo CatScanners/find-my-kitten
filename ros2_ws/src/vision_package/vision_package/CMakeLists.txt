@@ -11,15 +11,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
-
-# Custom message declarations
-find_package(rosidl_default_generators REQUIRED)
-
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/detected_objects.msg"
-  "msg/tracker_objects.msg"
-  DEPENDENCIES 
-)
+find_package(vision_msgs REQUIRED)
 
 
 #Include directories inside vision_package/include/*
@@ -36,6 +28,7 @@ ament_target_dependencies(image_publisher
   OpenCV
   cv_bridge
   image_transport
+  vision_msgs
 )
 
 # Declare the executable
@@ -49,6 +42,7 @@ ament_target_dependencies(image_subscriber
   OpenCV
   cv_bridge
   image_transport
+  vision_msgs 
 )
 
 # Install the executables
@@ -63,8 +57,10 @@ ament_python_install_package(${PROJECT_NAME})
 
 # Install Python executables
 install(PROGRAMS
-  vision_package/object_recognizer.py
+  vision_package/object_detector.py
   vision_package/video_publisher.py
+  vision_package/object_tracker.py
+  vision_package/track_publisher.py
   DESTINATION lib/${PROJECT_NAME}
 )
 # ament package setup

@@ -15,6 +15,7 @@
   <depend>sensor_msgs</depend>
   <depend>cv_bridge</depend>
   <depend>image_transport</depend>
+  <depend>vision_msgs</depend>
 
   <exec_depend>opencv-python</exec_depend>
   <exec_depend>torch</exec_depend>
