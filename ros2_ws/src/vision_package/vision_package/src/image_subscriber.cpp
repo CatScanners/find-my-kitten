@@ -4,22 +4,20 @@
 #include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.hpp>
 
-#include <vision_package/variables.hpp>
-
-// An example image subscriber which simply displays the images that are prodcast in a window 
-
-
 class ImageSubscriber : public rclcpp::Node
 {
 public:
     ImageSubscriber()
     : Node("image_subscriber")
     {
-        
+        // Declare parameters with default values
+        this->declare_parameter<std::string>("topic_name", "image_topic");
+        std::string image_topic = this->get_parameter("topic_name").as_string();
+
        // Subscribe to the image topic using image_transport
         image_sub_ = image_transport::create_subscription(
             this,
-            vision_package::RGB_IMAGE_TOPIC,
+            image_topic,
             std::bind(&ImageSubscriber::image_callback, this, std::placeholders::_1),
             "raw", // Use "raw" transport (default)
             rmw_qos_profile_sensor_data
@@ -42,10 +40,9 @@ private:
             cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
 
             // Display the image in a window
-	    cv::imshow("RGB Camera Feed", cv_ptr->image);
-	    cv::waitKey(1);  // Display image and wait for key press (to refresh the window)
-	    std::cout << "Received" << std::endl; // Printing received message for debug purposes. 
-        
+            cv::imshow("RGB Camera Feed", cv_ptr->image);
+            cv::waitKey(1);  // Display image and wait for key press (to refresh the window)
+            std::cout << "Received" << std::endl; // Printing received message for debug purposes. 
         }
         catch (const cv_bridge::Exception& e)
         {
@@ -61,3 +58,4 @@ int main(int argc, char * argv[])
     rclcpp::shutdown();
     return 0;
 }
+

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(vision_package)
+project(navigation_package)
 
 # Require ROS 2 dependencies
 find_package(ament_cmake REQUIRED)
@@ -18,10 +18,10 @@ find_package(vision_msgs REQUIRED)
 include_directories(include)
 
 # Declare the executable
-add_executable(image_publisher src/image_publisher.cpp)
+add_executable(target_deviation src/target_deviation.cpp)
 
 # Link dependencies
-ament_target_dependencies(image_publisher
+ament_target_dependencies(target_deviation
   rclcpp
   std_msgs
   sensor_msgs
@@ -31,24 +31,10 @@ ament_target_dependencies(image_publisher
   vision_msgs
 )
 
-# Declare the executable
-add_executable(image_subscriber src/image_subscriber.cpp)
-
-# Link dependencies
-ament_target_dependencies(image_subscriber
-  rclcpp
-  std_msgs
-  sensor_msgs
-  OpenCV
-  cv_bridge
-  image_transport
-  vision_msgs 
-)
 
 # Install the executables
 install(TARGETS
-  image_publisher
-  image_subscriber
+  target_deviation
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -57,10 +43,7 @@ ament_python_install_package(${PROJECT_NAME})
 
 # Install Python executables
 install(PROGRAMS
-  vision_package/object_detector.py
-  vision_package/video_publisher.py
-  vision_package/object_tracker.py
-  vision_package/track_publisher.py
+  navigation_package/deviation_visualizer.py
   DESTINATION lib/${PROJECT_NAME}
 )
 # ament package setup

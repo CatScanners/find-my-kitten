@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>vision_package</name>
+  <name>navigation_package</name>
   <version>0.0.1</version>
-  <description>Machine vision package for find my kitten project</description>
+  <description>Drone navigation package for find my kitten project</description>
   <maintainer email="kaius.koivisto@aalto.fi">Kaius</maintainer>
   <license>TODO: License declaration</license>
 
