@@ -1,7 +1,0 @@
-launch:
-
-- node:
-    pkg: "offboard_listener"
-    exec: "offboard_control"
-    name: "offboard_control"
-    output: "screen"

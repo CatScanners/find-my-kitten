@@ -17,13 +17,19 @@ class ImagePublisher(Node):
 
     
         self.declare_parameter('input_source', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+        self.declare_parameter('topic_name', "image_topic")
+        self.declare_parameter('pub_time', 0.1)
+
+
         self.input_source = self.get_parameter('input_source').value
+        self.topic_name = self.get_parameter('topic_name').value
+        self.pub_time = self.get_parameter('pub_time').value
 
         # Create a publisher for the Image message
-        self.publisher_ = self.create_publisher(Image, 'image_topic', 10)
+        self.publisher_ = self.create_publisher(Image, self.topic_name, 10)
 
         # Set up a timer to publish images/frames periodically
-        self.timer = self.create_timer(0.1, self.timer_callback)  # Adjust timer for video frame rate
+        self.timer = self.create_timer(self.pub_time, self.timer_callback)  # Adjust timer for video frame rate
 
         # Input can be a URL (image or YouTube video) or a local file path
         self.is_video = False
