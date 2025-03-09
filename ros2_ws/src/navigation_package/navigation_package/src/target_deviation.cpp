@@ -1,7 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <vision_msgs/msg/detection2_d_array.hpp>
 #include <vision_msgs/msg/detection2_d.hpp>
-#include <std_msgs/msg/string.hpp>
+#include <std_msgs/msg/float32_multi_array.hpp>
 #include <std_msgs/msg/header.hpp>
 #include <string>
 
@@ -35,12 +35,12 @@ public:
             std::bind(&TargetDeviation::calculateDeviation, this, std::placeholders::_1));
 
         // Create publisher
-        publisher_ = this->create_publisher<std_msgs::msg::String>(output_topic_name, 10);
+        publisher_ = this->create_publisher<std_msgs::msg::Float32MultiArray>(output_topic_name, 10);
     }
 
 private:
     rclcpp::Subscription<vision_msgs::msg::Detection2DArray>::SharedPtr subscription_;
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+    rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr publisher_;
 
     void calculateDeviation(const vision_msgs::msg::Detection2DArray::SharedPtr msg)
     {
@@ -49,7 +49,6 @@ private:
             RCLCPP_WARN(this->get_logger(), "No tracked objects received.");
             return;
         }
-
         // Take the first detected object
         auto target = msg->detections[0];
         float object_x = target.bbox.center.position.x;
@@ -58,15 +57,15 @@ private:
         // Calculate deviation from screen center
         float center_x = res_width / 2.0;
         float center_y = res_height / 2.0;
-        float deviation_x = object_x - center_x;
-        float deviation_y = object_y - center_y;
+        float deviation_x = (object_x - center_x );
+        float deviation_y = (object_y - center_y );
 
-        // Publish deviation
-        auto deviation_msg = std_msgs::msg::String();
-        deviation_msg.data = "Deviation X: " + std::to_string(deviation_x) + ", Deviation Y: " + std::to_string(deviation_y);
+        // Publish deviation as FLoat32MultiArray
+        auto deviation_msg = std_msgs::msg::Float32MultiArray();
+        deviation_msg.data = {deviation_x, deviation_y};
         publisher_->publish(deviation_msg);
 
-        RCLCPP_INFO(this->get_logger(), "Deviation -> X: %.2f, Y: %.2f", deviation_x, deviation_y);
+        RCLCPP_INFO(this->get_logger(), "Normalized Coordinates -> X: %.2f, Y: %.2f", deviation_x, deviation_y);
     }
 };
 
@@ -77,4 +76,3 @@ int main(int argc, char *argv[])
     rclcpp::shutdown();
     return 0;
 }
-
