@@ -57,6 +57,7 @@ ament_python_install_package(${PROJECT_NAME})
 
 # Install Python executables
 install(PROGRAMS
+  vision_package/ball_detector.py # TODO: make sure this line is needed.
   vision_package/object_detector.py
   vision_package/video_publisher.py
   vision_package/object_tracker.py

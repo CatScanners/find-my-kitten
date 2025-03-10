@@ -66,10 +66,15 @@ class ObjectDetectionNode(Node):
             for (x, y, r) in circles[0, :]:
 
                 detection_msg = Detection2D()
-                detection_msg.bbox.center.position.x = x
-                detection_msg.bbox.center.position.y = y
-                detection_msg.bbox.size_x = 2 * r
-                detection_msg.bbox.size_y = 2 * r
+                # FIXME: Made this modification:
+                #detection_msg.bbox.center.position.x = x
+                #detection_msg.bbox.center.position.y = y
+                #detection_msg.bbox.size_x = 2 * r
+                #detection_msg.bbox.size_y = 2 * r
+                detection_msg.bbox.center.position.x = float(x)
+                detection_msg.bbox.center.position.y = float(y)
+                detection_msg.bbox.size_x = float(2 * r)
+                detection_msg.bbox.size_y = float(2 * r)
 
                 cls = "ball"
                 # TODO: give some more realistic confidence estimate
@@ -82,7 +87,10 @@ class ObjectDetectionNode(Node):
                 detection_msg.results.append(hypothesis)
 
                 detection_array.detections.append(detection_msg)
-                self.get_logger().info(f"Detected: {self.model.names[int(cls)]} {conf:.2f} at ({x}, {y}), with radius {r})")
+                #FIXME: 
+                # self.get_logger().info(f"Detected: {self.model.names[int(cls)]} {conf:.2f} at ({x}, {y}), with radius {r})")
+                self.get_logger().info(f"Detected: {cls} {conf:.2f} at ({x}, {y}), with radius {r})")
+
 
             # Publish detection results
             self.detection_pub.publish(detection_array)
