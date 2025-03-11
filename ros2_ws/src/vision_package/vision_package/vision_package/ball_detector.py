@@ -9,13 +9,16 @@ import cv2
 import numpy as np
 
 
-def detect_balls(image):
+# This node finds balls in an image feed, and gives a list of bounding boxes in pixel coordinates.
+
+def detect_balls(image, param1, param2):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.medianBlur(gray,5)
 
-    # TODO: test and tune these parameters
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, dp=2, minDist=100,
-                               param1=50, param2=30, minRadius=0, maxRadius=200)
+    w, h = gray.shape
+
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, dp=2, minDist=int(w/10),
+                               param1=param1, param2=param2, minRadius=0, maxRadius=int(w/4))
 
     ret_circles = np.array([[]])
     if circles is not None:
@@ -30,7 +33,14 @@ class ObjectDetectionNode(Node):
 
         self.declare_parameter("input_topic_name", "image_topic")
         self.declare_parameter("output_topic_name", "detected_objects_topic")
-        
+
+        # Expose hough parameters
+        self.declare_parameter("hough_param_1", 100)
+        self.declare_parameter("hough_param_2", 80)
+
+        self.hough_param_1 = self.get_parameter('hough_param_1').value
+        self.hough_param_2 = self.get_parameter('hough_param_2').value
+
         self.input_topic_name = self.get_parameter("input_topic_name").value
         self.output_topic_name = self.get_parameter("output_topic_name").value
 
@@ -58,7 +68,7 @@ class ObjectDetectionNode(Node):
             cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
             # Perform object detection
-            circles = detect_balls(cv_image)
+            circles = detect_balls(cv_image, param1=self.hough_param_1, param2=self.hough_param_2)
 
             detection_array = Detection2DArray()
             detection_array.header = msg.header
