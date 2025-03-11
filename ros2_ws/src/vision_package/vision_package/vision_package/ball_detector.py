@@ -35,7 +35,7 @@ class ObjectDetectionNode(Node):
         self.declare_parameter("output_topic_name", "detected_objects_topic")
 
         # Expose hough parameters
-        self.declare_parameter("hough_param_1", 100)
+        self.declare_parameter("hough_param_1", 200)
         self.declare_parameter("hough_param_2", 80)
 
         self.hough_param_1 = self.get_parameter('hough_param_1').value
