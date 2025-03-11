@@ -1,8 +1,7 @@
 ---
-title: Offboard control node
 parent: Pixhawk, PX4 and QGroundControl
 ---
-
+# Offboard node doc
 ## PREREQ: Run XRCE bridge
 ```bash
 MicroXRCEAgent udp4 -p 8888
