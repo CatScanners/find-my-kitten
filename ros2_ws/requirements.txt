@@ -1,0 +1,8 @@
+numpy==1.24.1
+opencv-python
+torch
+torchvision
+numpy
+pandas
+yt-dlp
+supervision
