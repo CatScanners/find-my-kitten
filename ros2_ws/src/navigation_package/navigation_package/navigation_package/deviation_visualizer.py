@@ -5,27 +5,26 @@ from rclpy.node import Node
 import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
-from vision_msgs.msg import Detection2DArray
+from std_msgs.msg import Int32MultiArray  # Assuming deviation is published as Int32MultiArray
 
-class TrackedImagePublisher(Node):
+class TargetDeviationVisualizer(Node):
     def __init__(self):
-        super().__init__('tracked_image_publisher')
+        super().__init__('target_deviation_visualizer')
 
-
+        # Declare parameters
         self.declare_parameter("input_images", "image_topic")
-        self.declare_parameter("input_tracks", "tracked_objects_topic")
-        self.declare_parameter("input_deviation", "deviation_topic" )
-        self.declare_parameter("output_topic_name", "tracked_image_topic")
+        self.declare_parameter("input_deviation", "target_deviation_topic")
+        self.declare_parameter("output_topic_name", "visualized_image_topic")
 
+        # Get parameters
         self.input_images = self.get_parameter("input_images").value
-        self.input_tracks = self.get_parameter("input_tracks").value
-        self.input_tracks = self.get_parameter("input_deviation").value
+        self.input_deviation = self.get_parameter("input_deviation").value
         self.output_topic_name = self.get_parameter("output_topic_name").value
 
         # Initialize CV Bridge
         self.bridge = CvBridge()
 
-        # Subscribe to the image and tracked objects topics
+        # Subscribe to the image and deviation topics
         self.image_sub = self.create_subscription(
             Image,
             self.input_images,
@@ -33,21 +32,14 @@ class TrackedImagePublisher(Node):
             10
         )
 
-        self.tracked_objects_sub = self.create_subscription(
-            Detection2DArray,
-            self.input_tracks,
-            self.tracked_objects_callback,
-            10
-        )
-
         self.deviation_sub = self.create_subscription(
-            String,
+            Int32MultiArray,  # Assuming deviation is published as Int32MultiArray
             self.input_deviation,
             self.deviation_callback,
             10
         )
 
-        # Publisher for the annotated image
+        # Publisher for the visualized image
         self.image_pub = self.create_publisher(
             Image,
             self.output_topic_name,
@@ -55,57 +47,67 @@ class TrackedImagePublisher(Node):
         )
 
         self.latest_image = None
-        self.latest_tracked_objects = None
+        self.latest_deviation = None  # Store the latest deviation data
 
     def image_callback(self, msg):
-        """ Store the latest received image """
+        """Store the latest received image."""
         self.latest_image = msg
         self.process_and_publish()
 
-    def tracked_objects_callback(self, msg):
-        """ Store the latest tracked objects """
-        self.latest_tracked_objects = msg
-        self.process_and_publish()
-
     def deviation_callback(self, msg):
-        """ Store the latest deviation """
+        """Store the latest deviation data."""
         self.latest_deviation = msg
         self.process_and_publish()
 
     def process_and_publish(self):
-        """ Process the latest image and overlay tracked objects before publishing. """
-        if self.latest_image is None or self.latest_tracked_objects is None:
+        """Process the latest image and draw a line based on deviation data."""
+        if self.latest_image is None or self.latest_deviation is None:
             return
 
         # Convert ROS Image message to OpenCV format
         cv_image = self.bridge.imgmsg_to_cv2(self.latest_image, desired_encoding='bgr8')
 
-        # Draw bounding boxes and object IDs
-        for detection in self.latest_tracked_objects.detections:
-            x = int(detection.bbox.center.position.x - detection.bbox.size_x / 2)
-            y = int(detection.bbox.center.position.y - detection.bbox.size_y / 2)
-            w = int(detection.bbox.size_x)
-            h = int(detection.bbox.size_y)
+        # Get image dimensions
+        height, width, _ = cv_image.shape
+        screen_center_x = width // 2
+        screen_center_y = height // 2
 
-            tracker_id = "Unknown"
-            if detection.results:
-                tracker_id = str(detection.results[0].hypothesis.class_id)
+        # Extract deviation data (assuming it contains [x, y] coordinates)
+        if len(self.latest_deviation.data) >= 2:
+            target_x = self.latest_deviation.data[0]
+            target_y = self.latest_deviation.data[1]
 
-            # Draw rectangle
-            cv2.rectangle(cv_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            # Draw a line from the screen center to the target position
+            cv2.arrowedLine(
+                cv_image,
+                (screen_center_x, screen_center_y),  # Start from screen center
+                (target_x, target_y),  # End at target position
+                (0, 0, 255),  # Red color
+                2,  # Thickness
+                tipLength=0.1
+            )
 
-            # Put text (Object ID)
-            cv2.putText(cv_image, f'ID: {tracker_id}', (x, y - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            # Optionally, display the deviation values
+            deviation_x = target_x - screen_center_x
+            deviation_y = target_y - screen_center_y
+            cv2.putText(
+                cv_image,
+                f'Deviation: X={deviation_x}, Y={deviation_y}',
+                (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.7,
+                (255, 255, 255),  # White color
+                2
+            )
 
         # Convert back to ROS Image message and publish
-        annotated_msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='bgr8')
-        self.image_pub.publish(annotated_msg)
+        visualized_msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='bgr8')
+        self.image_pub.publish(visualized_msg)
 
 
 def main(args=None):
     rclpy.init(args=args)
-    node = TrackedImagePublisher()
+    node = TargetDeviationVisualizer()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
