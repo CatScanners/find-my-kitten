@@ -13,3 +13,6 @@
 [submodule "ros2_ws/simulation/ws_offboard_control/src/px4_ros_com"]
 	path = ros2_ws/simulation/ws_offboard_control/src/px4_ros_com
 	url = https://github.com/CatScanners/px4_ros_com.git
+[submodule "ros2_ws/src/px4_msgs"]
+	path = ros2_ws/src/px4_msgs
+	url = https://github.com/PX4/px4_msgs.git
