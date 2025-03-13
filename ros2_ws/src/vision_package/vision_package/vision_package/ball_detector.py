@@ -11,7 +11,7 @@ import numpy as np
 
 # This node finds balls in an image feed, and gives a list of bounding boxes in pixel coordinates.
 
-def detect_balls(image, param1, param2):
+def detect_balls(image):# , param1, param2):
     wimg, himg = image.shape[:2]
     avgmetric = 2/(wimg + himg)
     # Size to approx. 500 x 500
@@ -68,8 +68,6 @@ def detect_balls(image, param1, param2):
     circles = (np.array(circles) * inv_resize)
 
     ret_circles = np.around(circles)
-    if circles is not None:
-        ret_circles = np.around
 
     return ret_circles
 
@@ -81,11 +79,11 @@ class ObjectDetectionNode(Node):
         self.declare_parameter("output_topic_name", "detected_objects_topic")
 
         # Expose hough parameters
-        self.declare_parameter("hough_param_1", 200)
-        self.declare_parameter("hough_param_2", 80)
+        # self.declare_parameter("hough_param_1", 200)
+        # self.declare_parameter("hough_param_2", 80)
 
-        self.hough_param_1 = self.get_parameter('hough_param_1').value
-        self.hough_param_2 = self.get_parameter('hough_param_2').value
+        # self.hough_param_1 = self.get_parameter('hough_param_1').value
+        # self.hough_param_2 = self.get_parameter('hough_param_2').value
 
         self.input_topic_name = self.get_parameter("input_topic_name").value
         self.output_topic_name = self.get_parameter("output_topic_name").value
@@ -114,13 +112,15 @@ class ObjectDetectionNode(Node):
             cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
             # Perform object detection
-            circles = detect_balls(cv_image, param1=self.hough_param_1, param2=self.hough_param_2)
+            circles = detect_balls(cv_image) # , param1=self.hough_param_1, param2=self.hough_param_2)
 
             detection_array = Detection2DArray()
             detection_array.header = msg.header
 
+            self.get_logger().info("Before for loop")
+            self.get_logger().info(f"Circles: {circles}")
             for (x, y, r) in circles[0, :]:
-
+                self.get_logger().info("In for loop")
                 detection_msg = Detection2D()
                 detection_msg.bbox.center.position.x = x
                 detection_msg.bbox.center.position.y = y
@@ -138,7 +138,7 @@ class ObjectDetectionNode(Node):
                 detection_msg.results.append(hypothesis)
 
                 detection_array.detections.append(detection_msg)
-                self.get_logger().info(f"Detected: {self.model.names[int(cls)]} {conf:.2f} at ({x}, {y}), with radius {r})")
+                self.get_logger().info(f"Detected: {conf:.2f} at ({x}, {y}), with radius {r})")
 
             # Publish detection results
             self.detection_pub.publish(detection_array)
