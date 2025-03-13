@@ -12,20 +12,66 @@ import numpy as np
 # This node finds balls in an image feed, and gives a list of bounding boxes in pixel coordinates.
 
 def detect_balls(image, param1, param2):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    gray = cv2.medianBlur(gray,5)
+    wimg, himg = image.shape[:2]
+    avgmetric = 2/(wimg + himg)
+    # Size to approx. 500 x 500
+    avg_pixel_dim = 500
+    h = int(avgmetric * avg_pixel_dim * wimg)
+    w = int(avgmetric * avg_pixel_dim * himg)
+    inv_resize = wimg / w
+    image_resized = cv2.resize(image, (w, h))
 
-    w, h = gray.shape
+    # Convert the image to the HSV color space:
+    hsvImage = cv2.cvtColor(image_resized, cv2.COLOR_BGR2HSV)
 
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, dp=2, minDist=int(w/10),
-                               param1=param1, param2=param2, minRadius=0, maxRadius=int(w/4))
+    # Set the HSV values:
+    lowRange = np.array([60, 30, 120])
+    uppRange = np.array([270, 255, 255])
 
-    ret_circles = np.array([[]])
+    # Mask for high-contrast/value objects
+    binmask = cv2.inRange(hsvImage, lowRange, uppRange)
+    # Apply Dilate + Erode:
+    kernel = np.ones((3,3), np.uint8)
+    binmask = cv2.morphologyEx(binmask, cv2.MORPH_DILATE, kernel, iterations=1)
+
+    masked_image = cv2.bitwise_and(image_resized, image_resized, mask=binmask)
+
+    binmask = cv2.medianBlur(binmask, 9)
+    cv2.imshow("binmask", binmask)
+    cv2.imshow("mask", masked_image)
+
+    # Find contours
+    contours, _ = cv2.findContours(binmask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    min_circularity = 0.85
+    min_area = 0.02 * 0.02 * w*h/2
+
+    circles = [[]]
+
+    for contour in contours:
+        # Approximate the contour to a polygon
+        area = cv2.contourArea(contour)
+        # Filter out what's less than 2% width / height.
+        if area < min_area:
+            continue
+        perimeter = cv2.arcLength(contour, True)
+
+        circularity = (4 * 3.1416 * area)/(perimeter**2)
+
+        # Check if the polygon has fewer than 6 vertices (as circles are smooth)
+        if circularity > min_circularity:  # A circle should have many points
+            # Get the center and radius of the detected circle
+            (x, y), radius = cv2.minEnclosingCircle(contour)
+            circles[0].append([int(x), int(y), int(radius)])
+            cv2.circle(image_resized, (int(x), int(y)), int(radius), (0, 255, 0), 2)
+
+    circles = (np.array(circles) * inv_resize)
+
+    ret_circles = np.around(circles)
     if circles is not None:
-        ret_circles = np.around(circles)
+        ret_circles = np.around
 
     return ret_circles
-
 
 class ObjectDetectionNode(Node):
     def __init__(self):
