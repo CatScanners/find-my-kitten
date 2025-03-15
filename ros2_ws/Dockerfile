@@ -52,31 +52,40 @@ RUN if [ "$DEPTHAI" = "true" ]; then apt install -y ros-humble-depthai-ros; fi
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 RUN /bin/bash -c "source ~/.bashrc"
 
-# Copy navigation_package
-COPY . /ros2_ws/
+# **Copy part of the workspace for Dockerfile caching**
+# Copy px4_msgs
+COPY src/px4_msgs /ros2_ws/src/px4_msgs/
 WORKDIR /ros2_ws
+
+# Use bash
+SHELL ["/bin/bash", "-c"]
+
+# Source ros install and build px4_msgs
+RUN source /opt/ros/humble/setup.bash && \ 
+    colcon build
+
+# Copy requirements.txt
+COPY requirements.txt .
 
 # Install pip dependencies listed in requirements.txt
 RUN pip3 install -r requirements.txt
 
+#** Copy rest of the workspace **
+COPY . .
+
 # Give python scripts execution rights
 RUN chmod +x ./src/navigation_package/scripts/*
 RUN chmod +x ./src/vision_package/scripts/*
-
-# Use bash
-SHELL ["/bin/bash", "-c"]
 
 # Setup Rosdep and install dependencies
 RUN rosdep init && \
    rosdep update && \
    rosdep install --from-paths . --ignore-src -r -y
 
-
-# Build the package & source
-RUN  source /opt/ros/humble/setup.bash && \
-    colcon build --symlink-install && \
+# Build the packages & source
+RUN source /opt/ros/humble/setup.bash && \
+    colcon build && \
     source install/setup.bash
-
 
 # Entry point 
 CMD ["/bin/bash"]
