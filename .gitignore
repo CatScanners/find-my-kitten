@@ -1,2 +1,4 @@
 mav.*
 .DS_Store
+local_docs
+.vscode
