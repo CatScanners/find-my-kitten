@@ -29,11 +29,12 @@ ros2 run vision_package image_subscriber --ros-args \
   -p topic_name:="image_topic"
 ```
 ### object_detector.py
-Ultralytics pretrained yolov5 model based object detector node. Listens to /image_topic for input. Outputs yolo bounding box positions as Detection2DArray messages to output topic
+Ultralytics pretrained yolov5 model based object detector node. Listens to /image_topic for input. Outputs yolo bounding box positions as Detection2DArray messages to output topic. Outputs also the dimensions of the image that the detection was ran on.   
 ``` 
 ros2 run vision_package object_detector.py --ros-args \
   -p input_topic_name:="image_topic" \
-  -p output_topic_name"="detected_objects_topic"
+  -p output_topic_name"="detected_objects_topic" \ 
+  -p image_dimension_topic:"image_dimension_topic"
 ```
 ### object_tracker.py
 Node which uses detections to track the objects with ByteTrack algorithm. Wants specifically Detection2DArray messages from package vision_msgs https://github.com/ros-perception/vision_msgs/ 
