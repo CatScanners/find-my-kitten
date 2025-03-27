@@ -45,17 +45,22 @@ Run ros2 commands on demand:
 ros2 topic pub /custom_trajectory px4_msgs/msg/TrajectorySetpoint "{ position: [ 0.0, 0.0, -50.0 ], velocity: [0.0, 0.0, 0.0],  yaw: -3.14 }"
 ```
 
-## Run predefined motion (up, left, forward, rotate) x2:
+## Run predefined motion (up, left, forward, rotate) x2 (in simulator or live):
 1. Start offboard node
 ```
 ros2 run px4_ros_com offboard_control # start offboard node
 ```
+This node first starts to print out relevant local position information, and starts to send hardcoded (relative) tracepoints to the starting position, which is now set to 0.0, 0.0, -5.0. 
+
+
 2. Arm from QGroundCtonrol / via mavproxy by running ```arm throttle```.
-3. Record
+3. Set to offboard node from QGroundControl 
+4. Record
 ```
 ros2 bag record /fmu/out/vehicle_local_position
 ```
-4. Start motions
+5. Start motions
 ```
 ros2 run px4_ros_com maneuver.py # start the script
 ```
+This node waits for 5s and then starts to send the motion tracepoints.
