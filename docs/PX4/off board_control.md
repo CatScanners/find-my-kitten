@@ -44,3 +44,18 @@ Run ros2 commands on demand:
 ```bash
 ros2 topic pub /custom_trajectory px4_msgs/msg/TrajectorySetpoint "{ position: [ 0.0, 0.0, -50.0 ], velocity: [0.0, 0.0, 0.0],  yaw: -3.14 }"
 ```
+
+## Run predefined motion (up, left, forward, rotate) x2:
+1. Start offboard node
+```
+ros2 run px4_ros_com offboard_control # start offboard node
+```
+2. Arm from QGroundCtonrol / via mavproxy by running ```arm throttle```.
+3. Record
+```
+ros2 bag record /fmu/out/vehicle_local_position
+```
+4. Start motions
+```
+ros2 run px4_ros_com maneuver.py # start the script
+```
