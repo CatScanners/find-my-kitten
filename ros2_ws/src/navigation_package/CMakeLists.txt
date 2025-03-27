@@ -12,7 +12,7 @@ find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(vision_msgs REQUIRED)
-
+find_package(px4_msgs REQUIRED)
 
 #Include directories inside vision_package/include/*
 include_directories(include)
@@ -31,19 +31,33 @@ ament_target_dependencies(target_deviation
   vision_msgs
 )
 
-
 # Install the executables
 install(TARGETS
   target_deviation
   DESTINATION lib/${PROJECT_NAME}
 )
 
+add_executable(setpoint_publisher src/setpoint_publisher.cpp)
+
+# Link dependencies
+ament_target_dependencies(setpoint_publisher
+  rclcpp
+  std_msgs
+  px4_msgs
+)
+
+# Install the executables
+install(TARGETS
+  setpoint_publisher
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # Install Python modules
-ament_python_install_package(${PROJECT_NAME})
+ament_python_install_package(scripts)
 
 # Install Python executables
 install(PROGRAMS
-  navigation_package/deviation_visualizer.py
+  scripts/deviation_visualizer.py
   DESTINATION lib/${PROJECT_NAME}
 )
 # ament package setup
