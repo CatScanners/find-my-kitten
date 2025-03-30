@@ -1,45 +1,4 @@
-/****************************************************************************
- *
- * Copyright 2020 PX4 Development Team. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its contributors
- * may be used to endorse or promote products derived from this software without
- * specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- ****************************************************************************/
 
-/**
- * @brief Offboard control example
- * @file offboard_control.cpp
- * @addtogroup examples
- * @author Mickey Cowden <info@cowden.tech>
- * @author Nuno Marques <nuno.marques@dronesolutions.io>
- * @modified_by CatScanners <https://github.com/CatScanners/find-my-kitten>
- * @date 2025-02-03
- * @details Subscribes to a trajectory publisher and sends setpoints via publish_trajectory_setpoint()
- */
 
  #include <px4_msgs/msg/offboard_control_mode.hpp>
  #include <px4_msgs/msg/trajectory_setpoint.hpp>
@@ -71,28 +30,28 @@
  
 		 custom_trajectory_subscription_ = this->create_subscription<TrajectorySetpoint>("/custom_trajectory", 10, std::bind(&OffboardControl::trajectory_setpoint_callback, this, std::placeholders::_1));
 		 subscription_ = this->create_subscription<VehicleLocalPosition>("/fmu/out/vehicle_local_position", qos,std::bind(&OffboardControl::vehicle_gps_callback, this, std::placeholders::_1));
-		 current_trajectory_setpoint_.position = {0.0f, 0.0f, -3.0f};
-		 offboard_setpoint_counter_ = 0;
+		 current_trajectory_setpoint_.position = {0.0f, 0.0f, -5.0f};
+		 // offboard_setpoint_counter_ = 0;
  
 		 auto timer_callback = [this]() -> void {
  
 			 // Switch to offboard mode and armAFTER 10 trajectory setpoints have been sent.
 			 // https://docs.px4.io/main/en/ros2/offboard_control.html#:~:text=PX4%20requires%20that%20the%20vehicle%20is%20already%20receiving%20OffboardControlMode%20messages%20before
-			 if (offboard_setpoint_counter_ == 10) {
+			 /*if (offboard_setpoint_counter_ == 10) {
 				 // Change to Offboard mode after 10 setpoints
 				 this->publish_vehicle_command(VehicleCommand::VEHICLE_CMD_DO_SET_MODE, 1, 6);
 				 // Arm the vehicle
 				 // this->arm();
-			 }
+			 }*/
  
 			 // offboard_control_mode needs to be paired with trajectory_setpoint
 			 publish_offboard_control_mode();
 			 publish_trajectory_setpoint();
  
 			 // stop the counter after reaching 11, no need to count anymore.
-			 if (offboard_setpoint_counter_ < 11) {
+			 /*if (offboard_setpoint_counter_ < 11) {
 				 offboard_setpoint_counter_++;
-			 }
+			 }*/
 		 };
  
 		 timer_ = this->create_wall_timer(100ms, timer_callback);
@@ -112,7 +71,7 @@
 	 rclcpp::Subscription<TrajectorySetpoint>::SharedPtr custom_trajectory_subscription_;
  
 	 std::atomic<uint64_t> timestamp_;   //!< common synced timestamped
-	 uint64_t offboard_setpoint_counter_;   //!< counter for the number of setpoints sent
+	 // uint64_t offboard_setpoint_counter_;   //!< counter for the number of setpoints sent
 	 TrajectorySetpoint current_trajectory_setpoint_; //!< next setpoint, where the drone should be.
 	 float current_trajectory_altitude_ = 0; // current trajectory setpoint that we are sending
 
