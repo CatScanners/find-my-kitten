@@ -71,16 +71,17 @@ class Maneuver(Node):
         self.rotate(0.0, speed=speed)
     
     def start_moving(self):
+        time.sleep(5)
         rclpy.spin_once(self, timeout_sec=self.break_time)
         x, y, z = self.current_coords[0], self.current_coords[1], self.current_coords[2] # hardcode z
         yaw = self.current_yaw
         motions = [
             (x + 3.0, y, z, yaw),
             (x, y, z, yaw),
-            (x, y, -5.0, yaw),
-            (x, y, -3.0, yaw),
-            (x, y + 3.0, -3.0, yaw),
-            (x, y, -3.0, yaw)
+            (x, y, z - 2.0, yaw),
+            (x, y, z, yaw),
+            (x, y + 3.0, z, yaw),
+            (x, y, z, yaw)
         ]
         s1 = 1.0
         s2 = 0.6
