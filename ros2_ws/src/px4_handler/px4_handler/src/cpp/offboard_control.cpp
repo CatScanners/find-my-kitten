@@ -1,4 +1,45 @@
+/****************************************************************************
+ *
+ * Copyright 2020 PX4 Development Team. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ ****************************************************************************/
 
+/**
+ * @brief Offboard control example
+ * @file offboard_control.cpp
+ * @addtogroup examples
+ * @author Mickey Cowden <info@cowden.tech>
+ * @author Nuno Marques <nuno.marques@dronesolutions.io>
+ * @modified_by CatScanners <https://github.com/CatScanners/find-my-kitten>
+ * @date 2025-02-03
+ * @details Subscribes to a trajectory publisher and sends setpoints via publish_trajectory_setpoint()
+ */
 
  #include <px4_msgs/msg/offboard_control_mode.hpp>
  #include <px4_msgs/msg/trajectory_setpoint.hpp>
@@ -30,7 +71,7 @@
  
 		 custom_trajectory_subscription_ = this->create_subscription<TrajectorySetpoint>("/custom_trajectory", 10, std::bind(&OffboardControl::trajectory_setpoint_callback, this, std::placeholders::_1));
 		 subscription_ = this->create_subscription<VehicleLocalPosition>("/fmu/out/vehicle_local_position", qos,std::bind(&OffboardControl::vehicle_gps_callback, this, std::placeholders::_1));
-		 current_trajectory_setpoint_.position = {0.0f, 0.0f, -5.0f};
+		 current_trajectory_setpoint_.position = {0.0, 0.0, 0.0};
 		 // offboard_setpoint_counter_ = 0;
  
 		 auto timer_callback = [this]() -> void {
@@ -74,7 +115,7 @@
 	 // uint64_t offboard_setpoint_counter_;   //!< counter for the number of setpoints sent
 	 TrajectorySetpoint current_trajectory_setpoint_; //!< next setpoint, where the drone should be.
 	 float current_trajectory_altitude_ = 0; // current trajectory setpoint that we are sending
-
+	 bool setpoint_initialized = false;
 
  
 	 void publish_offboard_control_mode();
@@ -85,6 +126,11 @@
 	 {
 		print_counter_++;
         
+		if (setpoint_initialized == false)
+		{
+			current_trajectory_setpoint_.position = {msg->x, msg->y, msg->z};
+			setpoint_initialized = true;
+		}
         // Only print every 10th callback
         if (print_counter_ % 30 == 0)
         {
@@ -102,7 +148,7 @@
  
 	 void trajectory_setpoint_callback(const TrajectorySetpoint::SharedPtr msg)
 	 {
-		 current_trajectory_setpoint_ = *msg;
+		current_trajectory_setpoint_ = *msg;
 	 }
  
  };
@@ -150,8 +196,8 @@
  {	
 	 // LOOK AT WAYPOINTS: https://github.com/PX4/px4_msgs/blob/main/msg/TrajectoryWaypoint.msg
 	 if (current_trajectory_setpoint_.position.size() == 3) { // x, y and z coordinate received.
-		 /* RCLCPP_INFO(this->get_logger(), "Published trajectory: [%.2f, %.2f, %.2f]",
-					 current_trajectory_setpoint_.position[0], current_trajectory_setpoint_.position[1], current_trajectory_setpoint_.position[2]); */
+		RCLCPP_INFO(this->get_logger(), "Published trajectory: [%.2f, %.2f, %.2f]",
+					 current_trajectory_setpoint_.position[0], current_trajectory_setpoint_.position[1], current_trajectory_setpoint_.position[2]);
 		 current_trajectory_setpoint_.timestamp = this->get_clock()->now().nanoseconds() / 1000;
 		 trajectory_setpoint_publisher_->publish(current_trajectory_setpoint_);
 	 } else {
