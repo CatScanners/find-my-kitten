@@ -83,10 +83,14 @@ class Maneuver(Node):
             (x, y + 3.0, z, yaw),
             (x, y, z, yaw)
         ]
-        s1 = 1.0
-        s2 = 0.6
+        s1 = 0.7
+        s2 = 1.0
+        s3 = 1.3
+        s4 = 1.6
         self.perform_motions(motions, s1)
         self.perform_motions(motions, s2)
+        self.perform_motions(motions, s3)
+        self.perform_motions(motions, s4)
         self.get_logger().info("Drone movement complete!")
 
 
