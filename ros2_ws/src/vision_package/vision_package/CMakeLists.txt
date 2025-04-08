@@ -42,7 +42,7 @@ ament_target_dependencies(image_subscriber
   OpenCV
   cv_bridge
   image_transport
-  vision_msgs 
+  vision_msgs
 )
 
 # Install the executables
@@ -61,6 +61,7 @@ install(PROGRAMS
   vision_package/video_publisher.py
   vision_package/object_tracker.py
   vision_package/track_publisher.py
+  vision_package/rgb_publisher.py
   DESTINATION lib/${PROJECT_NAME}
 )
 # ament package setup
