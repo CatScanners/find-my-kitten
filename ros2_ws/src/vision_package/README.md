@@ -14,6 +14,17 @@ ros2 run vision_package image_publisher --ros-args \
   -p res_width:=1080 \
   -p pub_time:=0.05
 ```
+## arducam_publisher.py
+Publishes Adrucam AR02434 global shutter camera with color. Node image_publisher would only publish grayscale images with the cam. 
+```
+ros2 run vision_package arducam_publisher.py --ros-args \
+  -p topic_name:="image_topic" \
+  -p camera_id:=0 \
+  -p res_width:=1920 \
+  -p res_width:=1080 \
+  -p pub_time:=0.05
+```
+
 ## video_publisher.py
 Publishes video or images from local files or links. Online videos are youtube and example of specifying a source can be seen below.  
 ``` 
