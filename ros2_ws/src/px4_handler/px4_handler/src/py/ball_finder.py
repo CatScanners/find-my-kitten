@@ -27,6 +27,12 @@ class Maneuver(Node):
         self.break_time = 5.0
         self.something_detected = False
         self.goto_rescue = False
+        self.rescue_mode = True
+
+        # For follower mode
+        # self.direction_pub = self.create_publisher(String, '/direction_commands', 10)  # New topic for direction commands
+        # self.direction_subscriber = self.create_subscription(String, '/direction_commands', self.direction_callback, 10)  # Subscription to direction commands
+
     
     def vehicle_local_position_callback(self, msg):
         self.current_coords = np.array([msg.x, msg.y, msg.z])
@@ -113,8 +119,11 @@ class Maneuver(Node):
 
         self.get_logger().info("Drone movement complete!")
         if self.something_detected:
-            self.goto_rescue = True
-            self.move_to_waypoint([self.current_coords[0], self.current_coords[1], -5.0], self.current_yaw, s1)
+            if self.rescue_mode:
+                self.goto_rescue = True
+                self.move_to_waypoint([self.current_coords[0], self.current_coords[1], -5.0], self.current_yaw, s1)
+            else:
+                print("Follower mode")
 
 
 def main(args=None):
