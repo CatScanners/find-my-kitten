@@ -23,32 +23,10 @@ colcon build --packages-select <pckg-name>
 source install/setup.bash
 ```
 
-## Run flight example
-First, start to track telemetry to verify results later.
-```bash
-ros2 run px4_ros_com vehicle_gps_position_listener
-```
-
-Disable the safe mode.
-```bash
-mavproxy.py --master=udp:127.0.0.1:14540
-param set COM_FLTMODE2 7 # 7 = Offboard, as mentioned here https://docs.px4.io/main/en/advanced_config/parameter_reference.html#commander
-```
-
-Run example code that should raise the drone to 500m.
-```bash
-ros2 run px4_ros_com offboard_control
-```
-
-Run ros2 commands on demand:
-```bash
-ros2 topic pub /custom_trajectory px4_msgs/msg/TrajectorySetpoint "{ position: [ 0.0, 0.0, -50.0 ], velocity: [0.0, 0.0, 0.0],  yaw: -3.14 }"
-```
-
 ## Run predefined motion (up, left, forward, rotate) x2 (in simulator or live):
 1. Start offboard node
 ```
-ros2 run px4_ros_com offboard_control # start offboard node
+ros2 run px4_handler offboard_control # start offboard node
 ```
 This node first starts to print out relevant local position information, and starts to send hardcoded (relative) tracepoints to the starting position, which is now set to 0.0, 0.0, -5.0. 
 
@@ -61,6 +39,27 @@ ros2 bag record /fmu/out/vehicle_local_position
 ```
 5. Start motions
 ```
-ros2 run px4_ros_com maneuver.py # start the script
+ros2 run px4_handler maneuver.py # start the script
 ```
 This node waits for 5s and then starts to send the motion tracepoints.
+
+## Ball rescuer
+- *Offboard node* = Initially sends current coordinates to PX4 to keep the offboard mode on and the drone in the current location.
+- *Ball finder* = Goes through an area. If vision_package finds a sports ball (yolov5 class_id 32), stops all current motions and descents to 5m.
+- *Vision_package* = Analyzes the camera footage and sends a message to a topic if anything is detected.
+
+## Run ball rescuer (go through an area and descent to 5m if a ball is found)
+1. Start offboard node
+```
+ros2 run px4_handler offboard_control
+```
+
+2. Star vision package to detect nodes
+```
+ros2 run vision_package object_detector.py --ros-args -p input_topic_name:="camera" -p output_topic_name:="detections"
+```
+
+3. Start ballfinder node
+```
+ros2 run px4_handler ball_finder.py
+```
