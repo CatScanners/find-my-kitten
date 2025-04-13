@@ -74,6 +74,26 @@ WORKDIR /find-my-kitten/ros2_ws/src/simulation/ws_offboard_control/
 RUN bash -c "source /opt/ros/humble/setup.bash && colcon build"
 RUN echo "source find-my-kitten/ros2_ws/src/simulation/ws_offboard_control/install/local_setup.bash" >> ~/.bashrc
 
+# Install QGroundControl
 WORKDIR /find-my-kitten
+RUN useradd -ms /bin/bash user && \
+    echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN chown -R user:user /find-my-kitten
+USER user
+RUN pip3 install --user PySide2
+RUN sudo usermod -a -G dialout user
+RUN sudo apt-get remove modemmanager -y
+RUN sudo apt install -y \
+	 gstreamer1.0-plugins-bad \
+	 gstreamer1.0-libav \
+	 gstreamer1.0-gl \
+	 libfuse2 \
+	 fuse \
+	 libxcb-xinerama0 \
+	 libxkbcommon-x11-0 \
+	 libxcb-cursor-dev \
+	 libpulse-dev
+RUN sudo wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl.AppImage
+RUN sudo chmod +x ./QGroundControl.AppImage
 
 CMD ["/bin/bash"]
