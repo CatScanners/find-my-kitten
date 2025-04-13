@@ -19,12 +19,18 @@ class Maneuver(Node):
             history=HistoryPolicy.KEEP_LAST,
             depth=1
         )
+        # Ros pubsubs
         self.vehicle_local_position_subscriber = self.create_subscription(VehicleLocalPosition, '/fmu/out/vehicle_local_position', self.vehicle_local_position_callback, qos_profile)
         self.trajectory_pub = self.create_publisher(TrajectorySetpoint, '/custom_trajectory', 10)
-        self.current_coords = np.array([0.0, 0.0, 0.0])
         self.detection_subscriber = self.create_subscription(Detection2DArray, '/detections', self.ball_detection_callback, 10)
+        # Global state for current coords
+        self.current_coords = np.array([0.0, 0.0, 0.0])
         self.current_yaw = 0.0
-        self.break_time = 5.0
+
+        # Some helper class variables
+        self.SPIN_TIMEOUT = 0.05
+        self.SPEED = 4.0
+        self.CORNER_BREAK = 1.0
         self.something_detected = False
         self.goto_rescue = False
         self.rescue_mode = True
@@ -57,67 +63,85 @@ class Maneuver(Node):
         msg.yaw = yaw
         self.trajectory_pub.publish(msg)
 
-    def move_to_waypoint(self, target_coords, yaw, speed=1.0, step_size=0.1, tolerance=0.2):
-        target_coords = np.array(target_coords)
+    
+    
+    def move_in_direction_infinitely(self, direction_vector, step_size=0.1):
+        """
+        Continuously move the drone in a given direction vector.
         
-        while np.linalg.norm(self.current_coords - target_coords) > tolerance:
-            direction = target_coords - self.current_coords
-            distance = np.linalg.norm(direction)
-            if self.something_detected and self.goto_rescue == False:
+        Args:
+            direction_vector (list or np.array): The [dx, dy, dz] direction.
+            step_size (float): Step size for movement updates.
+        """
+        direction_vector = np.array(direction_vector)
+        norm = np.linalg.norm(direction_vector)
+
+        if norm == 0:
+            self.get_logger().warn("Direction vector cannot be zero.")
+            return
+        
+        unit_direction = direction_vector / norm
+
+        self.get_logger().info(f"Starting infinite movement in direction {unit_direction}...")
+
+        while rclpy.ok():
+            self.current_coords += unit_direction * self.SPEED * step_size
+            self.publish_trajectory(self.current_coords[0], self.current_coords[1], self.current_coords[2], self.current_yaw)
+
+            rclpy.spin_once(self, timeout_sec=self.SPIN_TIMEOUT)
+            time.sleep(step_size)
+
+    def move_to_waypoint(self, target_coords, yaw, step_size=0.1, tolerance=0.2):
+        """
+        Takes target coordinates [x, y, z, yaw] and moves to that dir.
+
+        Args:
+            target_coords (list): Target coordinates [x, y, z]
+            yaw (float): Target rotation
+        """
+        target_coords = np.array(target_coords) # To numpy array
+        
+        
+        while np.linalg.norm(self.current_coords - target_coords) > tolerance: # Have we reached the goal?
+            direction = target_coords - self.current_coords # Direction vector
+            distance = np.linalg.norm(direction) # Distance to the target
+            if self.something_detected and self.goto_rescue == False: # If we have detected something --> return
                 return 
-            if distance > 0:
-                step = direction / distance * speed * step_size 
+            if distance > 0: # If distance is bigger than zero
+                step = direction / distance * self.SPEED * step_size 
                 self.current_coords += step 
 
             self.publish_trajectory(self.current_coords[0], self.current_coords[1], self.current_coords[2], yaw)
-            #self.get_logger().info(str([self.current_coords[0], self.current_coords[1], self.current_coords[2]]))
             
-            rclpy.spin_once(self, timeout_sec=0.05)
-            
-    def rotate(self, yaw, speed=1.0, step_size=0.1, tolerance=0.2):
-        while abs(self.current_yaw - yaw) > tolerance:
-            direction = np.sign(yaw - self.current_yaw) 
-            step = direction * speed * step_size
-            self.current_yaw += step
-            
-            self.publish_trajectory(self.current_coords[0], self.current_coords[1], self.current_coords[2], self.current_yaw)
-            self.get_logger().info(f"Yaw: {self.current_yaw:.2f}")
-            time.sleep(step_size)  
-            
-        rclpy.spin_once(self, timeout_sec=self.break_time)
-        time.sleep(3)
+            rclpy.spin_once(self, timeout_sec=0.0)
     
-    def perform_motions(self, motions, speed=2.5):
+    def perform_motions(self, motions):
         for waypoint in motions:
-            self.move_to_waypoint(waypoint[:3], waypoint[3], speed=speed)
-            rclpy.spin_once(self, timeout_sec=self.break_time)
-            time.sleep(1)
-            if self.something_detected:
+            self.move_to_waypoint(waypoint[:3], waypoint[3])
+            time.sleep(self.CORNER_BREAK)
+
+            if self.something_detected: # We have detected something, break movements immediatelly.
                 break
-        
-        # self.rotate(6.28, speed=speed)
-        # self.rotate(0.0, speed=speed)
     
-    def start_moving(self):
-        time.sleep(5)
-        rclpy.spin_once(self, timeout_sec=self.break_time)
-        x, y, z = self.current_coords[0], self.current_coords[1], self.current_coords[2] # hardcode z
-        yaw = self.current_yaw
+    def start_moving(self, waypoints):
+        """
+        Takes waypoints and moves to their setpoints one at a time.
+        
+        Args:
+            waypoints (list): List of target setpoints [x, y, z, yaw].
+        """
+        time.sleep(3) # Don't start immediatelly
+        rclpy.spin_once(self, timeout_sec=self.SPIN_TIMEOUT) # Check for callbacks
+        x, y, z = self.current_coords[0], self.current_coords[1], self.current_coords[2] # Starting x, y, z
+        yaw = self.current_yaw # Starting yaw
 
-        waypoints = [
-            (x, y, z, yaw),
-            (x + 8, y, z, yaw),
-            (x + 8, y + 4, z, yaw),
-            (x, y + 4, z, yaw),
-            (x, y + 8, z, yaw),
-            (x + 8, y + 8, z, yaw),
-            (x + 8, y + 12, z, yaw)
-        ]
+        self.perform_motions(waypoints)
 
-        s1 = 4.0
-        self.perform_motions(waypoints, s1)
+        if self.something_detected:
+            self.get_logger().info("Cat found, let's go to its rescue.")
+        else:
+            self.get_logger().info("Cat not found.")
 
-        self.get_logger().info("Drone movement complete!")
         if self.something_detected:
             if self.rescue_mode:
                 self.goto_rescue = True
@@ -126,10 +150,22 @@ class Maneuver(Node):
                 print("Follower mode")
 
 
+
 def main(args=None):
+
+    waypoints = [
+        (x, y, z, yaw),
+        (x + 8, y, z, yaw),
+        (x + 8, y + 4, z, yaw),
+        (x, y + 4, z, yaw),
+        (x, y + 8, z, yaw),
+        (x + 8, y + 8, z, yaw),
+        (x + 8, y + 12, z, yaw)
+    ]
+
     rclpy.init(args=args)
     node = Maneuver()
-    node.start_moving()
+    node.start_moving(waypoints=waypoints)
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()

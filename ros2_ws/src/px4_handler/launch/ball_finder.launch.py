@@ -5,8 +5,8 @@ from launch import LaunchDescription
 def generate_launch_description():
     node_one = Node(
         package='px4_handler',
-        executable='ball_finder.py',
-        name='maneuver_node',
+        executable='offboard_control',
+        name='offboard_node'
     )
 
     node_two = TimerAction(
@@ -14,8 +14,8 @@ def generate_launch_description():
         actions=[
             Node(
                 package='px4_handler',
-                executable='offboard_control',
-                name='offboard_node'
+                executable='ball_finder.py',
+                name='maneuver_node',
             )
         ]
     )
