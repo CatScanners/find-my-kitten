@@ -7,6 +7,10 @@ parent: Start here
 There is two ways to start developing this project further. First one is simpler and basically anybody can do it - a simulator. Second one is to build your own drone or use our existing setup, upload your code to it, and run test flights. In this page, both of these options are covered. Moreover, we have been working on a Docker development environment, information about that here as well.
 
 ## Simulator quick start (Windows or Linux)
+
+*Requirements*
+Computer requirements? GPU for the simulator would be nice at least I reckon
+
 First, let's set up the toolchain:
 1. Install the PX4 toolchain as per [PX4 Toolchain Guide](https://docs.px4.io/main/en/dev_setup/dev_env.html). If QGroundControl is not working for you, [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ) guidance on how to proceed with the steps requiring QGroundControl.
 - If there are any problems when installing PX4-Autopilot, refer to [these](https://github.dev/CatScanners/find-my-kitten/tree/docs-update) notes.
