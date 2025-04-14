@@ -3,20 +3,12 @@ parent: Software setup
 ---
 # Find-my-kitten ROS offboard pipeline
 
-## PREREQ: Run XRCE bridge
+
+## Run XRCE bridge
 ```bash
-MicroXRCEAgent udp4 -p 8888
+MicroXRCEAgent udp4 -p 8888 # in PX4-Autopilot directory
 ```
 
-## PREREQ: Build PX4_handler
-```bash
-colcon build --packages-select <pckg-name>
-```
-
-## PREREQ: Source setup files
-```bash
-source install/setup.bash
-```
 
 ## Run predefined motion (up, left, forward, rotate) x2 (in simulator or live):
 1. Start offboard node
