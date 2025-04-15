@@ -8,11 +8,14 @@ from cv_bridge import CvBridge
 import cv2
 import torch
 import numpy as np
+import warnings
+warnings.filterwarnings("ignore")
+
 
 class ObjectDetectionNode(Node):
     def __init__(self):
         super().__init__('object_detection_node')
-
+        
         self.declare_parameter("input_topic_name", "image_topic")
         self.declare_parameter("output_topic_name", "detected_objects_topic")
         
@@ -69,7 +72,7 @@ class ObjectDetectionNode(Node):
                 hypothesis.hypothesis.class_id = str(cls)
                 hypothesis.hypothesis.score = float(conf)
                 detection_msg.results.append(hypothesis)
-
+                
                 detection_array.detections.append(detection_msg)
                 self.get_logger().info(f"Detected: {self.model.names[int(cls)]} {conf:.2f} at ({x1}, {y1}, {x2}, {y2})")
 
