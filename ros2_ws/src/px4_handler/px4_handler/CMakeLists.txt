@@ -9,6 +9,7 @@ find_package(rclpy REQUIRED)
 find_package(px4_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(vision_msgs REQUIRED)
 
 
 
@@ -18,6 +19,7 @@ ament_target_dependencies(offboard_control
 	rclcpp 
 	px4_msgs 
 	std_msgs
+	vision_msgs
 )
 install(TARGETS offboard_control DESTINATION lib/${PROJECT_NAME})
 
@@ -30,6 +32,11 @@ install(TARGETS
 
 install(PROGRAMS
   src/py/hard_motions.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(PROGRAMS
+  src/py/ball_finder.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
