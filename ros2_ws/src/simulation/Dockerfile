@@ -74,6 +74,9 @@ WORKDIR /find-my-kitten/ros2_ws/src/simulation/ws_offboard_control/
 RUN bash -c "source /opt/ros/humble/setup.bash && colcon build"
 RUN echo "source find-my-kitten/ros2_ws/src/simulation/ws_offboard_control/install/local_setup.bash" >> ~/.bashrc
 
+# Install ROS 2 Gazebo bridge (ros_gz) for image transport between Gazebo and ROS 2
+RUN sudo apt-get install -y ros-humble-ros-gzharmonic
+
 # Install QGroundControl
 WORKDIR /find-my-kitten
 RUN useradd -ms /bin/bash user && \
