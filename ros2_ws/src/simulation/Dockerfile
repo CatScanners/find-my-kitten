@@ -77,6 +77,9 @@ RUN echo "source find-my-kitten/ros2_ws/src/simulation/ws_offboard_control/insta
 # Install ROS 2 Gazebo bridge (ros_gz) for image transport between Gazebo and ROS 2
 RUN sudo apt-get install -y ros-humble-ros-gzharmonic
 
+# Install tmux
+RUN apt install -y tmux
+
 # Install QGroundControl
 WORKDIR /find-my-kitten
 RUN useradd -ms /bin/bash user && \
