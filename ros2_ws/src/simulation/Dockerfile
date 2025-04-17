@@ -45,7 +45,9 @@ RUN sudo apt-get update && sudo apt-get install -y \
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 RUN /bin/bash -c "source ~/.bashrc"
 
-RUN git clone https://github.com/CatScanners/find-my-kitten.git
+#### IMPORTANT UNCOMMENT THIS ONCE EVERYTHING IS READY.
+#### RUN git clone https://github.com/CatScanners/find-my-kitten.git
+RUN git clone --branch kaius --single-branch --recursive https://github.com/CatScanners/find-my-kitten.git
 WORKDIR /find-my-kitten/ros2_ws/src/simulation
 
 RUN git submodule update --init --recursive
