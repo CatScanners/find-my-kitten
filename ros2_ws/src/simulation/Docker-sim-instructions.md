@@ -43,7 +43,14 @@ git clone --recursive git@github.com:CatScanners/find-my-kitten.git
    ```
 
 ---
+## Either use startsim.sh file to start the simulation or start the simulation manually.
+## First approach:
+4. **Start simulation**:
+   ```bash
+   ./startsim.sh
+   ```
 
+## Second approach:
 ## Use `tmux` for Multiple Terminal Panes
 
 4. **Start `tmux` inside the container**:
