@@ -47,7 +47,7 @@ RUN /bin/bash -c "source ~/.bashrc"
 
 #### IMPORTANT UNCOMMENT THIS ONCE EVERYTHING IS READY.
 #### RUN git clone https://github.com/CatScanners/find-my-kitten.git
-RUN git clone --branch kaius --single-branch --recursive https://github.com/CatScanners/find-my-kitten.git
+RUN git clone --branch add-instructions --single-branch --recursive https://github.com/CatScanners/find-my-kitten.git
 WORKDIR /find-my-kitten/ros2_ws/src/simulation
 
 RUN git submodule update --init --recursive
@@ -103,5 +103,9 @@ RUN sudo apt install -y \
 	 libpulse-dev
 RUN sudo wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl.AppImage
 RUN sudo chmod +x ./QGroundControl.AppImage
+
+# Bash script for simulation setup (opens and runs all necessary scripts)
+COPY startsim.sh /find-my-kitten/startsim.sh
+RUN sudo chmod +x /find-my-kitten/startsim.sh
 
 CMD ["/bin/bash"]
