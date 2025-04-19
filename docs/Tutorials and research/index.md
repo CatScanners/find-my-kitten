@@ -1,4 +1,5 @@
 ---
+parent: Find my kitten, AI!
 title: Tutorials and Research
 ---
 
