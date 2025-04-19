@@ -1,5 +1,6 @@
 ---
 parent: Tutorials and Research
+title: ROS2 Compiled Guide
 ---
 
 # ROS2 Compiled Guide

@@ -1,5 +1,6 @@
 ---
 parent: Software setup
+title: RTK GNSS Integration for UAV Systems
 ---
 
 # RTK GNSS Integration for UAV Systems
