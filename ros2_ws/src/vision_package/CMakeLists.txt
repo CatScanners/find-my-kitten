@@ -53,14 +53,14 @@ install(TARGETS
 )
 
 # Install Python modules
-ament_python_install_package(${PROJECT_NAME})
+ament_python_install_package(scripts)
 
 # Install Python executables
 install(PROGRAMS
-  vision_package/object_detector.py
-  vision_package/video_publisher.py
-  vision_package/object_tracker.py
-  vision_package/track_publisher.py
+  scripts/object_detector.py
+  scripts/video_publisher.py
+  scripts/object_tracker.py
+  scripts/track_publisher.py
   DESTINATION lib/${PROJECT_NAME}
 )
 # ament package setup

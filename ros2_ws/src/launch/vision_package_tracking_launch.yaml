@@ -1,0 +1,23 @@
+launch:
+
+- node: 
+  pkg: "navigation_package"
+  exec: "setpoint_publisher"
+  name: "setpoint_publisher"
+  namespace: "navigation_package"
+
+- node: 
+  pkg: "navigation_package"
+  exec: "target_deviation"
+  name: "target_deviation"
+  namespace: "navigation_package"
+
+- node:
+    pkg: "vision_package"
+    exec: "ball_detector.py"
+    name: "ball_detector"
+    namespace: "vision_package"
+    param:
+    -
+      name: "input_topic_name"
+      value: "camera"
