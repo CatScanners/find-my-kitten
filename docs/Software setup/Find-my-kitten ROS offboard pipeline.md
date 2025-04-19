@@ -41,7 +41,7 @@ This node waits for 5s and then starts to send the motion tracepoints.
 ros2 run px4_handler offboard_control
 ```
 
-2. Star vision package to detect nodes
+2. Start vision package to detect nodes
 ```
 ros2 run vision_package object_detector.py --ros-args -p input_topic_name:="camera" -p output_topic_name:="detections"
 ```
