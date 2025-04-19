@@ -1,5 +1,6 @@
 ---
-parent: Pixhawk, PX4 and QGroundControl
+parent: Software setup
+title: PX4 Hello World guide
 ---
 
 # PX4 Hello World guide

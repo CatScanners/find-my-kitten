@@ -1,5 +1,6 @@
 ---
 parent: Start here
+title: Quick start
 ---
 
 # Quick start

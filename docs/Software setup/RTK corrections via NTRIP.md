@@ -1,5 +1,6 @@
 ---
 parent: Software setup
+title: RTK corrections via NTRIP
 ---
 
 # RTK corrections via NTRIP
