@@ -1,10 +1,10 @@
 ---
-parent: Jetson Orin (Devkit, Baseboard)
+parent: Software setup
 ---
 
-# Orin (Devkit) setup
+# Isaac ROS setup
 
-following [setup](<../nvidia-jetson-orin/>), SSD is initialized to `/ssd/` and set as the default location for docker. We can now proceed with ROS2 Docker setup.
+Following [setup](<../nvidia-jetson-orin/>), SSD is initialized to `/ssd/` and set as the default location for docker. We can now proceed with ROS2 Docker setup.
 
 Based on [Developer Environment Setup](<https://nvidia-isaac-ros.github.io/getting_started/dev_env_setup.html>), adapted to SSD mounting location. Also following [Isaac Apt Repository](<https://nvidia-isaac-ros.github.io/getting_started/isaac_apt_repository.html>), 
 
