@@ -1,5 +1,6 @@
 ---
 parent: Hardware setup
+title: Baseboard setup - deviations from tutorial
 ---
 
 # Baseboard setup - deviations from tutorial

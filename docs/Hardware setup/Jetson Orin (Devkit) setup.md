@@ -1,5 +1,6 @@
 ---
 parent: Hardware setup
+title: Jetson Orin installation and initial setup
 ---
 
 # Jetson Orin installation and initial setup

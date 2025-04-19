@@ -1,5 +1,6 @@
 ---
 parent: Software setup
+title: Isaac ROS setup
 ---
 
 # Isaac ROS setup

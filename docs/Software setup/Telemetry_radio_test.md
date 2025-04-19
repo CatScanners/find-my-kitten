@@ -1,5 +1,6 @@
 ---
 parent: Software setup
+title: Telemetry radio setup for serial communication
 ---
 
 # Telemetry radio setup for serial communication
