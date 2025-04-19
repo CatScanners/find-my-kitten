@@ -1,5 +1,5 @@
 ---
-parent: Pixhawk, PX4 and QGroundControl
+parent: Software setup
 ---
 
 # RTK corrections via NTRIP

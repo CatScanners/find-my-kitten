@@ -1,5 +1,5 @@
 ---
-parent: Jetson Orin (Devkit, Baseboard)
+parent: Hardware setup
 ---
 
 # Baseboard setup - deviations from tutorial

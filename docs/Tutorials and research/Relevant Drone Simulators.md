@@ -1,5 +1,5 @@
 ---
-parent: Simulation
+parent: Tutorials and Research
 ---
 
 # Relevant Drone Simulators

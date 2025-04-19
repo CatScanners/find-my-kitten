@@ -1,8 +1,8 @@
 ---
-parent: Jetson Orin (Devkit, Baseboard)
+parent: Hardware setup
 ---
 
-# Setting up the hardware
+# Jetson Orin installation and initial setup
 
 Based on [Nvidia's getting started](<https://developer.nvidia.com/embedded/learn/get-started-jetson-orin-nano-devkit>) guide.
 
