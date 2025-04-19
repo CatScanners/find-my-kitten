@@ -1,5 +1,6 @@
 ---
 parent: Development
+title: ZedSDK on Ubuntu22
 ---
 
 # ZedSDK on Ubuntu22

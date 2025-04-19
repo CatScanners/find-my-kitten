@@ -1,5 +1,6 @@
 ---
 parent: Software setup
+title: ULog parsing
 ---
 
 # ULog parsing

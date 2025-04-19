@@ -1,5 +1,6 @@
 ---
 parent: Development
+title: Creating documentation with GitHub pages
 ---
 
 # Creating documentation with GitHub pages

@@ -1,5 +1,6 @@
 ---
 parent: Tutorials and Research
+title: Relevant Drone Simulators
 ---
 
 # Relevant Drone Simulators

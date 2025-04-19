@@ -1,5 +1,6 @@
 ---
 parent: Tutorials and Research
+title: Report - ROS2 Recording System and Corrupted Database Recovery
 ---
 
 # Report: ROS2 Recording System and Corrupted Database Recovery

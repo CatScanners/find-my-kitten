@@ -1,5 +1,6 @@
 ---
 parent: Tutorials and Research
+title: PX4 and Jetson Communication via uXRCE-DDS Guide
 ---
 
 # PX4 and Jetson Communication via uXRCE-DDS Guide

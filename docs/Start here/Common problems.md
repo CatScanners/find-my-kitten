@@ -1,5 +1,6 @@
 ---
 parent: Start here
+title: Common problems
 ---
 
 # Common problems
