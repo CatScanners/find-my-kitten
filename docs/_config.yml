@@ -1,3 +1,6 @@
-title: AI, find my kitten! | Documentation
+title: Find my kitten, AI!
 remote_theme: just-the-docs/just-the-docs
 color_scheme: dark
+
+just_the_docs:
+  disable_nav: true
