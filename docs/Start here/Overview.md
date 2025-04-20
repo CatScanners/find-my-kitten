@@ -6,7 +6,7 @@ nav_order: 3
 
 # Technical Overview
 
-This subpage is divided into several pieces: Jetson, Drone and Miscellaneous. These pieces describe their own technical architectures separately, though always informing the reader about their connections. If interested, please take a lookt at the technical overview report [here](../assets/Technical%20Overview.pdf).
+This subpage is divided into several pieces: Jetson, Drone and Miscellaneous. These pieces describe their own technical architectures separately, though always informing the reader about their connections. If interested, please take a look at the technical overview report [here](../assets/Technical%20Overview.pdf).
 
 
 ## Jetson
