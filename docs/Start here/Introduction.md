@@ -1,6 +1,7 @@
 ---
-parent: Start here
-title: Intro
+parent: Quick Start
+title: Introduction
+nav_order: 1
 ---
 
 # Find my kitten, AI!

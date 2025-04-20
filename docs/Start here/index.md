@@ -1,5 +1,6 @@
 ---
-title: Start here
+title: Quick Start
+nav_order: 2
 ---
 
-Introduction & not-so-quick start.
+Introduction and quick start.
