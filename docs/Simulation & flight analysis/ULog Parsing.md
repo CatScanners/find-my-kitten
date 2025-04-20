@@ -1,5 +1,5 @@
 ---
-parent: Software setup
+parent: Simulation & Flight Analysis
 title: ULog parsing
 ---
 

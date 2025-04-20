@@ -1,5 +1,5 @@
 ---
-parent: Tutorials and Research
+parent: Jetsons & Pixhawk setup
 title: Report - ROS2 Recording System and Corrupted Database Recovery
 ---
 
