@@ -20,19 +20,12 @@ class Maneuver(Node):
             history=HistoryPolicy.KEEP_LAST,
             depth=1
         )
-        # Ros pubsubs
         self.vehicle_local_position_subscriber = self.create_subscription(VehicleLocalPosition, '/fmu/out/vehicle_local_position', self.vehicle_local_position_callback, qos_profile)
         self.trajectory_pub = self.create_publisher(TrajectorySetpoint, '/custom_trajectory', 10)
         self.coords = np.array([0.0, 0.0, 0.0])
         self.detection_subscriber = self.create_subscription(Detection2DArray, '/detections', self.ball_detection_callback, 10)
-        # Global state for current coords
-        self.current_coords = np.array([0.0, 0.0, 0.0])
         self.current_yaw = 0.0
-
-        # Some helper class variables
-        self.SPIN_TIMEOUT = 0.05
-        self.SPEED = 4.0
-        self.CORNER_BREAK = 1.0
+        self.break_time = 5.0
         self.something_detected = False
         self.goto_rescue = False
         self.rescue_mode = False
@@ -72,22 +65,36 @@ class Maneuver(Node):
 
     def move_to_waypoint(self, target_coords, yaw, speed=4.0, step_size=0.1, tolerance=0.2):
         target_coords = np.array(target_coords)
-        ramp_factor = 0.70  # Start at 70% speed
-        ramp_increment = 0.1  # How fast to ramp up
-        max_ramp = 1.0  # Cap at full speed
+        ramp_factor = 0.70
+        ramp_increment = 0.1
+        max_ramp = 1.0
 
-        while np.linalg.norm(self.coords - target_coords) > tolerance:
+        while np.linalg.norm(self.coords - target_coords) > tolerance + 0.2:
             if self.something_detected and not self.goto_rescue:
                 return
+            
             direction = target_coords - self.coords
             distance = np.linalg.norm(direction)
-            if distance > 0:
-                step = direction / distance * speed * step_size 
-                self.coords += step * ramp_factor
 
-            self.publish_trajectory(self.coords[0], self.coords[1], self.coords[2], yaw)
+            if distance == 0:
+                break
+
+            # Clamp small movements to 0 per axis
+            step_vector = []
+            for i in range(3):  # x, y, z
+                axis_diff = direction[i]
+                if abs(axis_diff) < tolerance:  # Don't adjust if already close enough on this axis
+                    step_vector.append(0.0)
+                else:
+                    axis_dir = axis_diff / distance
+                    step_vector.append(axis_dir * speed * step_size)
+
+            new_coords = self.coords + np.array(step_vector) * ramp_factor
+            self.publish_trajectory(new_coords[0], new_coords[1], new_coords[2], yaw)
+
             ramp_factor = min(max_ramp, ramp_factor + ramp_increment)
             rclpy.spin_once(self, timeout_sec=self.break_time)
+
             
     def rotate(self, yaw, speed=1.0, step_size=0.1, tolerance=0.2):
         while abs(self.current_yaw - yaw) > tolerance:
@@ -104,10 +111,10 @@ class Maneuver(Node):
     
     def perform_motions(self, motions):
         for waypoint in motions:
-            self.move_to_waypoint(waypoint[:3], waypoint[3])
-            time.sleep(self.CORNER_BREAK)
-
-            if self.something_detected: # We have detected something, break movements immediatelly.
+            self.move_to_waypoint(waypoint[:3], waypoint[3], speed=speed)
+            rclpy.spin_once(self, timeout_sec=self.break_time)
+            time.sleep(1)
+            if self.something_detected:
                 break
 
 
@@ -117,20 +124,18 @@ class Maneuver(Node):
         init_x = self.ball_center_x
         init_y = self.ball_center_y
 
-        x, y, z = self.coords[0], self.coords[1], self.coords[2]
-       
+        x, y, z = self.getxyz()
+        z = -5.5
         print("Calibrating")
-        self.move_to_waypoint([x + 2, y + 2, z], self.current_yaw)
+        self.move_to_waypoint([x + 1, y + 1, z], self.current_yaw)
         rclpy.spin_once(self, timeout_sec=self.break_time)
 
-        
-        
         time.sleep(2)
         ball_dx = self.ball_center_x - init_x
         ball_dy = self.ball_center_y - init_y
         theta_rad = math.atan2(ball_dy, ball_dx)
         theta_deg = math.degrees(theta_rad)
-        x2, y2, z2 = self.coords[0], self.coords[1], self.coords[2]
+        x2, y2, z2 = self.getxyz()
         print(f"Image X axis is rotated {theta_deg:.2f}° from VLP.x")
         offset_x = img_x - self.ball_center_x
         offset_y = img_y - self.ball_center_y
@@ -139,25 +144,36 @@ class Maneuver(Node):
         print(ix, iy, " ix and iy before transformation")
         vlp_dx = ix * math.cos(theta_rad) - iy * math.sin(theta_rad)
         vlp_dy = ix * math.sin(theta_rad) + iy * math.cos(theta_rad)
-
+        z2 = -5.5
         offset_vec_vlp = [vlp_dx, vlp_dy]
         print(offset_vec_vlp, " drone movement")
         target_x = x2 + vlp_dx * 10
         target_y = y2 + vlp_dy * 10
         # Command the drone to move to this target position
-        self.move_to_waypoint([target_x, target_y, z2], self.current_yaw)
+        self.move_to_waypoint([target_x, target_y, z2], self.current_yaw, speed=5.0)
 
 
         print("Centralized")
         return
 
+    def getxyz(self):
+        return self.coords[0], self.coords[1], self.coords[2]
+
     def start_moving(self):
         time.sleep(2)
         rclpy.spin_once(self, timeout_sec=self.break_time)
-        x, y, z = self.coords[0], self.coords[1], self.coords[2] # hardcode z
+        x, y, z = self.getxyz() # hardcode z
         yaw = self.current_yaw
 
-        self.perform_motions(waypoints)
+        waypoints = [
+            (x, y, z, yaw),
+            (x + 8, y, z, yaw),
+            (x + 8, y + 4, z, yaw),
+            (x, y + 4, z, yaw),
+            (x, y + 8, z, yaw),
+            (x + 8, y + 8, z, yaw),
+            (x + 8, y + 12, z, yaw)
+        ]
 
         if self.something_detected:
             self.get_logger().info("Cat found, let's go to its rescue.")
@@ -189,7 +205,7 @@ def main(args=None):
 
     rclpy.init(args=args)
     node = Maneuver()
-    node.start_moving(waypoints=waypoints)
+    node.start_moving()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
