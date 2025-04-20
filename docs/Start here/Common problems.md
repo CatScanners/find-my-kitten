@@ -1,5 +1,5 @@
 ---
-parent: Start here
+parent: Quick Start
 title: Common problems
 ---
 
