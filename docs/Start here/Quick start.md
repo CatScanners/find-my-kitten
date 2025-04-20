@@ -1,6 +1,6 @@
 ---
 parent: Quick Start
-title: Start
+title: Quick Start
 nav_order: 2
 ---
 
