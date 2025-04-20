@@ -1,5 +1,5 @@
 ---
-parent: Hardware setup
+parent: Jetsons & Pixhawk setup
 title: Jetson Orin installation and initial setup
 ---
 

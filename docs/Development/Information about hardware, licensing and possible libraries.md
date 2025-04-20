@@ -1,6 +1,6 @@
 ---
 parent: Development
-title: Information about hardware, licensing and possible libraries
+title: Information about hardware and licensing
 ---
 
 # Information about hardware, licensing and possible libraries

@@ -1,5 +1,5 @@
 ---
-parent: Software setup
+parent: QGroundControl & Drone setup
 title: Telemetry radio setup for serial communication
 ---
 

@@ -1,5 +1,5 @@
 ---
-parent: Software setup
+parent: QGroundControl & Drone setup
 title: RTK corrections via NTRIP
 ---
 

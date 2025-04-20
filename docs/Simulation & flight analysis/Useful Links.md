@@ -1,5 +1,5 @@
 ---
-parent: Tutorials and Research
+parent: Simulation & Flight Analysis
 title: Useful links
 ---
 
