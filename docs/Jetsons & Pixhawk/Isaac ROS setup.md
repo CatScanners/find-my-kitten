@@ -1,5 +1,5 @@
 ---
-parent: Software setup
+parent: Jetsons & Pixhawk setup
 title: Isaac ROS setup
 ---
 

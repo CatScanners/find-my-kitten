@@ -1,5 +1,5 @@
 ---
-parent: Tutorials and Research
+parent: Jetsons & Pixhawk setup
 title: ROS2 Compiled Guide
 ---
 
