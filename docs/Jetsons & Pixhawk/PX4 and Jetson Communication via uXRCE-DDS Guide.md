@@ -1,5 +1,5 @@
 ---
-parent: Tutorials and Research
+parent: Jetsons & Pixhawk setup
 title: PX4 and Jetson Communication via uXRCE-DDS Guide
 ---
 

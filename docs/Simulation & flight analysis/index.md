@@ -1,6 +1,5 @@
 ---
-title: Tutorials and Research
-nav_order: 2
+title: Simulation & Flight Analysis
 ---
 
 Tutorials and research documentaiton on separate pieces of the project.

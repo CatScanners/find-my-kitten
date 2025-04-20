@@ -1,5 +1,5 @@
 ---
-parent: Hardware setup
+parent: Jetsons & Pixhawk setup
 title: Baseboard setup - deviations from tutorial
 ---
 
