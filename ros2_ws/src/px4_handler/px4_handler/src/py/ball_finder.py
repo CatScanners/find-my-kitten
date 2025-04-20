@@ -20,12 +20,19 @@ class Maneuver(Node):
             history=HistoryPolicy.KEEP_LAST,
             depth=1
         )
+        # Ros pubsubs
         self.vehicle_local_position_subscriber = self.create_subscription(VehicleLocalPosition, '/fmu/out/vehicle_local_position', self.vehicle_local_position_callback, qos_profile)
         self.trajectory_pub = self.create_publisher(TrajectorySetpoint, '/custom_trajectory', 10)
         self.coords = np.array([0.0, 0.0, 0.0])
         self.detection_subscriber = self.create_subscription(Detection2DArray, '/detections', self.ball_detection_callback, 10)
+        # Global state for current coords
+        self.current_coords = np.array([0.0, 0.0, 0.0])
         self.current_yaw = 0.0
-        self.break_time = 5.0
+
+        # Some helper class variables
+        self.SPIN_TIMEOUT = 0.05
+        self.SPEED = 4.0
+        self.CORNER_BREAK = 1.0
         self.something_detected = False
         self.goto_rescue = False
         self.rescue_mode = False
@@ -97,10 +104,10 @@ class Maneuver(Node):
     
     def perform_motions(self, motions, speed=2.5):
         for waypoint in motions:
-            self.move_to_waypoint(waypoint[:3], waypoint[3], speed=speed)
-            rclpy.spin_once(self, timeout_sec=self.break_time)
-            time.sleep(1)
-            if self.something_detected:
+            self.move_to_waypoint(waypoint[:3], waypoint[3])
+            time.sleep(self.CORNER_BREAK)
+
+            if self.something_detected: # We have detected something, break movements immediatelly.
                 break
 
 
@@ -150,15 +157,15 @@ class Maneuver(Node):
         x, y, z = self.coords[0], self.coords[1], self.coords[2] # hardcode z
         yaw = self.current_yaw
 
-        waypoints = [
-            (x, y, z, yaw),
-            (x + 8, y, z, yaw),
-            (x + 8, y + 4, z, yaw),
-            (x, y + 4, z, yaw),
-            (x, y + 8, z, yaw),
-            (x + 8, y + 8, z, yaw),
-            (x + 8, y + 12, z, yaw)
-        ]
+    waypoints = [
+        (x, y, z, yaw),
+        (x + 8, y, z, yaw),
+        (x + 8, y + 4, z, yaw),
+        (x, y + 4, z, yaw),
+        (x, y + 8, z, yaw),
+        (x + 8, y + 8, z, yaw),
+        (x + 8, y + 12, z, yaw)
+    ]
 
         s1 = 4.0
         self.perform_motions(waypoints, s1)
@@ -177,7 +184,7 @@ class Maneuver(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = Maneuver()
-    node.start_moving()
+    node.start_moving(waypoints=waypoints)
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
