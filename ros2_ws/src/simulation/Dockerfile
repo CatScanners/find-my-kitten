@@ -45,7 +45,9 @@ RUN sudo apt-get update && sudo apt-get install -y \
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 RUN /bin/bash -c "source ~/.bashrc"
 
-RUN git clone https://github.com/CatScanners/find-my-kitten.git
+#### IMPORTANT UNCOMMENT THIS ONCE EVERYTHING IS READY.
+#### RUN git clone https://github.com/CatScanners/find-my-kitten.git
+RUN git clone --branch add-instructions --single-branch --recursive https://github.com/CatScanners/find-my-kitten.git
 WORKDIR /find-my-kitten/ros2_ws/src/simulation
 
 RUN git submodule update --init --recursive
@@ -74,6 +76,12 @@ WORKDIR /find-my-kitten/ros2_ws/src/simulation/ws_offboard_control/
 RUN bash -c "source /opt/ros/humble/setup.bash && colcon build"
 RUN echo "source find-my-kitten/ros2_ws/src/simulation/ws_offboard_control/install/local_setup.bash" >> ~/.bashrc
 
+# Install ROS 2 Gazebo bridge (ros_gz) for image transport between Gazebo and ROS 2
+RUN sudo apt-get install -y ros-humble-ros-gzharmonic
+
+# Install tmux
+RUN apt install -y tmux
+
 # Install QGroundControl
 WORKDIR /find-my-kitten
 RUN useradd -ms /bin/bash user && \
@@ -95,5 +103,9 @@ RUN sudo apt install -y \
 	 libpulse-dev
 RUN sudo wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl.AppImage
 RUN sudo chmod +x ./QGroundControl.AppImage
+
+# Bash script for simulation setup (opens and runs all necessary scripts)
+COPY startsim.sh /find-my-kitten/startsim.sh
+RUN sudo chmod +x /find-my-kitten/startsim.sh
 
 CMD ["/bin/bash"]
