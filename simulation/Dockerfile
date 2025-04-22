@@ -48,7 +48,7 @@ RUN /bin/bash -c "source ~/.bashrc"
 #### IMPORTANT UNCOMMENT THIS ONCE EVERYTHING IS READY.
 #### RUN git clone https://github.com/CatScanners/find-my-kitten.git
 RUN git clone --branch add-instructions --single-branch --recursive https://github.com/CatScanners/find-my-kitten.git
-WORKDIR /find-my-kitten/ros2_ws/src/simulation
+WORKDIR /find-my-kitten/simulation
 
 RUN git submodule update --init --recursive
 
@@ -57,24 +57,24 @@ RUN mkdir -p ws_offboard_control/src/
 
 RUN bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
 
-WORKDIR /find-my-kitten/ros2_ws/src/simulation/PX4-Autopilot/
+WORKDIR /find-my-kitten/simulation/PX4-Autopilot/
 RUN make px4_sitl
 
-WORKDIR /find-my-kitten/ros2_ws/src/simulation/Micro-XRCE-DDS-Agent/build
+WORKDIR /find-my-kitten/simulation/Micro-XRCE-DDS-Agent/build
 RUN cmake ..
 RUN make -j$(nproc)
 RUN make install
 RUN ldconfig /usr/local/lib/
 
-WORKDIR /find-my-kitten/ros2_ws/src/simulation/ws_offboard_control/src/px4_msgs
+WORKDIR /find-my-kitten/simulation/PX4_support/src/px4_msgs
 RUN git pull origin main
 
-WORKDIR /find-my-kitten/ros2_ws/src/simulation/ws_offboard_control/src/px4_ros_com
+WORKDIR /find-my-kitten/simulation/PX4_support/src/px4_ros_com
 RUN git pull origin main
 
-WORKDIR /find-my-kitten/ros2_ws/src/simulation/ws_offboard_control/
+WORKDIR /find-my-kitten/ros2_ws/src/simulation/PX4_support/
 RUN bash -c "source /opt/ros/humble/setup.bash && colcon build"
-RUN echo "source find-my-kitten/ros2_ws/src/simulation/ws_offboard_control/install/local_setup.bash" >> ~/.bashrc
+RUN echo "source find-my-kitten/simulation/ws_offboard_control/install/local_setup.bash" >> ~/.bashrc
 
 # Install ROS 2 Gazebo bridge (ros_gz) for image transport between Gazebo and ROS 2
 RUN sudo apt-get install -y ros-humble-ros-gzharmonic
