@@ -45,15 +45,13 @@ RUN sudo apt-get update && sudo apt-get install -y \
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 RUN /bin/bash -c "source ~/.bashrc"
 
-#### IMPORTANT UNCOMMENT THIS ONCE EVERYTHING IS READY.
-#### RUN git clone https://github.com/CatScanners/find-my-kitten.git
-RUN git clone --branch add-instructions --single-branch --recursive https://github.com/CatScanners/find-my-kitten.git
+RUN git clone --recursive https://github.com/CatScanners/find-my-kitten.git
 WORKDIR /find-my-kitten/simulation
 
 RUN git submodule update --init --recursive
 
 RUN mkdir -p Micro-XRCE-DDS-Agent/build
-RUN mkdir -p ws_offboard_control/src/
+RUN mkdir -p PX4_support/src/
 
 RUN bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
 
@@ -72,7 +70,7 @@ RUN git pull origin main
 WORKDIR /find-my-kitten/simulation/PX4_support/src/px4_ros_com
 RUN git pull origin main
 
-WORKDIR /find-my-kitten/ros2_ws/src/simulation/PX4_support/
+WORKDIR /find-my-kitten/simulation/PX4_support/
 RUN bash -c "source /opt/ros/humble/setup.bash && colcon build"
 RUN echo "source find-my-kitten/simulation/ws_offboard_control/install/local_setup.bash" >> ~/.bashrc
 
