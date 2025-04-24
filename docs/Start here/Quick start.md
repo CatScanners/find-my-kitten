@@ -8,10 +8,15 @@ nav_order: 2
 
 There is two ways to start developing this project further. First one is simpler and basically anybody can do it - a simulator. Second one is to build your own drone or use our existing setup, upload your code to it, and run test flights. In this page, both of these options are covered. Moreover, we have been working on a Docker development environment, information about that here as well.
 
+## Nvidia Jetson initialization
+Please refer to our [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/Jetson%20Orin%20(Devkit)%20setup.html).
+
 ## Simulator quick start (Windows or Linux)
 
 ### Requirements
-Computer requirements? GPU for the simulator would be nice at least I reckon
+- A Windows or a Linux computer, preferably with GPU since the simulation is quite a heavy software.
+- If you are already using a Nvidia Jetson -computer, please refer to the [Nvidia Jetson initialization](#jetson-initialization).
+- Basic knowledge on ROS. Please refer to our [ROS guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/ROS2%20Compiled%20Guide.html).
 
 ### Setup toolchain
 
