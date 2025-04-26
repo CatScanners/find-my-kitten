@@ -63,7 +63,7 @@ class Maneuver(Node):
         msg.yaw = yaw
         self.trajectory_pub.publish(msg)
 
-    def move_to_waypoint(self, target_coords, yaw, speed=0.10, step_size=0.05, tolerance=0.5):
+    def move_to_waypoint(self, target_coords, yaw, speed=5.0, step_size=0.05, tolerance=0.5):
         target_coords = np.array(target_coords)
         ramp_factor = 0.70  # Start at 70% speed
         ramp_increment = 0.1  # How fast to ramp up
@@ -73,13 +73,16 @@ class Maneuver(Node):
         orig_coords = self.getxyz()
 
         direction = target_coords - orig_coords
-
-        if abs(direction[2]) < 0.5:
-            direction[2] = 0.0
         
         if np.linalg.norm(direction) > 0:
             direction = direction / np.linalg.norm(direction)
-
+        if abs(direction[1]) < 0.5:
+            direction[1] = 0.0
+        
+        if abs(direction[0]) < 0.5:
+            direction[0] = 0.0
+        if abs(direction[2]) < 0.5:
+            direction[2] = 0.0
         print(target_coords, " target coods")
         print(self.coords, " self coords")
         print(direction, " direction")
@@ -87,28 +90,19 @@ class Maneuver(Node):
 
         while np.linalg.norm(target_coords - self.coords) > tolerance:
             if self.something_detected and not self.goto_rescue:
-                return
+              return
             
-            step = direction * speed * step_size 
+            step = direction * speed * step_size
+            
+            delta_coords = self.coords + step * ramp_factor
+            for i in range(3):
+                if abs(direction[i]) <= 0.0001:
+                    delta_coords[i] = orig_coords[i]
+                    
 
-            delta_coords = orig_coords + step * ramp_factor
-            orig_coords = delta_coords
             self.publish_trajectory(delta_coords[0], delta_coords[1], delta_coords[2], yaw)
             ramp_factor = min(max_ramp, ramp_factor + ramp_increment)
             rclpy.spin_once(self, timeout_sec=self.break_time)
-            
-    def rotate(self, yaw, speed=1.0, step_size=0.1, tolerance=0.2):
-        while abs(self.current_yaw - yaw) > tolerance:
-            direction = np.sign(yaw - self.current_yaw) 
-            step = direction * speed * step_size
-            self.current_yaw += step
-            
-            self.publish_trajectory(self.coords[0], self.coords[1], self.coords[2], self.current_yaw)
-            self.get_logger().info(f"Yaw: {self.current_yaw:.2f}")
-            time.sleep(step_size)  
-            
-        rclpy.spin_once(self, timeout_sec=self.break_time)
-        time.sleep(3)
     
     def perform_motions(self, motions, speed=2.5):
         for waypoint in motions:
