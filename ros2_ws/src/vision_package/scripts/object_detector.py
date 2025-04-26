@@ -74,7 +74,7 @@ class ObjectDetectionNode(Node):
                 detection_msg.results.append(hypothesis)
                 
                 detection_array.detections.append(detection_msg)
-                self.get_logger().info(f"Detected: {self.model.names[int(cls)]} {conf:.2f} at ({x1}, {y1}, {x2}, {y2})")
+                self.get_logger().info(f"Detected: {self.model.names[int(cls)]} {conf:.2f} at ({float(x1+x2)/2}, {float(y1+y2)/2})")
 
             # Publish detection results
             self.detection_pub.publish(detection_array)
