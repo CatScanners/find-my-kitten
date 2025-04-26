@@ -71,7 +71,7 @@
  
 		 custom_trajectory_subscription_ = this->create_subscription<TrajectorySetpoint>("/custom_trajectory", 10, std::bind(&OffboardControl::trajectory_setpoint_callback, this, std::placeholders::_1));
 		 subscription_ = this->create_subscription<VehicleLocalPosition>("/fmu/out/vehicle_local_position", qos,std::bind(&OffboardControl::vehicle_gps_callback, this, std::placeholders::_1));
-		 current_trajectory_setpoint_.position = {0.0, 0.0, 0.0};
+		 current_trajectory_setpoint_.position = {7.3, 6.13, -5.5};
 		 // offboard_setpoint_counter_ = 0;
  
 		 auto timer_callback = [this]() -> void {
@@ -115,7 +115,7 @@
 	 // uint64_t offboard_setpoint_counter_;   //!< counter for the number of setpoints sent
 	 TrajectorySetpoint current_trajectory_setpoint_; //!< next setpoint, where the drone should be.
 	 float current_trajectory_altitude_ = 0; // current trajectory setpoint that we are sending
-	 bool setpoint_initialized = false;
+	 bool setpoint_initialized = true;
 
  
 	 void publish_offboard_control_mode();
@@ -197,7 +197,7 @@
 	 // LOOK AT WAYPOINTS: https://github.com/PX4/px4_msgs/blob/main/msg/TrajectoryWaypoint.msg
 	 if (current_trajectory_setpoint_.position.size() == 3) { // x, y and z coordinate received.
 		RCLCPP_INFO(this->get_logger(), "Published trajectory: [%.2f, %.2f, %.2f]",
-					 current_trajectory_setpoint_.position[0], current_trajectory_setpoint_.position[1], current_trajectory_setpoint_.position[2]);
+					 current_trajectory_setpoint_.position[1], current_trajectory_setpoint_.position[0], current_trajectory_setpoint_.position[2]);
 		 current_trajectory_setpoint_.timestamp = this->get_clock()->now().nanoseconds() / 1000;
 		 trajectory_setpoint_publisher_->publish(current_trajectory_setpoint_);
 	 } else {
