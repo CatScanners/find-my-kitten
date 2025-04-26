@@ -110,7 +110,7 @@ class Maneuver(Node):
         rclpy.spin_once(self, timeout_sec=self.break_time)
         time.sleep(3)
     
-    def perform_motions(self, motions):
+    def perform_motions(self, motions, speed=2.5):
         for waypoint in motions:
             self.move_to_waypoint(waypoint[:3], waypoint[3], speed=speed)
             rclpy.spin_once(self, timeout_sec=self.break_time)
@@ -150,11 +150,10 @@ class Maneuver(Node):
             (x + 8, y + 12, z, yaw)
         ]
 
-        if self.something_detected:
-            self.get_logger().info("Cat found, let's go to its rescue.")
-        else:
-            self.get_logger().info("Cat not found.")
+        s1 = 4.0
+        self.perform_motions(waypoints, s1)
 
+        self.get_logger().info("Drone movement complete!")
         if self.something_detected:
             if self.rescue_mode:
                 self.goto_rescue = True
@@ -165,19 +164,7 @@ class Maneuver(Node):
                 self.centralize()
 
 
-
 def main(args=None):
-
-    waypoints = [
-        (x, y, z, yaw),
-        (x + 8, y, z, yaw),
-        (x + 8, y + 4, z, yaw),
-        (x, y + 4, z, yaw),
-        (x, y + 8, z, yaw),
-        (x + 8, y + 8, z, yaw),
-        (x + 8, y + 12, z, yaw)
-    ]
-
     rclpy.init(args=args)
     node = Maneuver()
     node.start_moving()
