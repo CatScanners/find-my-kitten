@@ -65,36 +65,22 @@ class Maneuver(Node):
 
     def move_to_waypoint(self, target_coords, yaw, speed=4.0, step_size=0.1, tolerance=0.2):
         target_coords = np.array(target_coords)
-        ramp_factor = 0.70
-        ramp_increment = 0.1
-        max_ramp = 1.0
+        ramp_factor = 0.70  # Start at 70% speed
+        ramp_increment = 0.1  # How fast to ramp up
+        max_ramp = 1.0  # Cap at full speed
 
-        while np.linalg.norm(self.coords - target_coords) > tolerance + 0.2:
+        while np.linalg.norm(self.coords - target_coords) > tolerance:
             if self.something_detected and not self.goto_rescue:
                 return
-            
             direction = target_coords - self.coords
             distance = np.linalg.norm(direction)
+            if distance > 0:
+                step = direction / distance * speed * step_size 
+                self.coords += step * ramp_factor
 
-            if distance == 0:
-                break
-
-            # Clamp small movements to 0 per axis
-            step_vector = []
-            for i in range(3):  # x, y, z
-                axis_diff = direction[i]
-                if abs(axis_diff) < tolerance:  # Don't adjust if already close enough on this axis
-                    step_vector.append(0.0)
-                else:
-                    axis_dir = axis_diff / distance
-                    step_vector.append(axis_dir * speed * step_size)
-
-            new_coords = self.coords + np.array(step_vector) * ramp_factor
-            self.publish_trajectory(new_coords[0], new_coords[1], new_coords[2], yaw)
-
+            self.publish_trajectory(self.coords[0], self.coords[1], self.coords[2], yaw)
             ramp_factor = min(max_ramp, ramp_factor + ramp_increment)
             rclpy.spin_once(self, timeout_sec=self.break_time)
-
             
     def rotate(self, yaw, speed=1.0, step_size=0.1, tolerance=0.2):
         while abs(self.current_yaw - yaw) > tolerance:
@@ -125,35 +111,7 @@ class Maneuver(Node):
         init_y = self.ball_center_y
 
         x, y, z = self.getxyz()
-        z = -5.5
-        print("Calibrating")
-        self.move_to_waypoint([x + 1, y + 1, z], self.current_yaw)
-        rclpy.spin_once(self, timeout_sec=self.break_time)
-
-        time.sleep(2)
-        ball_dx = self.ball_center_x - init_x
-        ball_dy = self.ball_center_y - init_y
-        theta_rad = math.atan2(ball_dy, ball_dx)
-        theta_deg = math.degrees(theta_rad)
-        x2, y2, z2 = self.getxyz()
-        print(f"Image X axis is rotated {theta_deg:.2f}° from VLP.x")
-        offset_x = img_x - self.ball_center_x
-        offset_y = img_y - self.ball_center_y
-        norm_i = math.sqrt(offset_x**2 + offset_y**2)
-        ix, iy = [- offset_x / norm_i, - offset_y / norm_i]
-        print(ix, iy, " ix and iy before transformation")
-        vlp_dx = ix * math.cos(theta_rad) - iy * math.sin(theta_rad)
-        vlp_dy = ix * math.sin(theta_rad) + iy * math.cos(theta_rad)
-        z2 = -5.5
-        offset_vec_vlp = [vlp_dx, vlp_dy]
-        print(offset_vec_vlp, " drone movement")
-        target_x = x2 + vlp_dx * 10
-        target_y = y2 + vlp_dy * 10
-        # Command the drone to move to this target position
-        self.move_to_waypoint([target_x, target_y, z2], self.current_yaw, speed=5.0)
-
-
-        print("Centralized")
+        self.move_to_waypoint([x, y + 10, z], self.current_yaw)
         return
 
     def getxyz(self):
