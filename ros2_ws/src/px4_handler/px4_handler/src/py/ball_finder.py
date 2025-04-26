@@ -63,22 +63,36 @@ class Maneuver(Node):
         msg.yaw = yaw
         self.trajectory_pub.publish(msg)
 
-    def move_to_waypoint(self, target_coords, yaw, speed=1.0, step_size=0.05, tolerance=0.5):
+    def move_to_waypoint(self, target_coords, yaw, speed=0.10, step_size=0.05, tolerance=0.5):
         target_coords = np.array(target_coords)
         ramp_factor = 0.70  # Start at 70% speed
         ramp_increment = 0.1  # How fast to ramp up
         max_ramp = 1.0  # Cap at full speed
+        rclpy.spin_once(self, timeout_sec=self.break_time)
 
         orig_coords = self.getxyz()
+
         direction = target_coords - orig_coords
+
+        if abs(direction[2]) < 0.5:
+            direction[2] = 0.0
+        
+        if np.linalg.norm(direction) > 0:
+            direction = direction / np.linalg.norm(direction)
+
+        print(target_coords, " target coods")
+        print(self.coords, " self coords")
+        print(direction, " direction")
+        print(direction[2])
 
         while np.linalg.norm(target_coords - self.coords) > tolerance:
             if self.something_detected and not self.goto_rescue:
                 return
             
             step = direction * speed * step_size 
-            delta_coords = self.coords + step * ramp_factor
 
+            delta_coords = orig_coords + step * ramp_factor
+            orig_coords = delta_coords
             self.publish_trajectory(delta_coords[0], delta_coords[1], delta_coords[2], yaw)
             ramp_factor = min(max_ramp, ramp_factor + ramp_increment)
             rclpy.spin_once(self, timeout_sec=self.break_time)
@@ -112,8 +126,9 @@ class Maneuver(Node):
         init_y = self.ball_center_y
 
         x, y, z = self.getxyz()
+        print("startin z", z)
         print("current yaw is ", self.current_yaw)
-        self.move_to_waypoint([x, y + 10, z], self.current_yaw)
+        self.move_to_waypoint([x, y + 10, -5.5], self.current_yaw)
         return
 
     def getxyz(self):
