@@ -90,7 +90,7 @@ class Maneuver(Node):
 
         while np.linalg.norm(target_coords - self.coords) > tolerance:
             if self.something_detected and not self.goto_rescue:
-              return
+                return
             
             step = direction * speed * step_size
             
