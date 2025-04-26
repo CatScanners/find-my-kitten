@@ -63,7 +63,7 @@ class Maneuver(Node):
         msg.yaw = yaw
         self.trajectory_pub.publish(msg)
 
-    def move_to_waypoint(self, target_coords, yaw, speed=4.0, step_size=0.1, tolerance=0.2):
+    def move_to_waypoint(self, target_coords, yaw, speed=4.0, step_size=0.05, tolerance=0.5):
         target_coords = np.array(target_coords)
         ramp_factor = 0.70  # Start at 70% speed
         ramp_increment = 0.1  # How fast to ramp up
@@ -75,7 +75,7 @@ class Maneuver(Node):
             direction = target_coords - self.coords
             distance = np.linalg.norm(direction)
             if distance > 0:
-                step = direction / distance * speed * step_size 
+                step = direction / distance * min(speed * step_size, distance) 
                 self.coords += step * ramp_factor
 
             self.publish_trajectory(self.coords[0], self.coords[1], self.coords[2], yaw)
