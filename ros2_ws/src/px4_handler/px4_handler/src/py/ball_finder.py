@@ -171,7 +171,7 @@ class Maneuver(Node):
     def start_moving(self):
         time.sleep(2)
         rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
-        x, y, z = self.getxyz() # hardcode z
+        x, y, z = self.getxyz()
         yaw = self.current_yaw
 
         waypoints = [
@@ -188,13 +188,14 @@ class Maneuver(Node):
 
         self.get_logger().info("Drone movement complete!")
         if self.something_detected:
+            self.goto_rescue = True
+
             if self.RESCUE_MODE:
-                self.goto_rescue = True
                 x, y, z = self.getxyz()
+                self.get_logger().info("Ball detected. Lets go down immediatelly.")
                 self.move_to_waypoint([x, y, z], self.current_yaw)
             else:
-                print("Follower mode")
-                self.goto_rescue = True
+                self.get_logger().info("Ball detected. Lets go on top of it.")
                 self.go_on_top()
 
 
