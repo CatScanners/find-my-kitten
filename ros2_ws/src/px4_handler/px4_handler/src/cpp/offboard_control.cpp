@@ -71,7 +71,7 @@
  
 		 custom_trajectory_subscription_ = this->create_subscription<TrajectorySetpoint>("/custom_trajectory", 10, std::bind(&OffboardControl::trajectory_setpoint_callback, this, std::placeholders::_1));
 		 subscription_ = this->create_subscription<VehicleLocalPosition>("/fmu/out/vehicle_local_position", qos,std::bind(&OffboardControl::vehicle_gps_callback, this, std::placeholders::_1));
-		 current_trajectory_setpoint_.position = {0.0, 0.0, 0.0};
+		 current_trajectory_setpoint_.position = {2.3, 10.7, -8.0};
 		 // offboard_setpoint_counter_ = 0;
  
 		 auto timer_callback = [this]() -> void {
@@ -128,7 +128,10 @@
         
 		if (setpoint_initialized == false)
 		{
-			current_trajectory_setpoint_.position = {msg->x, msg->y, msg->z};
+			current_trajectory_setpoint_.position[0] = msg->x; 
+			current_trajectory_setpoint_.position[1] = msg->y; 
+			current_trajectory_setpoint_.position[2] = msg->z; 
+			current_trajectory_setpoint_.yaw = msg->heading;
 			setpoint_initialized = true;
 		}
         // Only print every 10th callback
@@ -197,7 +200,7 @@
 	 // LOOK AT WAYPOINTS: https://github.com/PX4/px4_msgs/blob/main/msg/TrajectoryWaypoint.msg
 	 if (current_trajectory_setpoint_.position.size() == 3) { // x, y and z coordinate received.
 		RCLCPP_INFO(this->get_logger(), "Published trajectory: [%.2f, %.2f, %.2f]",
-					 current_trajectory_setpoint_.position[0], current_trajectory_setpoint_.position[1], current_trajectory_setpoint_.position[2]);
+					 current_trajectory_setpoint_.position[1], current_trajectory_setpoint_.position[0], current_trajectory_setpoint_.position[2]);
 		 current_trajectory_setpoint_.timestamp = this->get_clock()->now().nanoseconds() / 1000;
 		 trajectory_setpoint_publisher_->publish(current_trajectory_setpoint_);
 	 } else {
