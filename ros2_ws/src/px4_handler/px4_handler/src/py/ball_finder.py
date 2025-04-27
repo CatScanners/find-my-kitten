@@ -29,7 +29,7 @@ class Maneuver(Node):
         self.IMAGE_HEIGHT = 720 # CHANGE MANUALLY DEPENDING ON CAMERA
         self.IMAGE_WIDTH = 1280
         self.RESCUE_MODE = False
-        self.MOVE_SPEED = 5.0 # Drone max move speed
+        self.MOVE_SPEED = 8.0 # Drone max move speed
         
         # Drone location states.
         self.coords = np.array([0.0, 0.0, 0.0])
@@ -57,20 +57,15 @@ class Maneuver(Node):
             for detection in msg.detections:
                 for hypothesis in detection.results:
                     if hypothesis.hypothesis.class_id == "32.0":  # Check for class_id 32
-                        
                         self.ball_center_x = detection.bbox.center.position.x
                         self.ball_center_y = detection.bbox.center.position.y
-                        
                         if not self.something_detected:
                             self.get_logger().info("Object with class_id 32 detected!")
                             self.something_detected = True
-                    
-                    
                 return
         except Exception:
             self.get_logger().info("Something wetn wrong handling ball detection.")
             return
-
 
     def publish_trajectory(self, x, y, z, yaw):
         msg = TrajectorySetpoint()
@@ -81,10 +76,9 @@ class Maneuver(Node):
     
     def is_in_middle(self):
         dist_from_middle = np.linalg.norm(np.array([self.ball_center_x - self.IMAGE_WIDTH / 2, self.ball_center_y - self.IMAGE_HEIGHT / 2]))
-        print(dist_from_middle)
         return dist_from_middle < 100
 
-    def move_to_waypoint(self, target_coords, yaw, speed=self.MOVE_SPEED, step_size=0.05, tolerance=0.5, stop_at_middle=False):
+    def move_to_waypoint(self, target_coords, yaw, step_size=0.05, tolerance=0.5, stop_at_middle=False):
         target_coords = np.array(target_coords)
         ramp_factor = 0.70  # Start at 70% speed
         ramp_increment = 0.1  # How fast to ramp up
@@ -97,31 +91,23 @@ class Maneuver(Node):
         
         if np.linalg.norm(direction) > 0:
             direction = direction / np.linalg.norm(direction)
-        if abs(direction[1]) < 0.5:
-            direction[1] = 0.0
         
-        if abs(direction[0]) < 0.5:
-            direction[0] = 0.0
-        if abs(direction[2]) < 0.5:
-            direction[2] = 0.0
 
-        #for i in range(3):
-            #if abs(direction[i] <= 0.5):
-            #   direction[i] = 0.0
+        for i in range(3):
+            if (abs(direction[i]) <= 0.5):
+                direction[i] = 0.0
+  
         while np.linalg.norm(target_coords - self.coords) > tolerance:
             if stop_at_middle:
                 is_in_middle = self.is_in_middle()
                 if is_in_middle:
-                    self.get_logger().info("We are in the middle!")
-
+                    self.get_logger().info("We are in the middle! Let's go on top of the cat.")
                     return
-                
-                
 
             if self.something_detected and not self.goto_rescue:
                 return
             
-            step = direction * speed * step_size
+            step = direction * self.MOVE_SPEED * step_size
             
             delta_coords = self.coords + step * ramp_factor
             for i in range(3):
@@ -135,9 +121,9 @@ class Maneuver(Node):
     
 
     # 
-    def perform_motions(self, motions, speed=2.5):
+    def perform_motions(self, motions):
         for waypoint in motions:
-            self.move_to_waypoint(waypoint[:3], waypoint[3], speed=speed)
+            self.move_to_waypoint(waypoint[:3], waypoint[3])
             rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
             time.sleep(1)
             if self.something_detected:
@@ -174,7 +160,7 @@ class Maneuver(Node):
         self.get_logger().info(f"Centralizing: move_x_world={movement_vec[00]:.2f}, move_y_world={movement_vec[1]:.2f}")
         
         # Set waypoint to target position
-        self.move_to_waypoint([target_x, target_y, target_z], yaw=self.current_yaw, speed=20, stop_at_middle=True)
+        self.move_to_waypoint([target_x, target_y, target_z], yaw=self.current_yaw, stop_at_middle=True)
 
 
     def getxyz(self):
@@ -195,16 +181,14 @@ class Maneuver(Node):
             (x + 8, y + 8, z, yaw),
             (x + 8, y + 12, z, yaw)
         ]
-
-        s1 = 4.0
         
-        self.perform_motions(waypoints, s1)
+        self.perform_motions(waypoints)
 
         self.get_logger().info("Drone movement complete!")
         if self.something_detected:
             if self.RESCUE_MODE:
                 self.goto_rescue = True
-                self.move_to_waypoint([self.coords[0], self.coords[1], -5.0], self.current_yaw, s1)
+                self.move_to_waypoint([self.coords[0], self.coords[1], -5.0], self.current_yaw)
             else:
                 print("Follower mode")
                 self.goto_rescue = True
