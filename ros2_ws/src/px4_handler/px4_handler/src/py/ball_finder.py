@@ -29,38 +29,46 @@ class Maneuver(Node):
         self.IMAGE_HEIGHT = 720 # CHANGE MANUALLY DEPENDING ON CAMERA
         self.IMAGE_WIDTH = 1280
         self.RESCUE_MODE = False
+        self.MOVE_SPEED = 5.0 # Drone max move speed
         
         # Drone location states.
         self.coords = np.array([0.0, 0.0, 0.0])
         self.current_yaw = 0.0
+
+        # Ball location states.
+        self.ball_center_x = None
+        self.ball_center_y = None
         
         # Ball rescue mode states.
         self.something_detected = False
         self.goto_rescue = False
         self.rotate_to_zero = False
+        
 
-        self.ball_center_x = None
-        self.ball_center_y = None
-
-    
-    
     def vehicle_local_position_callback(self, msg):
+        # Set the current drone states.
         self.coords = np.array([msg.x, msg.y, msg.z])
         self.current_yaw = msg.heading
     
     def ball_detection_callback(self, msg):
         # Process the received message (msg) here
         try:
+            # Boilerplate code for handling ball detection.
             for detection in msg.detections:
                 for hypothesis in detection.results:
-                    if hypothesis.hypothesis.class_id == "32.0" and self.something_detected == False:  # Check for class_id 32
-                        self.get_logger().info("Object with class_id 32 detected!")
-                        self.something_detected = True
-                self.ball_center_x = detection.bbox.center.position.x
-                self.ball_center_y = detection.bbox.center.position.y
+                    if hypothesis.hypothesis.class_id == "32.0":  # Check for class_id 32
+                        
+                        self.ball_center_x = detection.bbox.center.position.x
+                        self.ball_center_y = detection.bbox.center.position.y
+                        
+                        if not self.something_detected:
+                            self.get_logger().info("Object with class_id 32 detected!")
+                            self.something_detected = True
+                    
+                    
                 return
         except Exception:
-            self.get_logger().info("Exception")
+            self.get_logger().info("Something wetn wrong handling ball detection.")
             return
 
 
@@ -76,7 +84,7 @@ class Maneuver(Node):
         print(dist_from_middle)
         return dist_from_middle < 100
 
-    def move_to_waypoint(self, target_coords, yaw, speed=5.0, step_size=0.05, tolerance=0.5, stop_at_middle=False):
+    def move_to_waypoint(self, target_coords, yaw, speed=self.MOVE_SPEED, step_size=0.05, tolerance=0.5, stop_at_middle=False):
         target_coords = np.array(target_coords)
         ramp_factor = 0.70  # Start at 70% speed
         ramp_increment = 0.1  # How fast to ramp up
@@ -125,6 +133,8 @@ class Maneuver(Node):
             ramp_factor = min(max_ramp, ramp_factor + ramp_increment)
             rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
     
+
+    # 
     def perform_motions(self, motions, speed=2.5):
         for waypoint in motions:
             self.move_to_waypoint(waypoint[:3], waypoint[3], speed=speed)
@@ -162,6 +172,7 @@ class Maneuver(Node):
         target_z = z 
 
         self.get_logger().info(f"Centralizing: move_x_world={movement_vec[00]:.2f}, move_y_world={movement_vec[1]:.2f}")
+        
         # Set waypoint to target position
         self.move_to_waypoint([target_x, target_y, target_z], yaw=self.current_yaw, speed=20, stop_at_middle=True)
 
