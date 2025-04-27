@@ -157,7 +157,7 @@ class Maneuver(Node):
         target_z = z 
         print("Current yaw", yaw)
         self.get_logger().info(f"Centralizing: move_x_world={move_x_world:.2f}, move_y_world={move_y_world:.2f}")
-        self.move_to_waypoint([target_y, target_x, target_z], yaw=self.current_yaw, speed=7)
+        self.move_to_waypoint([target_y, -target_x, target_z], yaw=self.current_yaw, speed=10)
 
     def getxyz(self):
         return self.coords[0], self.coords[1], self.coords[2]
