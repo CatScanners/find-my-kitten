@@ -25,7 +25,7 @@ class Maneuver(Node):
         self.coords = np.array([0.0, 0.0, 0.0])
         self.detection_subscriber = self.create_subscription(Detection2DArray, '/detections', self.ball_detection_callback, 10)
         self.current_yaw = 0.0
-        self.break_time = 5.0
+        self.BREAK_TIME = 5.0
         self.something_detected = False
         self.goto_rescue = False
         self.rescue_mode = False
@@ -34,8 +34,8 @@ class Maneuver(Node):
         self.ball_center_x = None
         self.ball_center_y = None
 
-        self.image_height = 720 # change manually depending on our camera
-        self.image_width = 1280
+        self.IMAGE_HEIGHT = 720 # change manually depending on our camera
+        self.IMAGE_WIDTH = 1280
 
         
     
@@ -67,7 +67,7 @@ class Maneuver(Node):
         self.trajectory_pub.publish(msg)
     
     def is_in_middle(self):
-        dist_from_middle = np.linalg.norm(np.array([self.ball_center_x - self.image_width / 2, self.ball_center_y - self.image_height / 2]))
+        dist_from_middle = np.linalg.norm(np.array([self.ball_center_x - self.IMAGE_WIDTH / 2, self.ball_center_y - self.IMAGE_HEIGHT / 2]))
         print(dist_from_middle)
         return dist_from_middle < 100
 
@@ -76,7 +76,7 @@ class Maneuver(Node):
         ramp_factor = 0.70  # Start at 70% speed
         ramp_increment = 0.1  # How fast to ramp up
         max_ramp = 1.0  # Cap at full speed
-        rclpy.spin_once(self, timeout_sec=self.break_time)
+        rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
 
         orig_coords = self.getxyz()
 
@@ -118,63 +118,45 @@ class Maneuver(Node):
 
             self.publish_trajectory(delta_coords[0], delta_coords[1], delta_coords[2], yaw)
             ramp_factor = min(max_ramp, ramp_factor + ramp_increment)
-            rclpy.spin_once(self, timeout_sec=self.break_time)
+            rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
     
     def perform_motions(self, motions, speed=2.5):
         for waypoint in motions:
             self.move_to_waypoint(waypoint[:3], waypoint[3], speed=speed)
-            rclpy.spin_once(self, timeout_sec=self.break_time)
+            rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
             time.sleep(1)
             if self.something_detected:
                 break
 
 
     def go_on_top(self):
-        rclpy.spin_once(self, timeout_sec=self.break_time)
+        rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
 
-        img_center_x = self.image_width / 2.0
-        img_center_y = self.image_height / 2.0
-
-        ball_x = self.ball_center_x
-        ball_y = self.ball_center_y
-
-        if ball_x is None or ball_y is None:
-            self.get_logger().warn("No ball detection available!")
+        if self.ball_center_x is None or self.ball_center_y is None:
+            self.get_logger().warn("No ball deteted, something went wrong!")
             return
 
-        camera_dy = (img_center_y - self.ball_center_y) / self.image_height
-        camera_dx = (img_center_x - self.ball_center_x) / self.image_width
+        # Ball coordinates in camera image
+        camera_dy = (self.IMAGE_HEIGHT / 2.0 - self.ball_center_y) / self.IMAGE_HEIGHT
+        camera_dx = (self.IMAGE_WIDTH / 2.0 - self.ball_center_x) / self.IMAGE_WIDTH
 
-        print("Camera dy", camera_dy)
-        print("Camera dx", camera_dx)
-        print("Camera angle", )
+        # Vector towards ball in drone coordinates (NED)  
+        movement_vec = np.array([-camera_dy, camera_dx])
         
-        # world_dx = -camera_dy * cos_yaw
-        # world_dy = camera_dx
+        # Take to account drone's yaw angle
+        movement_vec[0] = movement_vec[0] * math.cos(self.current_yaw) - movement_vec[1] * math.sin(self.current_yaw)
+        movement_vec[1] = movement_vec[0] * math.sin(self.current_yaw) + movement_vec[1] * math.cos(self.current_yaw)
 
-        world_dx = -camera_dy
-        world_dy = camera_dx
-
-        movement_vec = np.array([world_dx, world_dy])
-        movement_vec = movement_vec / np.linalg.norm(movement_vec)
+        # Normalize and scale the movement vector
+        movement_vec = movement_vec / np.linalg.norm(movement_vec) * 15
         
-        yaw = self.current_yaw
-
-        # TODO: Make sure that we don't need - in front of yaw.
-        cos_yaw = math.cos(yaw)
-        sin_yaw = math.sin(yaw)
-        move_x_world = movement_vec[0] * cos_yaw - movement_vec[1] * sin_yaw
-        move_y_world = movement_vec[0] * sin_yaw + movement_vec[1] * cos_yaw
-
-        move_x_world = move_x_world * 15
-        move_y_world = move_y_world * 15
+        # Set target position
         x, y, z = self.getxyz()
-
-        target_x = x + move_x_world 
-        target_y = y + move_y_world
+        target_x = x + movement_vec[0] 
+        target_y = y + movement_vec[1]
         target_z = z 
-        
-        self.get_logger().info(f"Centralizing: move_x_world={move_x_world:.2f}, move_y_world={move_y_world:.2f}")
+        print(target_x, target_y, target_z, " thissss")
+        self.get_logger().info(f"Centralizing: move_x_world={movement_vec[00]:.2f}, move_y_world={movement_vec[1]:.2f}")
         self.move_to_waypoint([target_x, target_y, target_z], yaw=self.current_yaw, speed=20, stop_at_middle=True)
 
     def getxyz(self):
@@ -182,7 +164,7 @@ class Maneuver(Node):
 
     def start_moving(self):
         time.sleep(2)
-        rclpy.spin_once(self, timeout_sec=self.break_time)
+        rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
         x, y, z = self.getxyz() # hardcode z
         yaw = self.current_yaw
 
