@@ -138,27 +138,32 @@ class Maneuver(Node):
         #dx = ball_x - img_center_x  
         #dy = ball_y - img_center_y  
 
-        dx = -(ball_y - img_center_y)
-        dy = (ball_x - img_center_x)
-        print("dx", dx)
-        print("dy", dy)
-        
-        move_x_cam = dy * 0.10
-        move_y_cam = dx * 0.10 
+        camera_dy = (img_center_y - self.ball_center_x) / self.image_height
+        camera_dx = (img_center_x - self.ball_center_y) / self.image_width
 
-        # -π <= yaw <= π
+        print("Camera dy", camera_dy)
+        print("Camera dx", camera_dx)
+        #New x=−y
+        #New 𝑦 = 𝑥
+        world_dx = -camera_dy * 5
+        world_dy = camera_dx * 5
+
+
+        movement_vec = np.array([world_dx, world_dy])
+        movement_vec = movement_vec / np.linalg.norm(movement_vec)
+        
         yaw = 0.0
 
         # TODO: Make sure that we don't need - in front of yaw.
-        cos_yaw = math.cos(yaw)
-        sin_yaw = math.sin(yaw)
-
-        move_x_world = move_x_cam * cos_yaw - move_y_cam * sin_yaw
-        move_y_world = move_x_cam * sin_yaw + move_y_cam * cos_yaw
-
+        #cos_yaw = math.cos(yaw)
+        #sin_yaw = math.sin(yaw)
+        #move_x_world = move_x_cam * cos_yaw - move_y_cam * sin_yaw
+        #move_y_world = move_x_cam * sin_yaw + move_y_cam * cos_yaw
+        move_x_world = movement_vec[0]
+        move_y_world = movement_vec[1]
         x, y, z = self.getxyz()
 
-        target_x = x + move_x_world
+        target_x = x + move_x_world 
         target_y = y + move_y_world
         target_z = z 
         print("Current yaw", yaw)
