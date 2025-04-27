@@ -83,11 +83,10 @@ class Maneuver(Node):
             direction[0] = 0.0
         if abs(direction[2]) < 0.5:
             direction[2] = 0.0
-        print(target_coords, " target coods")
-        print(self.coords, " self coords")
-        print(direction, " direction")
-        print(direction[2])
 
+        #for i in range(3):
+            #if abs(direction[i] <= 0.5):
+            #   direction[i] = 0.0
         while np.linalg.norm(target_coords - self.coords) > tolerance:
             if self.something_detected and not self.goto_rescue:
                 return
@@ -113,17 +112,52 @@ class Maneuver(Node):
                 break
 
 
-    def centralize(self):
-        img_x = self.image_width / 2.0
-        img_y = self.image_height / 2.0
-        init_x = self.ball_center_x
-        init_y = self.ball_center_y
+    def go_on_top(self):
+        rclpy.spin_once(self, timeout_sec=self.break_time)
+
+        # TEST x, y, z
+        # ---------------
+        #x,y,z = self.getxyz()
+
+        #self.move_to_waypoint([x, y, z], yaw=self.current_yaw, speed=7)
+
+        #return
+        # ----------------
+        
+        img_center_x = self.image_width / 2.0
+        img_center_y = self.image_height / 2.0
+
+        ball_x = self.ball_center_x
+        ball_y = self.ball_center_y
+
+        if ball_x is None or ball_y is None:
+            self.get_logger().warn("No ball detection available!")
+            return
+
+        dx = ball_x - img_center_x  
+        dy = ball_y - img_center_y  
+
+        move_scale = 10
+        
+        move_x_cam = dy * move_scale
+        move_y_cam = dx * move_scale 
+
+        yaw = self.current_yaw 
+
+        cos_yaw = math.cos(-yaw)
+        sin_yaw = math.sin(-yaw)
+
+        move_x_world = move_x_cam * cos_yaw - move_y_cam * sin_yaw
+        move_y_world = move_x_cam * sin_yaw + move_y_cam * cos_yaw
 
         x, y, z = self.getxyz()
-        print("startin z", z)
-        print("current yaw is ", self.current_yaw)
-        self.move_to_waypoint([x, y + 10, -5.5], self.current_yaw)
-        return
+
+        target_x = x + move_x_world
+        target_y = y + move_y_world
+        target_z = z 
+        print("Current yaw", yaw)
+        self.get_logger().info(f"Centralizing: move_x_world={move_x_world:.2f}, move_y_world={move_y_world:.2f}")
+        self.move_to_waypoint([target_y, target_x, target_z], yaw=self.current_yaw, speed=7)
 
     def getxyz(self):
         return self.coords[0], self.coords[1], self.coords[2]
@@ -155,7 +189,7 @@ class Maneuver(Node):
             else:
                 print("Follower mode")
                 self.goto_rescue = True
-                self.centralize()
+                self.go_on_top()
 
 
 def main(args=None):
