@@ -67,8 +67,9 @@ class Maneuver(Node):
         self.trajectory_pub.publish(msg)
     
     def is_in_middle(self):
-        dist_from_middle = np.linal.norm([(self.ball_x - self.image_width) / 2, (self.ball_y - self.image_height) / 2 ])
-        return dist_from_middle < 150
+        dist_from_middle = np.linalg.norm(np.array([self.ball_center_x - self.image_width / 2, self.ball_center_y - self.image_height / 2]))
+        print(dist_from_middle)
+        return dist_from_middle < 100
 
     def move_to_waypoint(self, target_coords, yaw, speed=5.0, step_size=0.05, tolerance=0.5, stop_at_middle=False):
         target_coords = np.array(target_coords)
