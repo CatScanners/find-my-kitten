@@ -22,22 +22,27 @@ class Maneuver(Node):
         )
         self.vehicle_local_position_subscriber = self.create_subscription(VehicleLocalPosition, '/fmu/out/vehicle_local_position', self.vehicle_local_position_callback, qos_profile)
         self.trajectory_pub = self.create_publisher(TrajectorySetpoint, '/custom_trajectory', 10)
-        self.coords = np.array([0.0, 0.0, 0.0])
         self.detection_subscriber = self.create_subscription(Detection2DArray, '/detections', self.ball_detection_callback, 10)
-        self.current_yaw = 0.0
+        
+        # Constants.
         self.BREAK_TIME = 5.0
+        self.IMAGE_HEIGHT = 720 # CHANGE MANUALLY DEPENDING ON CAMERA
+        self.IMAGE_WIDTH = 1280
+        self.RESCUE_MODE = False
+        
+        # Drone location states.
+        self.coords = np.array([0.0, 0.0, 0.0])
+        self.current_yaw = 0.0
+        
+        # Ball rescue mode states.
         self.something_detected = False
         self.goto_rescue = False
-        self.rescue_mode = False
         self.rotate_to_zero = False
 
         self.ball_center_x = None
         self.ball_center_y = None
 
-        self.IMAGE_HEIGHT = 720 # change manually depending on our camera
-        self.IMAGE_WIDTH = 1280
-
-        
+    
     
     def vehicle_local_position_callback(self, msg):
         self.coords = np.array([msg.x, msg.y, msg.z])
@@ -155,9 +160,11 @@ class Maneuver(Node):
         target_x = x + movement_vec[0] 
         target_y = y + movement_vec[1]
         target_z = z 
-        print(target_x, target_y, target_z, " thissss")
+
         self.get_logger().info(f"Centralizing: move_x_world={movement_vec[00]:.2f}, move_y_world={movement_vec[1]:.2f}")
+        # Set waypoint to target position
         self.move_to_waypoint([target_x, target_y, target_z], yaw=self.current_yaw, speed=20, stop_at_middle=True)
+
 
     def getxyz(self):
         return self.coords[0], self.coords[1], self.coords[2]
@@ -184,7 +191,7 @@ class Maneuver(Node):
 
         self.get_logger().info("Drone movement complete!")
         if self.something_detected:
-            if self.rescue_mode:
+            if self.RESCUE_MODE:
                 self.goto_rescue = True
                 self.move_to_waypoint([self.coords[0], self.coords[1], -5.0], self.current_yaw, s1)
             else:
