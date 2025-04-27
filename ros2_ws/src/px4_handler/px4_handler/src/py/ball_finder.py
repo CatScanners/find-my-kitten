@@ -100,6 +100,7 @@ class Maneuver(Node):
                 direction[i] = 0.0
   
         while np.linalg.norm(target_coords - self.coords) > self.TOLERANCE:
+
             if stop_at_middle:
                 is_in_middle = self.is_in_middle()
                 if is_in_middle:
@@ -189,7 +190,8 @@ class Maneuver(Node):
         if self.something_detected:
             if self.RESCUE_MODE:
                 self.goto_rescue = True
-                self.move_to_waypoint([self.coords[0], self.coords[1], -5.0], self.current_yaw)
+                x, y, z = self.getxyz()
+                self.move_to_waypoint([x, y, z], self.current_yaw)
             else:
                 print("Follower mode")
                 self.goto_rescue = True
