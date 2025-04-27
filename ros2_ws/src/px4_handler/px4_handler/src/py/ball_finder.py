@@ -30,6 +30,8 @@ class Maneuver(Node):
         self.IMAGE_WIDTH = 1280
         self.RESCUE_MODE = False
         self.MOVE_SPEED = 8.0 # Drone max move speed
+        self.STEP_SIZE=0.05
+        self.TOLERANCE=0.5
         
         # Drone location states.
         self.coords = np.array([0.0, 0.0, 0.0])
@@ -75,10 +77,12 @@ class Maneuver(Node):
         self.trajectory_pub.publish(msg)
     
     def is_in_middle(self):
-        dist_from_middle = np.linalg.norm(np.array([self.ball_center_x - self.IMAGE_WIDTH / 2, self.ball_center_y - self.IMAGE_HEIGHT / 2]))
+        x_dist = self.ball_center_x - self.IMAGE_WIDTH / 2
+        y_dist = self.ball_center_y - self.IMAGE_HEIGHT / 2
+        dist_from_middle = np.linalg.norm(np.array([ x_dist, y_dist ]))
         return dist_from_middle < 100
 
-    def move_to_waypoint(self, target_coords, yaw, step_size=0.05, tolerance=0.5, stop_at_middle=False):
+    def move_to_waypoint(self, target_coords, yaw, stop_at_middle=False):
         target_coords = np.array(target_coords)
         ramp_factor = 0.70  # Start at 70% speed
         ramp_increment = 0.1  # How fast to ramp up
@@ -86,41 +90,38 @@ class Maneuver(Node):
         rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
 
         orig_coords = self.getxyz()
-
         direction = target_coords - orig_coords
         
-        if np.linalg.norm(direction) > 0:
+        if np.linalg.norm(direction) > 0: # Normalize the direction.
             direction = direction / np.linalg.norm(direction)
-        
 
         for i in range(3):
             if (abs(direction[i]) <= 0.5):
                 direction[i] = 0.0
   
-        while np.linalg.norm(target_coords - self.coords) > tolerance:
+        while np.linalg.norm(target_coords - self.coords) > self.TOLERANCE:
             if stop_at_middle:
                 is_in_middle = self.is_in_middle()
                 if is_in_middle:
                     self.get_logger().info("We are in the middle! Let's go on top of the cat.")
+                    x, y, z = self.getxyz()
+                    self.move_to_waypoint([x, y, -3.0], yaw=self.current_yaw, stop_at_middle=False)
                     return
 
             if self.something_detected and not self.goto_rescue:
                 return
             
-            step = direction * self.MOVE_SPEED * step_size
+            step = direction * self.MOVE_SPEED * self.STEP_SIZE
             
             delta_coords = self.coords + step * ramp_factor
             for i in range(3):
                 if abs(direction[i]) <= 0.0001:
                     delta_coords[i] = orig_coords[i]
-                    
 
             self.publish_trajectory(delta_coords[0], delta_coords[1], delta_coords[2], yaw)
             ramp_factor = min(max_ramp, ramp_factor + ramp_increment)
             rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
     
-
-    # 
     def perform_motions(self, motions):
         for waypoint in motions:
             self.move_to_waypoint(waypoint[:3], waypoint[3])
