@@ -59,7 +59,8 @@ class Maneuver(Node):
 
     def publish_trajectory(self, x, y, z, yaw):
         msg = TrajectorySetpoint()
-        msg.position = [x, y, z]
+        positions = [x, y, z]
+        msg.position = positions
         msg.yaw = yaw
         self.trajectory_pub.publish(msg)
 
@@ -119,9 +120,9 @@ class Maneuver(Node):
         # ---------------
         #x,y,z = self.getxyz()
 
-        #self.move_to_waypoint([x, y, z], yaw=self.current_yaw, speed=7)
+        #self.move_to_waypoint([x-10, y, z], yaw=0.0, speed=7)
 
-        #return
+        ###return
         # ----------------
         
         img_center_x = self.image_width / 2.0
@@ -134,18 +135,23 @@ class Maneuver(Node):
             self.get_logger().warn("No ball detection available!")
             return
 
-        dx = ball_x - img_center_x  
-        dy = ball_y - img_center_y  
+        #dx = ball_x - img_center_x  
+        #dy = ball_y - img_center_y  
 
-        move_scale = 10
+        dx = -(ball_y - img_center_y)
+        dy = (ball_x - img_center_x)
+        print("dx", dx)
+        print("dy", dy)
         
-        move_x_cam = dy * move_scale
-        move_y_cam = dx * move_scale 
+        move_x_cam = dy * 0.10
+        move_y_cam = dx * 0.10 
 
-        yaw = self.current_yaw 
+        # -π <= yaw <= π
+        yaw = 0.0
 
-        cos_yaw = math.cos(-yaw)
-        sin_yaw = math.sin(-yaw)
+        # TODO: Make sure that we don't need - in front of yaw.
+        cos_yaw = math.cos(yaw)
+        sin_yaw = math.sin(yaw)
 
         move_x_world = move_x_cam * cos_yaw - move_y_cam * sin_yaw
         move_y_world = move_x_cam * sin_yaw + move_y_cam * cos_yaw
@@ -156,8 +162,10 @@ class Maneuver(Node):
         target_y = y + move_y_world
         target_z = z 
         print("Current yaw", yaw)
+        print("MOVE X WORLD", move_x_world)
+        print("MOVE Y WORLD", move_y_world)
         self.get_logger().info(f"Centralizing: move_x_world={move_x_world:.2f}, move_y_world={move_y_world:.2f}")
-        self.move_to_waypoint([target_y, -target_x, target_z], yaw=self.current_yaw, speed=10)
+        self.move_to_waypoint([target_x, target_y, target_z], yaw=0.0, speed=10)
 
     def getxyz(self):
         return self.coords[0], self.coords[1], self.coords[2]
