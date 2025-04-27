@@ -131,7 +131,7 @@
 			current_trajectory_setpoint_.position[0] = msg->x; 
 			current_trajectory_setpoint_.position[1] = msg->y; 
 			current_trajectory_setpoint_.position[2] = msg->z; 
-			current_trajectory_setpoint_.yaw = 0.0f;
+			current_trajectory_setpoint_.yaw = msg->heading;
 			setpoint_initialized = true;
 		}
         // Only print every 10th callback

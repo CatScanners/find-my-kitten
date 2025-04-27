@@ -29,12 +29,14 @@ class Maneuver(Node):
         self.something_detected = False
         self.goto_rescue = False
         self.rescue_mode = False
+        self.rotate_to_zero = False
 
         self.ball_center_x = None
         self.ball_center_y = None
 
         self.image_height = 720 # change manually depending on our camera
         self.image_width = 1280
+
         
     
     def vehicle_local_position_callback(self, msg):
@@ -63,8 +65,12 @@ class Maneuver(Node):
         msg.position = positions
         msg.yaw = yaw
         self.trajectory_pub.publish(msg)
+    
+    def is_in_middle(self):
+        dist_from_middle = np.linal.norm([(self.ball_x - self.image_width) / 2, (self.ball_y - self.image_height) / 2 ])
+        return dist_from_middle < 150
 
-    def move_to_waypoint(self, target_coords, yaw, speed=5.0, step_size=0.05, tolerance=0.5):
+    def move_to_waypoint(self, target_coords, yaw, speed=5.0, step_size=0.05, tolerance=0.5, stop_at_middle=False):
         target_coords = np.array(target_coords)
         ramp_factor = 0.70  # Start at 70% speed
         ramp_increment = 0.1  # How fast to ramp up
@@ -89,6 +95,15 @@ class Maneuver(Node):
             #if abs(direction[i] <= 0.5):
             #   direction[i] = 0.0
         while np.linalg.norm(target_coords - self.coords) > tolerance:
+            if stop_at_middle:
+                is_in_middle = self.is_in_middle()
+                if is_in_middle:
+                    self.get_logger().info("We are in the middle!")
+
+                    return
+                
+                
+
             if self.something_detected and not self.goto_rescue:
                 return
             
@@ -159,7 +174,7 @@ class Maneuver(Node):
         target_z = z 
         
         self.get_logger().info(f"Centralizing: move_x_world={move_x_world:.2f}, move_y_world={move_y_world:.2f}")
-        self.move_to_waypoint([target_x, target_y, target_z], yaw=self.current_yaw, speed=20)
+        self.move_to_waypoint([target_x, target_y, target_z], yaw=self.current_yaw, speed=20, stop_at_middle=True)
 
     def getxyz(self):
         return self.coords[0], self.coords[1], self.coords[2]
@@ -181,6 +196,7 @@ class Maneuver(Node):
         ]
 
         s1 = 4.0
+        
         self.perform_motions(waypoints, s1)
 
         self.get_logger().info("Drone movement complete!")
