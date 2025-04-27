@@ -116,15 +116,6 @@ class Maneuver(Node):
     def go_on_top(self):
         rclpy.spin_once(self, timeout_sec=self.break_time)
 
-        # TEST x, y, z
-        # ---------------
-        #x,y,z = self.getxyz()
-
-        #self.move_to_waypoint([x-10, y, z], yaw=0.0, speed=7)
-
-        ###return
-        # ----------------
-        
         img_center_x = self.image_width / 2.0
         img_center_y = self.image_height / 2.0
 
@@ -141,33 +132,34 @@ class Maneuver(Node):
         print("Camera dy", camera_dy)
         print("Camera dx", camera_dx)
         print("Camera angle", )
-        #New x=−y
-        #New 𝑦 = 𝑥
+        
+        # world_dx = -camera_dy * cos_yaw
+        # world_dy = camera_dx
+
         world_dx = -camera_dy
         world_dy = camera_dx
 
         movement_vec = np.array([world_dx, world_dy])
         movement_vec = movement_vec / np.linalg.norm(movement_vec)
         
-        yaw = 0.0
+        yaw = self.current_yaw
 
         # TODO: Make sure that we don't need - in front of yaw.
-        #cos_yaw = math.cos(yaw)
-        #sin_yaw = math.sin(yaw)
-        #move_x_world = move_x_cam * cos_yaw - move_y_cam * sin_yaw
-        #move_y_world = move_x_cam * sin_yaw + move_y_cam * cos_yaw
-        move_x_world = movement_vec[0] * 15
-        move_y_world = movement_vec[1] * 15
+        cos_yaw = math.cos(yaw)
+        sin_yaw = math.sin(yaw)
+        move_x_world = movement_vec[0] * cos_yaw - movement_vec[1] * sin_yaw
+        move_y_world = movement_vec[0] * sin_yaw + movement_vec[1] * cos_yaw
+
+        move_x_world = move_x_world * 15
+        move_y_world = move_y_world * 15
         x, y, z = self.getxyz()
 
         target_x = x + move_x_world 
         target_y = y + move_y_world
         target_z = z 
-        print("Current yaw", yaw)
-        print("MOVE X WORLD", move_x_world)
-        print("MOVE Y WORLD", move_y_world)
+        
         self.get_logger().info(f"Centralizing: move_x_world={move_x_world:.2f}, move_y_world={move_y_world:.2f}")
-        self.move_to_waypoint([target_x, target_y, target_z], yaw=0.0, speed=10)
+        self.move_to_waypoint([target_x, target_y, target_z], yaw=self.current_yaw, speed=20)
 
     def getxyz(self):
         return self.coords[0], self.coords[1], self.coords[2]
