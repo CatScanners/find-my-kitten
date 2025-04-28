@@ -13,7 +13,7 @@ find_package(vision_msgs REQUIRED)
 
 
 
-add_executable(offboard_control src/cpp/offboard_control.cpp)
+add_executable(offboard_control src/offboard_control.cpp)
 ament_target_dependencies(offboard_control 
 	sensor_msgs 
 	rclcpp 
@@ -28,15 +28,10 @@ install(TARGETS
 	DESTINATION lib/${PROJECT_NAME}
 )
 
-#ament_python_install_package(${PROJECT_NAME})
+ament_python_install_package(scripts)
 
 install(PROGRAMS
-  src/py/hard_motions.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(PROGRAMS
-  src/py/ball_finder.py
+  scripts/ball_finder.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
