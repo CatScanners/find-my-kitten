@@ -106,7 +106,7 @@ class Maneuver(Node):
                 if is_in_middle:
                     self.get_logger().info("We are in the middle! Let's go on top of the cat.")
                     x, y, z = self.getxyz()
-                    self.move_to_waypoint([x, y, -1.5], yaw=self.current_yaw, stop_at_middle=False)
+                    self.move_to_waypoint([x, y, -2.25], yaw=self.current_yaw, stop_at_middle=False)
                     return
 
             if self.something_detected and not self.goto_rescue:
