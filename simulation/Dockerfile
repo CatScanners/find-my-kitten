@@ -5,7 +5,7 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Update apt-get and install basic dependencies
-RUN  apt-get update && apt-get upgrade -y && apt-get install -y \
+RUN  apt-get update && apt-get install -y \
     sudo \
     curl \
     gnupg2 \
@@ -45,8 +45,10 @@ RUN sudo apt-get update && sudo apt-get install -y \
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 RUN /bin/bash -c "source ~/.bashrc"
 
-RUN git clone --recursive https://github.com/CatScanners/find-my-kitten.git
-WORKDIR /find-my-kitten/simulation
+COPY simulation/ /find-my-kitten/simulation/
+COPY .git/ /find-my-kitten/.git
+COPY .gitmodules /find-my-kitten/simulation/.gitmodules
+WORKDIR find-my-kitten/simulation
 
 RUN git submodule update --init --recursive
 
@@ -103,7 +105,7 @@ RUN sudo wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl.AppIma
 RUN sudo chmod +x ./QGroundControl.AppImage
 
 # Bash script for simulation setup (opens and runs all necessary scripts)
-COPY startsim.sh /find-my-kitten/startsim.sh
-RUN sudo chmod +x /find-my-kitten/startsim.sh
+COPY ./simulation/startsim.sh /find-my-kitten/simulation/startsim.sh
+RUN sudo chmod +x /find-my-kitten/simulation/startsim.sh
 
 CMD ["/bin/bash"]
