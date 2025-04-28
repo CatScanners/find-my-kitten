@@ -18,16 +18,16 @@ git clone --recursive git@github.com:CatScanners/find-my-kitten.git
 
 ## Build and run the Docker container
 
-1. **Navigate to the simulation directory**:
+1. **Navigate to the root directory of the project**:
 
    ```bash
-   cd find-my-kitten/ros2_ws/src/simulation
+   cd find-my-kitten/
    ```
 
 2. **Build the Docker container**:
 
    ```bash
-   sudo docker build -t kitten-sim .
+   sudo docker build -t kitten-sim -f ./simulation/Dockerfile .
    ```
 
 3. **Run the container**:
@@ -39,6 +39,7 @@ git clone --recursive git@github.com:CatScanners/find-my-kitten.git
      --cap-add SYS_ADMIN \
      -e DISPLAY=$DISPLAY \
      -v /tmp/.X11-unix:/tmp/.X11-unix \
+     -v ./ros2_ws:/find-my-kitten/ros2_ws \
      kitten-sim
    ```
 

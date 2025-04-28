@@ -47,6 +47,9 @@ class ImagePublisher(Node):
         self.get_logger().info(f"Publishing camera stream on '{self.topic_name}'")
 
     def set_camera_format(self):
+        
+        # To make this node work, it is crucial to set V4L2 video format to correct type eg. BA10. 
+        # Other wise OpenCV is not able to intreped the video stream with color. 
         cmd = [
             'v4l2-ctl',
             f'-d', f'/dev/video{self.cam_id}',
@@ -62,10 +65,18 @@ class ImagePublisher(Node):
 
     def publish_frame(self):
         ret, bayer_frame = self.cap.read()
+
         if not ret or bayer_frame is None:
             self.get_logger().warn("Failed to read frame from camera")
             return
 
+        # This is a curiosity of our hardware. Arducam globalshutter camera color format is BA10
+        # which in linux is stored in a 16bit buffer with padding. OpenCV on the other hand does not 
+        # understand this, especially as color data. 
+        # This is why we first nee
+        # back to BGR from BayerGB with demosaicing. This is still just a hypothesis and the solution was found by testing 
+        # different Bayer formats from which the correct colors were found. 
+        
         if bayer_frame.ndim == 3:
             # It got interpreted as BGR, force grayscale
             bayer_frame = cv.cvtColor(bayer_frame, cv.COLOR_BGR2GRAY)
