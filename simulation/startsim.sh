@@ -12,12 +12,12 @@ tmux send-keys -t sim:0.1 'source /opt/ros/humble/setup.bash && ros2 run ros_gz_
 
 # Pane 2: MicroXRCEAgent
 tmux split-window -v -t sim:0.1
-tmux send-keys -t sim:0.2 'cd /find-my-kitten/ros2_ws/src/simulation/Micro-XRCE-DDS-Agent/build/ && MicroXRCEAgent udp4 -p 8888' C-m
+tmux send-keys -t sim:0.2 'cd /find-my-kitten/simulation/Micro-XRCE-DDS-Agent/build/ && MicroXRCEAgent udp4 -p 8888' C-m
 
 # Pane 3: PX4 simulation
 tmux select-pane -t sim:0.0
 tmux split-window -v
-tmux send-keys -t sim 'cd /find-my-kitten/ros2_ws/src/simulation/PX4-Autopilot && make px4_sitl gz_x500_gimbal_baylands' C-m
+tmux send-keys -t sim 'cd /find-my-kitten/simulation/PX4-Autopilot && make px4_sitl gz_x500_gimbal_baylands' C-m
 
 # Attach to the session
 tmux select-pane -t sim:0.0
