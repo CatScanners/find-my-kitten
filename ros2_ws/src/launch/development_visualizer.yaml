@@ -1,0 +1,31 @@
+launch:
+
+- node:
+   pkg: "vision_package"
+   exec: "image_publisher"
+   name: "image_publisher"
+
+- node:
+   pkg: "vision_package"
+   exec: "object_detector.py"
+   name: "object_detector"
+
+- node: 
+   pkg: "vision_package"
+   exec: "object_tracker.py"
+   name: "object_tracker"
+
+- node: 
+   pkg: "vision_package"
+   exec: "track_publisher.py"
+   name: "track_publisher"
+
+- node: 
+   pkg: "navigation_package"
+   exec: "target_deviation"
+   name: "target_deviation"
+
+- node: 
+   pkg: "rviz2"
+   exec: "rviz2"
+   name: "rviz2"

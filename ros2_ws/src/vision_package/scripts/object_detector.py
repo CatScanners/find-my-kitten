@@ -3,6 +3,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
+from std_msgs.msg import Int32MultiArray
 from vision_msgs.msg import Detection2DArray, Detection2D, ObjectHypothesisWithPose
 from cv_bridge import CvBridge
 import cv2
@@ -18,10 +19,11 @@ class ObjectDetectionNode(Node):
         
         self.declare_parameter("input_topic_name", "image_topic")
         self.declare_parameter("output_topic_name", "detected_objects_topic")
-        
+        self.declare_parameter("image_dimension_topic", "image_dimension_topic")
+
         self.input_topic_name = self.get_parameter("input_topic_name").value
         self.output_topic_name = self.get_parameter("output_topic_name").value
-
+        self.image_dimension_topic = self.get_parameter("image_dimension_topic").value
 
         # Load the PyTorch model
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5s.pt')  # Replace with your .pt file path
@@ -45,10 +47,23 @@ class ObjectDetectionNode(Node):
             10
         )
 
+        # Publisher for image dimensions
+        self.dimension_pub = self.create_publisher(
+            Int32MultiArray,
+            self.image_dimension_topic,
+            10
+        )
+
     def image_callback(self, msg):
         try:
             # Convert ROS Image message to OpenCV image
             cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            height, width, _ = cv_image.shape
+
+            # Publish image dimensions
+            dimension_msg = Int32MultiArray()
+            dimension_msg.data = [width, height]
+            self.dimension_pub.publish(dimension_msg)
 
             # Perform object detection
             results = self.model(cv_image)

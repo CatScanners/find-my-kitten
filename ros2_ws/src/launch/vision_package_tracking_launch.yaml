@@ -1,5 +1,26 @@
 launch:
 
+<<<<<<< HEAD
+- node:
+   pkg: "vision_package"
+   exec: "image_publisher"
+   name: "image_publisher"
+   namespace: "vision_package"
+
+- node:
+   pkg: "vision_package"
+   exec: "object_detector.py"
+   name: "object_detector"
+   namespace: "vision_package"
+
+- node: 
+   pkg: "vision_package"
+   exec: "object_tracker.py"
+   name: "object_tracker"
+   namespace: "vision_package"
+
+
+=======
 - node: 
   pkg: "navigation_package"
   exec: "setpoint_publisher"
@@ -21,3 +42,4 @@ launch:
     -
       name: "input_topic_name"
       value: "camera"
+>>>>>>> origin/main
