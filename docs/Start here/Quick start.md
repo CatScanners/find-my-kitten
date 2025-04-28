@@ -13,6 +13,8 @@ Please refer to our [Jetson Orin setup guide](https://catscanners.github.io/find
 
 ## Simulator quick start (Windows or Linux)
 
+This part guides the user on how to install a simulator, ROS2, find-my-kitten repository, QGroundControl, and run our main nodes on the system of consisting this software.
+
 ### Requirements
 - A Windows or a Linux computer, preferably with GPU since the simulation is quite a heavy software.
 - If you are already using a Nvidia Jetson -computer, please refer to the [Nvidia Jetson initialization](#jetson-initialization).
@@ -48,7 +50,26 @@ git clone https://github.com/CatScanners/find-my-kitten
 5. a - With default code, the drone should search an area of 8m x 12m and stop and go a bit down when it sees a **sports ball**, or b - Does a few predefined motions in two different speeds.
 
 
-## Real life quick start
+## Real life quick start (Jetson baseboard + PX6 + drone)
+
+This part guides the user on how to setup the actual drone and how to connect a Holybro Pixhawk Jetson Baseboard into it, the installation of all the relevant software. If you already have our pre-built drone with the baseboard, feel free to skip until the "Running the software part". This part also includes information about necessary permissions and who is actually allowed to fly the drone in Finland.
+
+### Requirements
+- Knowledge of Linux.
+- [Holybro Pixhawk Jetson Baseboard](https://docs.px4.io/main/en/companion_computer/holybro_pixhawk_jetson_baseboard.html)
+- Drone frame
+- Something else?
+
+### Setting up the Holybro Pixhawk Jetson Baseboard
+
+To set up the baseboard, please follow this [guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/Baseboard%20setup%20-%20deviations%20from%20tutorial.html) of ours. It has a link to the official guide on setting up the baseboard, and also the deviations from the official material.
+
+[Here](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/Jetson%20Orin%20(Devkit)%20setup.html) is a similar guide about initializing Jetson Orin Devkit, which might be helpful.
+
+### Setting up the drone
+
+### Setting up
+
 1. Drone?
 2. Jetson basebord initialization
 3. Prepare for flight? :D
