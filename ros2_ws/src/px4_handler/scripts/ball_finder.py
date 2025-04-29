@@ -28,7 +28,7 @@ class Maneuver(Node):
         self.BREAK_TIME = 5.0
         self.IMAGE_HEIGHT = 720 # CHANGE MANUALLY DEPENDING ON CAMERA
         self.IMAGE_WIDTH = 1280
-        self.RESCUE_MODE = False
+        self.RESCUE_MODE = True
         self.MOVE_SPEED = 8.0 # Drone max move speed
         self.STEP_SIZE=0.05
         self.TOLERANCE=0.5
@@ -59,6 +59,8 @@ class Maneuver(Node):
             for detection in msg.detections:
                 for hypothesis in detection.results:
                     if hypothesis.hypothesis.class_id == "32.0":  # Check for class_id 32
+                        # self.ball_center_x = self.IMAGE_WIDTH - detection.bbox.center.position.x
+                        # self.ball_center_y = self.IMAGE_HEIGHT - detection.bbox.center.position.y
                         self.ball_center_x = detection.bbox.center.position.x
                         self.ball_center_y = detection.bbox.center.position.y
                         if not self.something_detected:
@@ -82,7 +84,7 @@ class Maneuver(Node):
         dist_from_middle = np.linalg.norm(np.array([ x_dist, y_dist ]))
         return dist_from_middle < 100
 
-    def move_to_waypoint(self, target_coords, yaw, stop_at_middle=False):
+    def move_to_waypoint(self, target_coords, yaw, stop_at_middle=False, go_down=True):
         target_coords = np.array(target_coords)
         ramp_factor = 0.70  # Start at 70% speed
         ramp_increment = 0.1  # How fast to ramp up
@@ -105,8 +107,9 @@ class Maneuver(Node):
                 is_in_middle = self.is_in_middle()
                 if is_in_middle:
                     self.get_logger().info("We are in the middle! Let's go on top of the cat.")
-                    x, y, z = self.getxyz()
-                    self.move_to_waypoint([x, y, -2.25], yaw=self.current_yaw, stop_at_middle=False)
+                    if go_down:
+                        x, y, z = self.getxyz()
+                        self.move_to_waypoint([x, y, -2.25], yaw=self.current_yaw, stop_at_middle=False)
                     return
 
             if self.something_detected and not self.goto_rescue:
@@ -164,6 +167,38 @@ class Maneuver(Node):
         # Set waypoint to target position
         self.move_to_waypoint([target_x, target_y, target_z], yaw=self.current_yaw, stop_at_middle=True)
 
+    def go_on_top_2(self):
+        rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
+
+        if self.ball_center_x is None or self.ball_center_y is None:
+            self.get_logger().warn("No ball deteted, something went wrong!")
+            return
+
+        # Ball coordinates in camera image
+        camera_dy = (self.IMAGE_HEIGHT / 2.0 - self.ball_center_y) / self.IMAGE_HEIGHT
+        camera_dx = (self.IMAGE_WIDTH / 2.0 - self.ball_center_x) / self.IMAGE_WIDTH
+
+        # Vector towards ball in drone coordinates (NED)  
+        movement_vec = np.array([-camera_dy, camera_dx])
+        
+        # Take to account drone's yaw angle
+        movement_vec[0] = movement_vec[0] * math.cos(self.current_yaw) - movement_vec[1] * math.sin(self.current_yaw)
+        movement_vec[1] = movement_vec[0] * math.sin(self.current_yaw) + movement_vec[1] * math.cos(self.current_yaw)
+
+        # Normalize and scale the movement vector
+        movement_vec = movement_vec / np.linalg.norm(movement_vec) * 15
+        
+        # Set target position
+        x, y, z = self.getxyz()
+        target_x = x + movement_vec[0] 
+        target_y = y + movement_vec[1]
+        target_z = z 
+
+        self.get_logger().info(f"Centralizing: move_x_world={movement_vec[00]:.2f}, move_y_world={movement_vec[1]:.2f}")
+        
+        # Set waypoint to target position
+        self.move_to_waypoint([target_x, target_y, target_z], yaw=self.current_yaw, stop_at_middle=True, go_down=False)
+
 
     def getxyz(self):
         return self.coords[0], self.coords[1], self.coords[2]
@@ -192,8 +227,8 @@ class Maneuver(Node):
 
             if self.RESCUE_MODE:
                 x, y, z = self.getxyz()
-                self.get_logger().info("Ball detected. Lets go down immediatelly.")
-                self.move_to_waypoint([x, y, z], self.current_yaw)
+                while True:
+                    self.go_on_top_2()
             else:
                 self.get_logger().info("Ball detected. Lets go on top of it.")
                 self.go_on_top()
