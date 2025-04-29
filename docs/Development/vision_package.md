@@ -89,65 +89,9 @@ input_images is the topic publishing images.\
 input_tracks is the topic publishing Detection2DArray messages.\
 output_topic_name is the topic name to which the visualization images are published
 
-### Depthai-ros included nodes
-DepthAI-ROS is a optional include  in vision_package Dockerfile. Documentaion of it is poor but node names are descriptive enough and can be seen here: https://github.com/luxonis/depthai-ros/tree/humble .
-Using Depthai-ros example RGB camera node:
-```
-ros2 run depthai_examples rgb_stereo_node
-```
-
-## How to use Docker container
-
-Build docker image vision_package 
-```
-docker build -t vision_package --build-arg DEPTHAI=true .
-```
-Allow X11 forwarding if graphics needed inside the container
-```
-xhost +local:docker
-```
-Run the vision_package image to create a container
-```
-docker run -it \
-    --privileged \
-    -v /dev/bus/usb:/dev/bus/usb \
-    --device-cgroup-rule='c 189:* rmw' \
-    -e DISPLAY=$DISPLAY \
-    -v /tmp/.X11-unix:/tmp/.X11-unix \
-    --network host \
-    vision_package
-```
-Check containers to see the **NAME** or id of just created container 
-```
-docker ps -a
-```
-Start and attach stopped container
-```
-docker start NAME
-docker attach NAME
-```
-
-Open a new shell to container
-```
-docker exec -it NAME /bin/bash
-```
-Some housekeeping commands \
-Remove container
-```
-docker rm NAME
-```
-Remove Image
-```
-docker image rm vision_package
-```
-
-## How to use in host enviroment?
-
-Follow and run the dockerfile CMD commands. Dockerfile uses Ubuntu 22.04 and you can follow it as an instruction set.  
-
 
 ## Notes and debuggin details
-Mostly problems I've ran across and found some fix
+These are problems I've ran across and used considerable time to find the fix.
 
 Image_transport needs to be installed separately eg: 
 sudo apt install ros-humble-image-transport
@@ -168,4 +112,5 @@ For yt-dlp eg. video publisher ~/.local/bin needs to be exported to shell. Add t
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
-`
+```
+
