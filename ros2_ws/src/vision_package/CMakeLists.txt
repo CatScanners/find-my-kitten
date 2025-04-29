@@ -61,7 +61,7 @@ install(PROGRAMS
   scripts/video_publisher.py
   scripts/object_tracker.py
   scripts/track_publisher.py
-  scritps/arducam_publisher.py
+  scripts/arducam_publisher.py
   DESTINATION lib/${PROJECT_NAME}
 )
 # ament package setup
