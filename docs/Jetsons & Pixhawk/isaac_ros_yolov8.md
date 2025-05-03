@@ -1,3 +1,7 @@
+---
+parent: Jetsons & Pixhawk setup
+title: Isaac ROS YOLOv8
+---
 
 Note: ssh with GUI via:
 `ssh -Y usr@host`, if using XLaunch (VcXsrv), set `$env:DISPLAY="localhost:0"` in PS prior to SSH
@@ -6,9 +10,9 @@ Resources:
 - [isaac_ros_object_detection documentation](<https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_object_detection/isaac_ros_yolov8/index.html>)
 - [Jetson AI Lab Tutorial - Ultralytics YOLOv8](https://www.jetson-ai-lab.com/tutorial_ultralytics.html#__tabbed_2_1)
 
-## Pre-setup in local environment
+## Pre-setup in host environment
 
-Go to the ISAAC ROS workspace and set version to release-3.2
+Go to the ISAAC ROS (`$ISAAC_ROS_WS`) workspace and set version to release-3.2
 
 ```
 cd ${ISAAC_ROS_WS}/src/isaac_ros_common && git pull
@@ -21,7 +25,7 @@ Installing libraries (outside container)
 sudo apt-get install -y curl jq tar
 ```
 
-Bash script to download asset from NGC
+Bash script to download assets from NGC
 
 ```
 NGC_ORG="nvidia"
@@ -96,10 +100,8 @@ ZED-camera specific: clone the zed-ros2-wrapper
 
 ```
 cd ${ISAAC_ROS_WS}/src && \
-git clone --recurse-submodules https://github.com/stereolabs/zed-ros2-wrapper
+git clone --recurse-submodules https://github.com/stereolabs/zed-ros2-wrapper -b humble-v4.2.5
 ```
-
-**TODO**: Specify a version/commit for the zed-ros2-wrapper
 
 ## In the docker workspace/container
 
@@ -216,8 +218,9 @@ cd ${ISAAC_ROS_WS}/src/isaac_ros_common && \
 ros2 run rqt_image_view rqt_image_view /yolov8_processed_image
 ```
 
+![image](../assets/yolov8_launch_example.png)
 
-**WIP** node (needs images redirect from camera):
+The above is effectively an example launch script which also launches some nodes of the zed wrapper under a different namespace. Below shows the launch format of just the yolo including some arguments, but further requires mapping to input topics.
 
 ```
 ros2 launch isaac_ros_yolov8 isaac_ros_yolov8_visualize.launch.py \
