@@ -1,6 +1,6 @@
 ---
-parent: Jetsons & Pixhawk setup
-title: ZedSDK on Ubuntu22
+parent: Development
+title: ZedSDK on x86-64 Ubuntu22
 ---
 
 # ZedSDK on Ubuntu22
