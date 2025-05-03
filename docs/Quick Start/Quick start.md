@@ -1,6 +1,6 @@
 ---
-parent: Quick Start
-title: Start Here
+parent: Introduction
+title: Quick Start
 nav_order: 2
 ---
 

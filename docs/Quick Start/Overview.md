@@ -1,5 +1,5 @@
 ---
-parent: Quick Start
+parent: Introduction
 title: Technical Overview
 nav_order: 3
 ---
