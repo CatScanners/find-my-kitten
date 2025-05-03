@@ -12,11 +12,10 @@ Resources:
 
 ## Pre-setup in host environment
 
-Go to the ISAAC ROS (`$ISAAC_ROS_WS`) workspace and set version to release-3.2
+Go to the ISAAC ROS (`$ISAAC_ROS_WS`) workspace
 
 ```
-cd ${ISAAC_ROS_WS}/src/isaac_ros_common && git pull
-git checkout release-3.2
+cd ${ISAAC_ROS_WS}/src/isaac_ros_common
 ```
 
 Installing libraries (outside container)
