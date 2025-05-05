@@ -66,11 +66,7 @@ class Maneuver(Node):
                         if not self.something_detected:
                             self.get_logger().info("Object with class_id 32 detected!")
                             self.something_detected = True
-                    self.ball_center_x = detection.bbox.center.position.x
-                    self.ball_center_y = detection.bbox.center.position.y
-                    if not self.something_detected:
-                        self.get_logger().info("Object with class_id 32 detected!")
-                        self.something_detected = True
+
                 return
         except Exception:
             self.get_logger().info("Something wetn wrong handling ball detection.")
