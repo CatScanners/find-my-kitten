@@ -25,7 +25,7 @@ class Maneuver(Node):
         self.detection_subscriber = self.create_subscription(Detection2DArray, '/detections', self.ball_detection_callback, 10)
         
         # Constants.
-        self.BREAK_TIME = 5.0
+        self.BREAK_TIME = 0.5# 5.0
         self.IMAGE_HEIGHT = 720 # CHANGE MANUALLY DEPENDING ON CAMERA
         self.IMAGE_WIDTH = 1280
         self.RESCUE_MODE = False # True
@@ -156,7 +156,14 @@ class Maneuver(Node):
         direction_vector[1] = a
 
         # Find unit vector
-        direction_vector /= np.linalg.norm(direction_vector)
+        norm = np.linalg.norm(direction_vector)
+        
+        ## The drone is already well centered.
+        if norm < 20:
+            self.get_logger().info("Ball is centered under the drone.")
+            return
+        
+        direction_vector /= norm
 
         # Rotate vector based on yaw angle.
         rotated_x = direction_vector[0] * np.cos(self.current_yaw) - direction_vector[1] * np.sin(self.current_yaw)
@@ -166,9 +173,10 @@ class Maneuver(Node):
         self.get_logger().info(f"direction = [{rotated_direction_vector[0]}, {rotated_direction_vector[1]}]")
         x, y, z = self.getxyz()
         current_coords = np.array([x, y, z])
+        speed = 1.0
         target_location = current_coords + rotated_direction_vector
-        self.move_to_waypoint(target_location, yaw=self.current_yaw, stop_at_middle=True)
-
+        # self.move_to_waypoint(target_location, yaw=self.current_yaw, stop_at_middle=True)
+        self.publish_trajectory(target_location[0], target_location[1], -10.0, self.current_yaw)
         return
 
     
