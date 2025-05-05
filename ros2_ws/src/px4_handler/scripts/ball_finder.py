@@ -29,7 +29,7 @@ class Maneuver(Node):
         self.IMAGE_HEIGHT = 720 # CHANGE MANUALLY DEPENDING ON CAMERA
         self.IMAGE_WIDTH = 1280
         self.RESCUE_MODE = False # True
-        self.MOVE_SPEED = 8.0 # Drone max move speed
+        self.MOVE_SPEED = 20.0 # Drone max move speed
         self.STEP_SIZE=0.05
         self.TOLERANCE=0.5
         
@@ -45,6 +45,7 @@ class Maneuver(Node):
         self.something_detected = False
         self.goto_rescue = False
         self.rotate_to_zero = False
+        self.is_gone_down_already = False
         
 
     def vehicle_local_position_callback(self, msg):
@@ -112,7 +113,8 @@ class Maneuver(Node):
                     self.get_logger().info("We are in the middle! Let's go on top of the cat.")
                     if go_down:
                         x, y, z = self.getxyz()
-                        self.move_to_waypoint([x, y, -2.25], yaw=self.current_yaw, stop_at_middle=False)
+                        self.move_to_waypoint([x, y, z + 2.00], yaw=self.current_yaw, stop_at_middle=False)
+                        self.is_gone_down_already = True
                     return
 
             if self.something_detected and not self.goto_rescue:
@@ -171,40 +173,7 @@ class Maneuver(Node):
 
         return
 
-    
-    # NED coordinate system.
-    def go_on_top_2(self):
-        rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
 
-        if self.ball_center_x is None or self.ball_center_y is None:
-            self.get_logger().warn("No ball detected, something went wrong!")
-            return
-
-        self.get_logger().info(f"yaw = {self.current_yaw}")
-        center_image_coords = np.array([self.IMAGE_WIDTH / 2.0, self.IMAGE_HEIGHT / 2.0, 0])
-        ball_center_coords = np.array([self.ball_center_x, self.ball_center_y, 0])
-
-        direction_vector = ball_center_coords - center_image_coords
-        a = direction_vector[0]
-        b = direction_vector[1]
-        direction_vector[0] = b
-        direction_vector[1] = -a
-
-        # Find unit vector
-        direction_vector /= np.linalg.norm(direction_vector)
-
-        # Rotate vector based on yaw angle.
-        rotated_x = direction_vector[0] * np.cos(self.current_yaw) - direction_vector[1] * np.sin(self.current_yaw)
-        rotated_y = direction_vector[0] * np.sin(self.current_yaw) + direction_vector[1] * np.cos(self.current_yaw)
-        rotated_direction_vector = np.array([rotated_x, rotated_y, 0])
-
-        self.get_logger().info(f"direction = [{rotated_direction_vector[0]}, {rotated_direction_vector[1]}]")
-        x, y, z = self.getxyz()
-        current_coords = np.array([x, y, z])
-        target_location = current_coords + rotated_direction_vector
-        self.move_to_waypoint(target_location, yaw=self.current_yaw, stop_at_middle=True, go_down=False)
-
-        return
 
     def getxyz(self):
         return self.coords[0], self.coords[1], self.coords[2]
@@ -233,11 +202,9 @@ class Maneuver(Node):
 
             if self.RESCUE_MODE:
                 x, y, z = self.getxyz()
-                while True:
-                    self.go_on_top_2()
             else:
                 self.get_logger().info("Ball detected. Lets go on top of it.")
-                while True:
+                while True and not self.is_gone_down_already:
                     self.go_on_top()
 
 def main(args=None):
