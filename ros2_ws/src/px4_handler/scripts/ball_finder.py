@@ -240,11 +240,10 @@ class Maneuver(Node):
             else:
                 self.get_logger().info("Ball detected. Lets go on top of it.")
                 while True and not self.is_gone_down_already:
-                    if self.is_gone_down_already == False:
-                        if self.NED:
-                            self.go_on_top_2()
-                        else:
-                            self.go_on_top()
+                    if self.NED:
+                        self.go_on_top_2()
+                    else:
+                        self.go_on_top()
 
 def main(args=None):
     rclpy.init(args=args)
