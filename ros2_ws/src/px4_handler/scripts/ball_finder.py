@@ -206,7 +206,7 @@ class Maneuver(Node):
         x, y, z = self.getxyz()
         current_coords = np.array([x, y, z])
         target_location = current_coords + rotated_direction_vector
-        self.move_to_waypoint(target_location, yaw=self.current_yaw, stop_at_middle=True, go_down=False)
+        self.move_to_waypoint(target_location, yaw=self.current_yaw, stop_at_middle=True, go_down=True)
 
         return
 
