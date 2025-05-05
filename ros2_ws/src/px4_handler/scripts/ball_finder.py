@@ -114,8 +114,10 @@ class Maneuver(Node):
                     self.get_logger().info("We are in the middle! Let's go on top of the cat.")
                     if go_down:
                         x, y, z = self.getxyz()
-                        self.move_to_waypoint([x, y, z + 2.00], yaw=self.current_yaw, stop_at_middle=False)
                         self.is_gone_down_already = True
+                        self.get_logger().info("Lets go down.")
+                        self.move_to_waypoint([x, y, z + 2.00], yaw=self.current_yaw, stop_at_middle=False)
+                        time.sleep(10)
                     return
 
             if self.something_detected and not self.goto_rescue:
@@ -238,10 +240,11 @@ class Maneuver(Node):
             else:
                 self.get_logger().info("Ball detected. Lets go on top of it.")
                 while True and not self.is_gone_down_already:
-                    if self.NED:
-                        self.go_on_top_2()
-                    else:
-                        self.go_on_top()
+                    if self.is_gone_down_already == False:
+                        if self.NED:
+                            self.go_on_top_2()
+                        else:
+                            self.go_on_top()
 
 def main(args=None):
     rclpy.init(args=args)
