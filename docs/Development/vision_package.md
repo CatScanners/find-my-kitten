@@ -89,6 +89,9 @@ input_images is the topic publishing images.\
 input_tracks is the topic publishing Detection2DArray messages.\
 output_topic_name is the topic name to which the visualization images are published
 
+## Diagram for node interaction in vision_package
+
+[Link to the diagram](https://github.com/CatScanners/find-my-kitten/blob/eeb5590c5453b9f34f5382daa1a27019a8bd45a5/docs/assets/vision-node-level-architecture.pdf)
 
 ## Notes and debuggin details
 These are problems I've ran across and used considerable time to find the fix.
@@ -113,4 +116,4 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 ```
-
+Arducam globalshutter camera does not have working exposure. Cannot be set manually nor automatically. 
