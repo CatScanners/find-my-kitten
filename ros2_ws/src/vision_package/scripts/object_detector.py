@@ -26,7 +26,7 @@ class ObjectDetectionNode(Node):
         self.image_dimension_topic = self.get_parameter("image_dimension_topic").value
 
         # Load the PyTorch model
-        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5s.pt')  # Replace with your .pt file path
+        self.model = torch.hub.load('', '', path='Add your model')  # Replace with your .pt file path
         self.model.conf = 0.5  # Confidence threshold
 
         # Initialize CV Bridge
