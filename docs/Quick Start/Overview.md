@@ -1,30 +1,10 @@
 ---
 parent: Introduction
-title: Technical Overview
+title: Conference Poster
 nav_order: 3
 ---
 
-# Technical Overview
+# Conference Poster
 
-This subpage is divided into several pieces: Jetson, Drone and Miscellaneous. These pieces describe their own technical architectures separately, though always informing the reader about their connections. If interested, please take a look at the technical overview report [here](../assets/Technical%20Overview.pdf).
+Take a look into a conference poster [here](../assets/Find_my_kitten_gala_poster.pdf). It includes a technical overview, the main objectives of the project, the results, and the future prospects.
 
-
-## Jetson
-The Jetson baseboard consists of a ROS2-system with four nodes. They are following with the following tasks:
-- offboard_control (pkg: px4_handler)
-  - Subsribes to `/fmu/out/vehicle_local_position`
-  - Publishes to `/fmu/in/trajectory_setpoint`
-- ball_finder (pkg: px4_handler)
-  - Subsribes to `/fmu/out/vehicle_local_position`
-  - Publishes to `/custom_trajectory`
-- object_detector (pkg: vision_package)
-  - Subsribes to `/image`
-  - Publishes to `/detections`
-
-![Jetson architecture](../assets/Figure_4.png)
-
-## Drone
-PX4 + the rtk stuff and the qgroundcontrol
-
-## Miscellaneous
-simulation? ulog?
