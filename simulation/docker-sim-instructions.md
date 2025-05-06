@@ -94,14 +94,14 @@ ros2 run ros_gz_image image_bridge /camera
 8. **In another pane**, run the DDS Agent:
 
 ```bash
-cd find-my-kitten/ros2_ws/src/simulation/Micro-XRCE-DDS-Agent/build/
+cd /find-my-kitten/simulation/Micro-XRCE-DDS-Agent/build/
 MicroXRCEAgent udp4 -p 8888
 ```
 
 9. **In another pane**, launch the PX4 simulation:
 
 ```bash
-cd find-my-kitten/ros2_ws/src/simulation/PX4-Autopilot
+cd /find-my-kitten/simulation/PX4-Autopilot
 make px4_sitl gz_x500_mono_cam_lawn
 ```
 
