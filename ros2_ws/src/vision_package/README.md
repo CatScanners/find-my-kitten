@@ -1,5 +1,6 @@
-# Documentation for vision_package
-Quick and dirty documentation for vision_package so yall maybe can use this too! 
+# vision_package
+Read further information [here](https://catscanners.github.io/find-my-kitten/Development/vision_package.html).
+
 ## Nodes and quick explanations
 
 Nodes included in vision_package (where given ros arguments are the default values):
