@@ -23,7 +23,7 @@ ros2 run video_tools record_video_from_rosbag --ros-args -p image_topic:=/image_
 
 ![Start listening to the image topic](../assets/Figure_5.png)
 
-Window 2: Navigate to the directory containing your rosbag and play it:
+**Window 2**: Navigate to the directory containing your rosbag and play it:
 
 ```
 ros2 bag play .
