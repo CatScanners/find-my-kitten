@@ -9,7 +9,7 @@ nav_order: 2
 There is two ways to start developing this project further. First one is simpler and basically anybody can do it - a simulator. Second one is to build your own drone or use our existing setup, upload your code to it, and run test flights. In this page, both of these options are covered. Moreover, we have been working on a Docker development environment, information about that here as well.
 
 ## Nvidia Jetson initialization
-Please refer to our [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/Jetson%20Orin%20(Devkit)%20setup.html).
+Please refer to our [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html).
 
 ## Simulator quick start (Windows or Linux)
 
@@ -18,7 +18,7 @@ This part guides the user on how to install a simulator, ROS2, find-my-kitten re
 ### Requirements
 - A Windows or a Linux computer, preferably with GPU since the simulation is quite a heavy software.
 - If you are already using a Nvidia Jetson -computer, please refer to the [Nvidia Jetson initialization](#jetson-initialization).
-- Basic knowledge on ROS. Please refer to our [ROS guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/ROS2%20Compiled%20Guide.html).
+- Basic knowledge on ROS2. Please refer to our [ROS2 guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/ROS2%20Compiled%20Guide.html).
 
 ### Setup toolchain
 
@@ -30,7 +30,7 @@ First, let's set up the toolchain:
 `
 git clone https://github.com/CatScanners/find-my-kitten
 `
-5. Make any changes to any of the packages inside **ros2_ws**-folder, or create new ones. Please refer to [ROS2 documentation](https://docs.ros.org/en/foxy/index.html). Shortly: change the code, `colcon build`, and `source install/setup.bash`. 
+5. Make any changes to any of the packages inside **ros2_ws**-folder, or create new ones. Please refer to [ROS2 documentation](https://docs.ros.org/en/humble/index.html). Shortly: change the code, `colcon build`, and `source install/setup.bash`. 
 
 ### Simulation startup 
 1. Open up a **QGroundControl** window.
@@ -62,11 +62,11 @@ This part guides the user on how to setup the actual drone and how to connect a 
 
 ### Setting up the Holybro Pixhawk Jetson Baseboard
 
-To set up the baseboard, please follow this [guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/Baseboard%20setup%20-%20deviations%20from%20tutorial.html) of ours. It has a link to the official guide on setting up the baseboard, and also the deviations from the official material.
-
-[Here](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/Jetson%20Orin%20(Devkit)%20setup.html) is a similar guide about initializing Jetson Orin Devkit, which might be helpful.
+To set up the baseboard, please follow this [guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html) of ours. It has a link to the official guide on setting up the baseboard, and also the deviations from the official material. It also includes steps for initializing a Jetson Orin Nano Devkit, which might be helpful.
 
 ### Setting up the drone
+
+Assembly follows the [HolyBro X500v2 guide](https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2) with Jetson and Pixhawk setup as mentioned above.
 
 ### Setting up
 
@@ -80,4 +80,5 @@ To set up the baseboard, please follow this [guide](https://catscanners.github.i
 8. Fly!
 
 ## Docker setup
-To be coming???
+
+We provide a Dockerfile and instructions for the simulation [here](https://github.com/CatScanners/find-my-kitten/blob/main/simulation/instructions.md). The section in Isaac ROS in the [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html) further covers Docker usage elsewhere.
