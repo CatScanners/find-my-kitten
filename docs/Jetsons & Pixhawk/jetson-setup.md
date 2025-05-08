@@ -1,6 +1,6 @@
 ---
 parent: Jetsons & Pixhawk setup
-title: Baseboard setup - deviations from tutorial
+title: Jetson Orin (Baseboard & Devkit) setup
 ---
 
 # Baseboard setup - deviations from tutorial
