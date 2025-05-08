@@ -23,9 +23,9 @@ This part guides the user on how to install a simulator, ROS2, find-my-kitten re
 ### Setup toolchain
 
 First, let's set up the toolchain:
-1. Install the **PX4 toolchain** as per [PX4 Toolchain Guide](https://docs.px4.io/main/en/dev_setup/dev_env.html). If QGroundControl is not working for you, [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ) guidance on how to proceed with the steps requiring QGroundControl. If there are any problems when installing PX4-Autopilot, refer to the Common problems -section.
+1. Install the **PX4 toolchain** as per [PX4 Toolchain Guide](https://docs.px4.io/main/en/dev_setup/dev_env.html). If QGroundControl is not working for you, [here](https://catscanners.github.io/find-my-kitten/QGroundControl%20&%20Drone/) guidance on how to proceed with the steps requiring QGroundControl. If there are any problems when installing PX4-Autopilot, refer to the Common problems -section.
 2. Install **ROS2** and **Micro-XRCE** as per [PX4 ROS2 Guide](https://docs.px4.io/main/en/ros2/user_guide.html).
-3. Use our [custom simulation](https://www.youtube.com/watch?v=dQw4w9WgXcQ) setup.
+3. Use our [custom simulation](https://github.com/CatScanners/find-my-kitten/blob/main/simulation/instructions.md) setup.
 4. Clone our **find-my-kitten** repository:
 `
 git clone https://github.com/CatScanners/find-my-kitten
