@@ -21,7 +21,11 @@ Note: it appears our A78AE only supports Neon.
 [SVE and Neon coding compared](<https://developer.arm.com/-/media/Arm%20Developer%20Community/PDF/Learn%20the%20Architecture/102131_0100_01_SVE_and_Neon_coding_compared.pdf?revision=feaaf72e-a941-461c-bd92-0d960d0f8615>) (PDF), 
 [Arm Vector Instructions: SVE and Neon](<https://github.com/NVIDIA/grace-cpu-benchmarking-guide/blob/main/src/developer/vectorization.md>)
 
-# Common licensing:
+## Common licensing:
+
+This project is licensed under MIT in order to be as permissive as possible. Note that many Isaac ROS packages are under the compatible Apache 2.0, but no such source code is directly included in this repository.
+
+[MIT License](https://opensource.org/license/mit)
 
 [Apache 2.0 License](<https://pitt.libguides.com/openlicensing/apache2>):
 
