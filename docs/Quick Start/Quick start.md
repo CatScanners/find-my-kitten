@@ -9,7 +9,7 @@ nav_order: 2
 There is two ways to start developing this project further. First one is simpler and basically anybody can do it - a simulator. Second one is to build your own drone or use our existing setup, upload your code to it, and run test flights. In this page, both of these options are covered. Moreover, we have been working on a Docker development environment, information about that here as well.
 
 ## Nvidia Jetson initialization
-Please refer to our [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/Jetson%20Orin%20(Devkit)%20setup.html).
+Please refer to our [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html).
 
 ## Simulator quick start (Windows or Linux)
 
@@ -18,19 +18,19 @@ This part guides the user on how to install a simulator, ROS2, find-my-kitten re
 ### Requirements
 - A Windows or a Linux computer, preferably with GPU since the simulation is quite a heavy software.
 - If you are already using a Nvidia Jetson -computer, please refer to the [Nvidia Jetson initialization](#jetson-initialization).
-- Basic knowledge on ROS. Please refer to our [ROS guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/ROS2%20Compiled%20Guide.html).
+- Basic knowledge on ROS2. Please refer to our [ROS2 guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/ROS2%20Compiled%20Guide.html).
 
 ### Setup toolchain
 
 First, let's set up the toolchain:
-1. Install the **PX4 toolchain** as per [PX4 Toolchain Guide](https://docs.px4.io/main/en/dev_setup/dev_env.html). If QGroundControl is not working for you, [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ) guidance on how to proceed with the steps requiring QGroundControl. If there are any problems when installing PX4-Autopilot, refer to the Common problems -section.
+1. Install the **PX4 toolchain** as per [PX4 Toolchain Guide](https://docs.px4.io/main/en/dev_setup/dev_env.html). If QGroundControl is not working for you, [here](https://catscanners.github.io/find-my-kitten/QGroundControl%20&%20Drone/) guidance on how to proceed with the steps requiring QGroundControl. If there are any problems when installing PX4-Autopilot, refer to the Common problems -section.
 2. Install **ROS2** and **Micro-XRCE** as per [PX4 ROS2 Guide](https://docs.px4.io/main/en/ros2/user_guide.html).
-3. Use our [custom simulation](https://www.youtube.com/watch?v=dQw4w9WgXcQ) setup.
+3. Use our [custom simulation markdown](https://github.com/CatScanners/find-my-kitten/blob/main/simulation/instructions.md) / [custom simulation website documentation](https://catscanners.github.io/find-my-kitten/Simulation%20&%20flight%20analysis/Simulation%20setup.html) setup.
 4. Clone our **find-my-kitten** repository:
 `
 git clone https://github.com/CatScanners/find-my-kitten
 `
-5. Make any changes to any of the packages inside **ros2_ws**-folder, or create new ones. Please refer to [ROS2 documentation](https://docs.ros.org/en/foxy/index.html). Shortly: change the code, `colcon build`, and `source install/setup.bash`. 
+5. Make any changes to any of the packages inside **ros2_ws**-folder, or create new ones. Please refer to [ROS2 documentation](https://docs.ros.org/en/humble/index.html). Shortly: change the code, `colcon build`, and `source install/setup.bash`. 
 
 ### Simulation startup 
 1. Open up a **QGroundControl** window.
@@ -62,22 +62,26 @@ This part guides the user on how to setup the actual drone and how to connect a 
 
 ### Setting up the Holybro Pixhawk Jetson Baseboard
 
-To set up the baseboard, please follow this [guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/Baseboard%20setup%20-%20deviations%20from%20tutorial.html) of ours. It has a link to the official guide on setting up the baseboard, and also the deviations from the official material.
-
-[Here](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/Jetson%20Orin%20(Devkit)%20setup.html) is a similar guide about initializing Jetson Orin Devkit, which might be helpful.
+To set up the baseboard, please follow this [guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html) of ours. It has a link to the official guide on setting up the baseboard, and also the deviations from the official material. It also includes steps for initializing a Jetson Orin Nano Devkit, which might be helpful.
 
 ### Setting up the drone
 
-### Setting up
+Assembly follows the [HolyBro X500v2 guide](https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2) with Jetson and Pixhawk setup as mentioned above.
 
-1. Drone?
-2. Jetson basebord initialization
-3. Prepare for flight? :D
-4. Find flight test site? :D
-5. Apply for sum permissions? :D
-6. Get certificate to fly?
-7. Get a yellow west?
-8. Fly!
+### Fly in real life
+
+1. Build the drone, refer to the [Setting up the drone](#setting-up-the-drone).
+2. Set up the Holybro Pixhawk Jetson Baseboard that is on the drone with our [guide](#setting-up-the-holybro-pixhawk-jetson-baseboard)
+3. Do all the real-life overhead related to flying a drone:
+- Get relevant permissions to fly.
+- Setup radio connection and buy a controller.
+- Find a test site.
+- Ensure a good test day weather.
+- Most of this stuff is probably taught at a drone flying certificate school.
+- Go through the [flight checklist](../assets/Flight-checklist.pdf) provided by our project.
+- Use our [flight plan template](../assets/MissionPlanTemplate.docx) to prepare for the flight.
+4. Arm, takeoff and fly with position/altitude mode in QGroundControl with your controller. Then, switch to offboard mode and run the same scripts as with [actions startup](#actions-startup).
 
 ## Docker setup
-To be coming???
+
+We provide a Dockerfile and instructions for the simulation [here](https://github.com/CatScanners/find-my-kitten/blob/main/simulation/instructions.md). The section in Isaac ROS in the [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html) further covers Docker usage elsewhere.
