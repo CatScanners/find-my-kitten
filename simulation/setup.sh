@@ -16,7 +16,7 @@ bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
 
 # Build
 cd PX4-Autopilot/
-make px4_sitl
+make -j$(nproc) px4_sitl
 # Return to simulation directory
 cd ..
 
@@ -39,29 +39,6 @@ sudo ldconfig /usr/local/lib/
 # Return to simulation directory
 cd ../../
 
-
-# -------------------------------
-# ROS 2 PX4 Workspace Setup
-# -------------------------------
-echo "Setting up ROS 2 PX4 workspace..."
-
-# Ensure colcon workspace directory exists
-mkdir -p ws_offboard_control/src/
-cd ws_offboard_control/src/
-
-# Pull the latest updates for px4_msgs
-cd px4_msgs
-git pull origin main
-cd ..
-
-# Pull the latest updates for px4_ros_com
-cd px4_ros_com
-git pull origin main
-cd ..
-
-# Build the workspace.
-cd ../
-
 # Ensure that ROS 2 Humble is installed.
 if [ ! -f "/opt/ros/humble/setup.bash" ]; then
     echo "Error: ROS 2 Humble is not installed. Please install it before running this script."
@@ -69,7 +46,6 @@ if [ ! -f "/opt/ros/humble/setup.bash" ]; then
 fi
 
 source /opt/ros/humble/setup.bash
-colcon build
-source install/local_setup.bash
+source install/setup.bash
 
 echo "Setup completed successfully!"
