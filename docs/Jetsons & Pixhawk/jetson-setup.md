@@ -194,6 +194,8 @@ The Docker image can be extended by creating more Dockerfiles and specifying the
 cd ${ISAAC_ROS_WS}/src/isaac_ros_common && ./scripts/run_dev.sh -i "ros2_humble.catscanners_ws.zed.yolo"
 ```
 
+Note that the user (admin) is only created at the [entrypoint](https://github.com/CatScanners/isaac_ros_common/blob/release-3.2/docker/scripts/workspace-entrypoint.sh) & everything created in the Dockerfiles is owned by root by default so you either have to configure groups in the dockerfiles or `chown -hR admin:admin <dir>` at the entrypoint (can be done with entrypoint additions)
+
 
 # SSH server
 Applicable to:
