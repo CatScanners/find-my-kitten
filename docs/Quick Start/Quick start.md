@@ -25,7 +25,7 @@ This part guides the user on how to install a simulator, ROS2, find-my-kitten re
 First, let's set up the toolchain:
 1. Install the **PX4 toolchain** as per [PX4 Toolchain Guide](https://docs.px4.io/main/en/dev_setup/dev_env.html). If QGroundControl is not working for you, [here](https://catscanners.github.io/find-my-kitten/QGroundControl%20&%20Drone/) guidance on how to proceed with the steps requiring QGroundControl. If there are any problems when installing PX4-Autopilot, refer to the Common problems -section.
 2. Install **ROS2** and **Micro-XRCE** as per [PX4 ROS2 Guide](https://docs.px4.io/main/en/ros2/user_guide.html).
-3. Use our [custom simulation](https://github.com/CatScanners/find-my-kitten/blob/main/simulation/instructions.md) setup.
+3. Use our [custom simulation markdown](https://github.com/CatScanners/find-my-kitten/blob/main/simulation/instructions.md) / [custom simulation website documentation](https://catscanners.github.io/find-my-kitten/Simulation%20&%20flight%20analysis/Simulation%20setup.html) setup.
 4. Clone our **find-my-kitten** repository:
 `
 git clone https://github.com/CatScanners/find-my-kitten
@@ -68,16 +68,19 @@ To set up the baseboard, please follow this [guide](https://catscanners.github.i
 
 Assembly follows the [HolyBro X500v2 guide](https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2) with Jetson and Pixhawk setup as mentioned above.
 
-### Setting up
+### Fly in real life
 
-1. Drone?
-2. Jetson basebord initialization
-3. Prepare for flight? :D
-4. Find flight test site? :D
-5. Apply for sum permissions? :D
-6. Get certificate to fly?
-7. Get a yellow west?
-8. Fly!
+1. Build the drone, refer to the [Setting up the drone](#setting-up-the-drone).
+2. Set up the Holybro Pixhawk Jetson Baseboard that is on the drone with our [guide](#setting-up-the-holybro-pixhawk-jetson-baseboard)
+3. Do all the real-life overhead related to flying a drone:
+- Get relevant permissions to fly.
+- Setup radio connection and buy a controller.
+- Find a test site.
+- Ensure a good test day weather.
+- Most of this stuff is probably taught at a drone flying certificate school.
+- Go through the [flight checklist](../assets/Flight-checklist.pdf) provided by our project.
+- Use our [flight plan template](../assets/MissionPlanTemplate.docx) to prepare for the flight.
+4. Arm, takeoff and fly with position/altitude mode in QGroundControl with your controller. Then, switch to offboard mode and run the same scripts as with [actions startup](#actions-startup).
 
 ## Docker setup
 
