@@ -8,9 +8,9 @@ title: Custom simulation setup
 
 **Note:** It is assumed that **QGroundControl** is installed. This guide uses version **v4.4.2**.
 
-## Clone the Repository
+## Clone 'final-demo' branch from main repository
 ```bash
-git clone --recursive https://github.com/CatScanners/find-my-kitten.git
+git clone -b final-demo --single-branch --recursive git@github.com:CatScanners/find-my-kitten.git
 ```
 
 ---
