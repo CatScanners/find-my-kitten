@@ -46,7 +46,7 @@ class Maneuver(Node):
         self.goto_rescue = False
         self.rotate_to_zero = False
         self.is_gone_down_already = False
-        self.NED = True
+        self.NED = False # True
         
 
     def vehicle_local_position_callback(self, msg):
@@ -177,7 +177,7 @@ class Maneuver(Node):
 
         return
 
-        # NED coordinate system.
+    # NED coordinate system.
     def go_on_top_2(self):
         rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
 
