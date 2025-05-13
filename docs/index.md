@@ -3,6 +3,8 @@ title: Introduction
 nav_order: 1
 ---
 
+# [Video Demo](./assets/20250505_193805.mp4)
+
 # Find my kitten, AI!
 
 This site serves as documentation for the Find My Kitten project, available at <https://github.com/catscanners/find-my-kitten>. The code is under multiple repositories under the CatScanners organization.
