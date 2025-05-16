@@ -40,10 +40,18 @@ git clone https://github.com/CatScanners/find-my-kitten
 - To start the simulation camera bridge: `ros2 run ros_gz_image image_bridge /camera`.
 4. From QGroundControl, **arm** and **takeoff**. If you don't have QGC, please refer to the Common problems -section.
 
+### Machine vision startup
+1. IMPORTANT. On drone startup make sure that all connected cameras are visible. This can be done with command `ls /dev/ | grep video`. If you have only the arducam globalshutter camera connected, you should only see /dev/Video0. 
+If you've connected the Zed depth camera, you should see three cameras: /dev/Video0 ...Video1 and ...Video2 (Depth camera has two video feeds). If you only see two or no cameras, powercycle the drone. The arducam uses custom drivers which if not loaded properly means it will not show up nor work.  
+2. Build and source our ros2 packages. Otherwise `ros2 run vision_package ...` will result in package not found. To build run `colcon build` and after building run `source install/setup.bash`. This should be done inside folders `ros2_ws` or `ros2_ws/src` to build all packages. 
+3. Run the camera publishing node. For a regular USB / CSI camera use `ros2 run vision_package image_publisher` and if you are using an arducam globalshutter camera run `ros2 run vision_package arducam_publisher.py`. These fill publish video frames to a ros2 topic called image_topic. You can check if the node is working and topic is visible with `ros2 topic list`.
+4. Run the object detection node. Command compatible with offboard_control is `ros2 run vision_package object_detector.py --ros-args -p input_topic_name:="camera" -p output_topic_name:="detections"`.
+5. To preview the image stream you can run `ros2 run vision_package image_subscriber` node. This brings up an window which displays the video feed from topic `image_topic`.
+
 ### Actions startup
 1. Start a node receiving offboard messages and then sending those periodically to PX4 simulator. `ros2 run px4_handler offboard_control`. By default just sends current coordinates.
 2. Turn on offboard node from QGroundControl. Now the drone is flying with our ROS2 messges, currently just staying in its current position. Again, if you don't have QGC, please refer to the Common problems -section.
-3. Star vision package to detect the ball.
+3. If you haven't already, star vision package to detect the ball.
 `ros2 run vision_package object_detector.py --ros-args -p input_topic_name:="camera" -p output_topic_name:="detections"`
 4. a - Start ballfinder node to start searching for the ball:
 `ros2 run px4_handler ball_finder.py`, or b - Start predefined motions with two speeds: `ros2 run px4_handler hard_motions.py`.
