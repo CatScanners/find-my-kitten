@@ -46,6 +46,5 @@ if [ ! -f "/opt/ros/humble/setup.bash" ]; then
 fi
 
 source /opt/ros/humble/setup.bash
-source install/setup.bash
 
 echo "Setup completed successfully!"
