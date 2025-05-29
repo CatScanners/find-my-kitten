@@ -25,7 +25,7 @@ Shortly explained the directory structure:
 | `/`                                 | Root of the project. Contains the main README, license, and configuration files. |
 | `/ros2_ws/`                         | Contains our ROS2 packages. Run all ROS-commands here (then build will appear in this directory).                                              
 | `/ros2_ws/src/px4_handler/`         | px4_handler-package for motions                                                  |
-| `/ros2_ws/src/px4_handler/`         | vision_package-package for camera and object detection                                              |
+| `/ros2_ws/src/vision_package/`         | vision_package-package for camera and object detection                                              |
 | `/ros2_ws/src/launch`                          | Some ROS2 launch files, have not really used.                              |
 | `/simulation`                           | Some files for the simulation, refer to [this](https://catscanners.github.io/find-my-kitten/Simulation%20&%20flight%20analysis/Simulation%20setup.html)                                                    |
 | `/docs/`                            | Documentation files.                                                             |
