@@ -11,7 +11,7 @@ There is two ways to start developing this project further. First one is simpler
 ## Nvidia Jetson initialization
 Please refer to our [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html).
 
-## Simulator quick start (Windows or Linux)
+## ---- Simulator quick start (Windows or Linux) ----
 
 This part guides the user on how to install a simulator, ROS2, find-my-kitten repository, QGroundControl, and run our main nodes on the system of consisting this software.
 
@@ -50,7 +50,7 @@ git clone https://github.com/CatScanners/find-my-kitten
 5. a - With default code, the drone should search an area of 8m x 12m and stop and go a bit down when it sees a **sports ball**, or b - Does a few predefined motions in two different speeds.
 
 
-## Real life quick start (Jetson baseboard + PX6 + drone)
+## ---- Real life quick start (Jetson baseboard + PX6 + drone) ----
 
 This part guides the user on how to setup the actual drone and how to connect a Holybro Pixhawk Jetson Baseboard into it, the installation of all the relevant software. If you already have our pre-built drone with the baseboard, feel free to skip until the "Running the software part". This part also includes information about necessary permissions and who is actually allowed to fly the drone in Finland.
 
@@ -73,14 +73,8 @@ Assembly follows the [HolyBro X500v2 guide](https://docs.holybro.com/drone-devel
 1. Build the drone, refer to the [Setting up the drone](#setting-up-the-drone).
 2. Set up the Holybro Pixhawk Jetson Baseboard that is on the drone with our [guide](#setting-up-the-holybro-pixhawk-jetson-baseboard)
 3. Do all the real-life overhead related to flying a drone:
-- Get relevant permissions to fly.
-- Setup radio connection and buy a controller.
-- Find a test site.
-- Ensure a good test day weather.
-- Most of this stuff is probably taught at a drone flying certificate school.
-- Go through the [flight checklist](../assets/Flight-checklist.pdf) provided by our project.
-- Use our [flight plan template](../assets/MissionPlanTemplate.docx) to prepare for the flight.
-4. Arm, takeoff and fly with position/altitude mode in QGroundControl with your controller. Then, switch to offboard mode and run the same scripts as with [actions startup](#actions-startup).
+- Refer to [this comprehensive guide](https://docs.google.com/document/d/1DUjyzkbAegfWW_M4UNErEH7ssDJYN7t6NvSwmUnFjBE/edit?pli=1&tab=t.0#heading=h.qy87xqej0dgz).
+4. Arm, takeoff and fly with position/altitude mode in QGroundControl with your controller. Then, switch to offboard mode and run the same scripts as with [machine vision](#machine vision) and [actions startup](#actions-startup).
 
 ## Docker setup
 
