@@ -4,6 +4,7 @@ This repository contains the ROS2 packages and the documentation website files f
 
 Documentation website here: https://catscanners.github.io/find-my-kitten/
 
+## Very quick start
 You have our drone and have [set up our toolchain](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Setup%20toolchain) on the drone? What should you do to get the drone running?
 - Pull this repository and ``cd ros2_ws``
 - The run operation can be divided into two parts: **drone pilot part** and **ROS2 packages part**.
@@ -14,4 +15,17 @@ You have our drone and have [set up our toolchain](https://catscanners.github.io
       - **vision_package**: get the camera input and enable object detection by referring to [Machine vision guide](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Machine%20vision%20startup)
       - **px4_handler**: once the drone is flying and offboard-mode is enabled, refer to [Actions startup](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Actions%20startup)
 - Want to make any changes? Make your changes on the packages in ``ros2_ws``, ``colcon build --packages-select <your-package>``, ``source install/setup.bash``.
-`
+
+## Directory structure
+
+Refer to [architecture](https://catscanners.github.io/find-my-kitten/assets/RealLife-Architecture.png) for the general architecture.
+Shortly explained the directory structure: 
+| Path                                | Description                                                                      |
+| ----------------------------------- | -------------------------------------------------------------------------------- |
+| `/`                                 | Root of the project. Contains the main README, license, and configuration files. |
+| `/ros2_ws/`                         | Contains our ROS2 packages. Run all ROS-commands here (then build will appear in this directory).                                              
+| `/ros2_ws/src/px4_handler/`         | px4_handler-package for motions                                                  |
+| `/ros2_ws/src/px4_handler/`         | vision_package-package for camera and object detection                                              |
+| `/ros2_ws/src/launch`                          | Some ROS2 launch files, have not really used.                              |
+| `/simulation`                           | Some files for the simulation, refer to [this](https://catscanners.github.io/find-my-kitten/Simulation%20&%20flight%20analysis/Simulation%20setup.html)                                                    |
+| `/docs/`                            | Documentation files.                                                             |
