@@ -26,10 +26,10 @@ class Maneuver(Node):
         
         # Constants.
         self.BREAK_TIME = 5.0
-        self.IMAGE_HEIGHT = 720 # CHANGE MANUALLY DEPENDING ON CAMERA
-        self.IMAGE_WIDTH = 1280
+        self.IMAGE_HEIGHT = 1080 # CHANGE MANUALLY DEPENDING ON CAMERA
+        self.IMAGE_WIDTH = 1920
         self.RESCUE_MODE = False # True
-        self.MOVE_SPEED = 20.0 # Drone max move speed
+        self.MOVE_SPEED = 18.0 # Drone max move speed
         self.STEP_SIZE=0.05
         self.TOLERANCE=0.5
         
@@ -60,7 +60,7 @@ class Maneuver(Node):
             # Boilerplate code for handling ball detection.
             for detection in msg.detections:
                 for hypothesis in detection.results:
-                    if hypothesis.hypothesis.class_id == "32.0" or hypothesis.hypothesis.class_id == "9.0":  # Check for class_id 32 (ball) and 9 (frisbee)
+                    if hypothesis.hypothesis.class_id == "99.0" or hypothesis.hypothesis.class_id == "0" or hypothesis.hypothesis.class_id == "0.0":  # Check for class_id 32 (ball) and 9 (frisbee)
                         self.ball_center_x = detection.bbox.center.position.x
                         self.ball_center_y = detection.bbox.center.position.y
                         if not self.something_detected:
@@ -117,7 +117,7 @@ class Maneuver(Node):
                         x, y, z = self.getxyz()
                         self.is_gone_down_already = True
                         self.get_logger().info("Lets go down.")
-                        self.move_to_waypoint([x, y, z + 2.00], yaw=self.current_yaw, stop_at_middle=False)
+                        self.move_to_waypoint([x, y, z + 4.00], yaw=self.current_yaw, stop_at_middle=False)
                         time.sleep(10)
                     return
 
@@ -207,7 +207,7 @@ class Maneuver(Node):
         x, y, z = self.getxyz()
         current_coords = np.array([x, y, z])
         target_location = current_coords + rotated_direction_vector
-        self.move_to_waypoint(target_location, yaw=self.current_yaw, stop_at_middle=True, go_down=True)
+        self.move_to_waypoint(target_location, yaw=self.current_yaw, stop_at_middle=False, go_down=False)
 
         return
 
