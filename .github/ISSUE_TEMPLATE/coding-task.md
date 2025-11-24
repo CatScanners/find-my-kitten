@@ -7,6 +7,10 @@ assignees: ''
 
 ---
 
+# Description
+
+*Placeholder: description goes here*
+
 # Definition of Ready
 
 - [ ] **Clear Description**: The task has a concise title and description (1-2 sentences).
