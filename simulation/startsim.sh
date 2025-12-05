@@ -4,7 +4,7 @@
 tmux new-session -d -s sim
 
 # Pane 0: QGroundControl
-tmux send-keys -t sim:0 'cd /find-my-kitten && ./QGroundControl.AppImage' C-m
+tmux send-keys -t sim:0 'cd /find-my-kitten && ./QGroundControl-x86_64.AppImage' C-m
 
 # Pane 1: ROS-GZ image bridge
 tmux split-window -h -t sim

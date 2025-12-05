@@ -4,3 +4,4 @@ ros
 install
 log
 mav.*
+px4_msgs

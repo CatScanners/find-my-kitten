@@ -15,7 +15,8 @@ RUN  apt-get update && apt-get install -y \
     python3-venv \
     build-essential \
     locales \
-    tzdata
+    tzdata \
+    wget
 
 # Make sure locale is UTF-8
 RUN locale-gen en_US en_US.UTF-8 && \
@@ -48,7 +49,7 @@ RUN /bin/bash -c "source ~/.bashrc"
 COPY simulation/ /find-my-kitten/simulation/
 COPY .git/ /find-my-kitten/.git
 COPY .gitmodules /find-my-kitten/simulation/.gitmodules
-WORKDIR find-my-kitten/simulation
+WORKDIR /find-my-kitten/simulation
 
 RUN git submodule update --init --recursive
 
@@ -82,27 +83,31 @@ RUN sudo apt-get install -y ros-humble-ros-gzharmonic
 # Install tmux
 RUN apt install -y tmux
 
-# Install QGroundControl
-WORKDIR /find-my-kitten
-RUN useradd -ms /bin/bash user && \
-    echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-RUN chown -R user:user /find-my-kitten
-USER user
-RUN pip3 install --user PySide2
-RUN sudo usermod -a -G dialout user
-RUN sudo apt-get remove modemmanager -y
-RUN sudo apt install -y \
-	 gstreamer1.0-plugins-bad \
-	 gstreamer1.0-libav \
-	 gstreamer1.0-gl \
-	 libfuse2 \
-	 fuse \
-	 libxcb-xinerama0 \
-	 libxkbcommon-x11-0 \
-	 libxcb-cursor-dev \
-	 libpulse-dev
-RUN sudo wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl.AppImage
-RUN sudo chmod +x ./QGroundControl.AppImage
+
+
+# # Install QGroundControl
+# WORKDIR /find-my-kitten
+# RUN useradd -ms /bin/bash user && \
+#     echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# RUN chown -R user:user /find-my-kitten
+# USER user
+# RUN pip3 install --user PySide2
+# RUN sudo usermod -a -G dialout user
+# RUN sudo apt-get remove modemmanager -y
+# RUN sudo apt install -y \
+# 	 gstreamer1.0-plugins-bad \
+# 	 gstreamer1.0-libav \
+# 	 gstreamer1.0-gl \
+# 	 libfuse2 \
+# 	 fuse \
+# 	 libxcb-xinerama0 \
+# 	 libxkbcommon-x11-0 \
+# 	 libxcb-cursor-dev \
+# 	 libpulse-dev
+# WORKDIR /
+# RUN sudo wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl-x86_64.AppImage
+# RUN
+# RUN sudo chmod +x ./QGroundControl.AppImage-x86_64.AppImage
 
 # Bash script for simulation setup (opens and runs all necessary scripts)
 COPY ./simulation/startsim.sh /find-my-kitten/simulation/startsim.sh

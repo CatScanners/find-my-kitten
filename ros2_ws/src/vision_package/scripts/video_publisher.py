@@ -27,6 +27,7 @@ class ImagePublisher(Node):
 
         # Create a publisher for the Image message
         self.publisher_ = self.create_publisher(Image, self.topic_name, 10)
+        self.gpu_publisher_ = self.create_publisher(Image, self.topic_name, 10)
 
         # Set up a timer to publish images/frames periodically
         self.timer = self.create_timer(self.pub_time, self.timer_callback)  # Adjust timer for video frame rate
