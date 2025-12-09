@@ -7,6 +7,6 @@
 [submodule "simulation/PX4_support/src/px4_ros_com"]
 	path = simulation/PX4_support/src/px4_ros_com
 	url = https://github.com/PX4/px4_ros_com.git
-[submodule "simulation/PX4_support/src/px4_msgs"]
-	path = simulation/PX4_support/src/px4_msgs
+[submodule "ros2_ws/src/px4_msgs"]
+	path = ros2_ws/src/px4_msgs
 	url = https://github.com/PX4/px4_msgs.git
