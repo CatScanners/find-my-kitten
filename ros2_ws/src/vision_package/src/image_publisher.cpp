@@ -4,9 +4,11 @@
 #include <std_msgs/msg/header.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/image_encodings.hpp>
-#include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.hpp>
 #include <string>
+
+// Remove if we move to Jazzy
+#include "cv_bridge_compat.hpp"
 
 class ImagePublisher: public rclcpp::Node
 {
