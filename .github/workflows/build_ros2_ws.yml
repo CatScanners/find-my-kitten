@@ -1,0 +1,42 @@
+name: Build ros2_ws
+on:
+  pull_request:
+    paths:
+      - ros2_ws/**
+      - .github/workflows/build_ros2_ws.yml
+  push:
+    branches:
+      - main
+    paths:
+      - ros2_ws/**
+      - .github/workflows/build_ros2_ws.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build_ros2_ws:
+    runs-on: ubuntu-22.04
+    container: ros:humble-ros-base-jammy
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ros-humble-image-tools ros-humble-cv-bridge ros-humble-image-transport ros-humble-vision-msgs
+
+      - name: init px4_msgs
+        run: |
+          # Needed to not get `detected dubious ownership in repository` caused
+          # by using a different container
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+          git submodule update --init ros2_ws/src/px4_msgs
+
+      - name: build ros2_ws
+        run: |
+          cd ros2_ws
+          . /opt/ros/humble/setup.sh
+          colcon build
