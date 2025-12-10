@@ -14,11 +14,12 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 jobs:
   build_ros2_ws:
     runs-on: ubuntu-22.04
-    container: ros:humble-ros-base-jammy
+    container: ghcr.io/catscanners/ros-humble-ci:humble
     steps:
       - uses: actions/checkout@v6
 
@@ -35,12 +36,6 @@ jobs:
         with:
           path: ros2_ws/build/px4_msgs
           key: ${{ runner.os }}-ros-humble-px4_msgs-${{ hashFiles('ros2_ws/src/px4_msgs/**') }}
-
-      - name: install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            ros-humble-image-tools ros-humble-cv-bridge ros-humble-image-transport ros-humble-vision-msgs
 
       - name: build ros2_ws
         run: |
