@@ -22,18 +22,25 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            ros-humble-image-tools ros-humble-cv-bridge ros-humble-image-transport ros-humble-vision-msgs
-
       - name: init px4_msgs
         run: |
           # Needed to not get `detected dubious ownership in repository` caused
           # by using a different container
           git config --global --add safe.directory $GITHUB_WORKSPACE
           git submodule update --init ros2_ws/src/px4_msgs
+
+      - name: cache px4_msgs build
+        id: cache-px4-msgs
+        uses: actions/cache@v4
+        with:
+          path: ros2_ws/build/px4_msgs
+          key: ${{ runner.os }}-ros-humble-px4_msgs-${{ hashFiles('ros2_ws/src/px4_msgs/**') }}
+
+      - name: install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ros-humble-image-tools ros-humble-cv-bridge ros-humble-image-transport ros-humble-vision-msgs
 
       - name: build ros2_ws
         run: |
