@@ -1,21 +1,31 @@
-# Use the official Ubuntu 22.04 image as the base
-FROM ubuntu:22.04
+FROM ros:humble-ros-base-jammy
+SHELL ["/bin/bash", "-c"]
 
 # Avoid prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update apt-get and install basic dependencies
-RUN  apt-get update && apt-get install -y \
-    sudo \
-    curl \
-    gnupg2 \
-    lsb-release \
-    ca-certificates \
-    python3-pip \
-    python3-venv \
-    build-essential \
+# Basic dependencies
+RUN apt-get update && apt-get -qq install -y --no-install-recommends \
     locales \
-    tzdata
+    wget \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-libav \
+    gstreamer1.0-gl \
+    libfuse2 \
+    fuse \
+    libxcb-xinerama0 \
+    libxkbcommon-x11-0 \
+    libxcb-cursor-dev \
+    libpulse-dev \
+    python3-pip \
+    ros-humble-ros-gz \
+    tmux && \
+    rm -rf /var/lib/apt/lists/
+
+RUN wget -q \
+    https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl-x86_64.AppImage \
+    -O /usr/local/bin/QGroundControl && \
+    chmod +x /usr/local/bin/QGroundControl
 
 # Make sure locale is UTF-8
 RUN locale-gen en_US en_US.UTF-8 && \
@@ -26,86 +36,51 @@ RUN locale-gen en_US en_US.UTF-8 && \
 RUN echo "Europe/Helsinki" > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata
 
-# Install ROS 2 Humble
-RUN sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
-
-# Install apt ros & depedencies
-RUN sudo apt-get update && sudo apt-get install -y \
-   ros-humble-ros-base \
-   ros-dev-tools \
-   ros-humble-image-transport \
-   python3-opencv \
-   ros-humble-ament-cmake \
-   ros-humble-ament-cmake-python \
-   libopencv-dev \
-   ros-humble-cv-bridge
-
-# Set up ROS 2 environment
-RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-RUN /bin/bash -c "source ~/.bashrc"
-
-COPY simulation/ /find-my-kitten/simulation/
-COPY .git/ /find-my-kitten/.git
-COPY .gitmodules /find-my-kitten/simulation/.gitmodules
-WORKDIR find-my-kitten/simulation
-
-RUN git submodule update --init --recursive
-
-RUN mkdir -p Micro-XRCE-DDS-Agent/build
-RUN mkdir -p PX4_support/src/
-
-RUN bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
-
-WORKDIR /find-my-kitten/simulation/PX4-Autopilot/
-RUN make px4_sitl
-
-WORKDIR /find-my-kitten/simulation/Micro-XRCE-DDS-Agent/build
-RUN cmake ..
-RUN make -j$(nproc)
-RUN make install
-RUN ldconfig /usr/local/lib/
-
-WORKDIR /find-my-kitten/simulation/PX4_support/src/px4_msgs
-RUN git pull origin main
-
-WORKDIR /find-my-kitten/simulation/PX4_support/src/px4_ros_com
-RUN git pull origin main
-
-WORKDIR /find-my-kitten/simulation/PX4_support/
-RUN bash -c "source /opt/ros/humble/setup.bash && colcon build"
-RUN echo "source find-my-kitten/simulation/ws_offboard_control/install/local_setup.bash" >> ~/.bashrc
-
-# Install ROS 2 Gazebo bridge (ros_gz) for image transport between Gazebo and ROS 2
-RUN sudo apt-get install -y ros-humble-ros-gzharmonic
-
-# Install tmux
-RUN apt install -y tmux
-
-# Install QGroundControl
-WORKDIR /find-my-kitten
 RUN useradd -ms /bin/bash user && \
-    echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-RUN chown -R user:user /find-my-kitten
+    echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    usermod -aG dialout user
+
 USER user
-RUN pip3 install --user PySide2
-RUN sudo usermod -a -G dialout user
-RUN sudo apt-get remove modemmanager -y
-RUN sudo apt install -y \
-	 gstreamer1.0-plugins-bad \
-	 gstreamer1.0-libav \
-	 gstreamer1.0-gl \
-	 libfuse2 \
-	 fuse \
-	 libxcb-xinerama0 \
-	 libxkbcommon-x11-0 \
-	 libxcb-cursor-dev \
-	 libpulse-dev
-RUN sudo wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl.AppImage
-RUN sudo chmod +x ./QGroundControl.AppImage
+ENV USER=user
+
+COPY --chown=user:user simulation/PX4-Autopilot/ /find-my-kitten/simulation/PX4-Autopilot/
+WORKDIR /find-my-kitten/simulation/
+
+RUN bash ./PX4-Autopilot/Tools/setup/ubuntu.sh && \
+    sudo rm -rf /var/lib/apt/lists/
+
+# PX4-Autopilot needs these files to build
+COPY --chown=user:user \
+    .git/modules/simulation/PX4-Autopilot/ \
+    /find-my-kitten/.git/modules/simulation/PX4-Autopilot/
+WORKDIR /find-my-kitten/simulation/PX4-Autopilot/
+
+# After building first time, only the HEAD and index files are required,
+# remove everything else to save space
+RUN make -j$(nproc) px4_sitl && \
+    find /find-my-kitten/.git/modules/simulation/PX4-Autopilot/* \
+        -maxdepth 0 ! -name "HEAD" ! -name "index" -exec rm -rf {} +
+
+ENV GZ_SIM_RESOURCE_PATH="/find-my-kitten/simulation/PX4-Autopilot/Tools/simulation/gz/models:/find-my-kitten/simulation/PX4-Autopilot/Tools/simulation/gz/worlds"
+
+COPY --chown=user:user simulation/Micro-XRCE-DDS-Agent/ /find-my-kitten/simulation/Micro-XRCE-DDS-Agent/
+WORKDIR /find-my-kitten/simulation/Micro-XRCE-DDS-Agent
+RUN cmake . -B build && \
+    make -C build -j $(nproc) && \
+    sudo make -C build install && \
+    rm -rf /find-my-kitten/simulation/Micro-XRCE-DDS-Agent/ && \
+    sudo ldconfig /usr/local/lib/
+
+# COPY --chown=user:user simulation/PX4_support/ /find-my-kitten/simulation/PX4_support/
+# COPY --chown=user:user ros2_ws/src/px4_msgs/ /find-my-kitten/ros2_ws/src/px4_msgs/
+# WORKDIR /find-my-kitten/simulation/PX4_support/
+# RUN source /opt/ros/humble/setup.bash && colcon build
+
+# RUN pip3 install --user PySide2
+RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
 # Bash script for simulation setup (opens and runs all necessary scripts)
-COPY ./simulation/startsim.sh /find-my-kitten/simulation/startsim.sh
-RUN sudo chmod +x /find-my-kitten/simulation/startsim.sh
+COPY --chown=user:user ./simulation/startsim.sh /find-my-kitten/simulation/startsim.sh
+RUN chmod +x /find-my-kitten/simulation/startsim.sh
 
-CMD ["/bin/bash"]
+WORKDIR /find-my-kitten/simulation
