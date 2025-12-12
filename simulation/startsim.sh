@@ -4,7 +4,7 @@
 tmux new-session -d -s sim
 
 # Pane 0: QGroundControl
-tmux send-keys -t sim:0 'cd /find-my-kitten && ./QGroundControl.AppImage' C-m
+tmux send-keys -t sim:0 'QGroundControl' C-m
 
 # Pane 1: ROS-GZ image bridge
 tmux split-window -h -t sim
@@ -12,7 +12,7 @@ tmux send-keys -t sim:0.1 'source /opt/ros/humble/setup.bash && ros2 run ros_gz_
 
 # Pane 2: MicroXRCEAgent
 tmux split-window -v -t sim:0.1
-tmux send-keys -t sim:0.2 'cd /find-my-kitten/simulation/Micro-XRCE-DDS-Agent/build/ && MicroXRCEAgent udp4 -p 8888' C-m
+tmux send-keys -t sim:0.2 'MicroXRCEAgent udp4 -p 8888' C-m
 
 # Pane 3: PX4 simulation
 tmux select-pane -t sim:0.0
