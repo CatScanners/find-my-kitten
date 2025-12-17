@@ -60,17 +60,19 @@ class Maneuver(Node):
             # Boilerplate code for handling ball detection.
             for detection in msg.detections:
                 for hypothesis in detection.results:
-                    if hypothesis.hypothesis.class_id == "99.0" or hypothesis.hypothesis.class_id == "0" or hypothesis.hypothesis.class_id == "0.0":  # Check for class_id 32 (ball) and 9 (frisbee)
+                    # Check for class_id 0 (person), 0.0 was leftover from last year but don't mess with success
+                    if hypothesis.hypothesis.class_id == "0.0":  
                         self.ball_center_x = detection.bbox.center.position.x
                         self.ball_center_y = detection.bbox.center.position.y
                         if not self.something_detected:
-                            self.get_logger().info("Object with class_id 32 detected!")
+                            self.get_logger().info(f"Object with class_id {hypothesis.hypothesis.class_id}  detected!")
                             self.something_detected = True
-                self.ball_center_x = detection.bbox.center.position.x
-                self.ball_center_y = detection.bbox.center.position.y
-                if not self.something_detected:
-                    self.get_logger().info("Object with class_id 32 detected!")
-                    self.something_detected = True
+                # This feels like it would break everything...?
+                #self.ball_center_x = detection.bbox.center.position.x
+                #self.ball_center_y = detection.bbox.center.position.y
+                #if not self.something_detected:
+                #    self.get_logger().info(f"Object with class_id 0 detected!")
+                #    self.something_detected = True
 
                 return
         except Exception:
