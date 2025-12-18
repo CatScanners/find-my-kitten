@@ -23,7 +23,8 @@ class Maneuver(Node):
         self.vehicle_local_position_subscriber = self.create_subscription(VehicleLocalPosition, '/fmu/out/vehicle_local_position', self.vehicle_local_position_callback, qos_profile)
         self.trajectory_pub = self.create_publisher(TrajectorySetpoint, '/custom_trajectory', 10)
         self.detection_subscriber = self.create_subscription(Detection2DArray, '/detections', self.ball_detection_callback, 10)
-        
+        self.vehicle_command_publisher = self.create_publisher(VehicleCommand, '/fmu/in/vehicle_command', qos_profile)
+
         # Constants.
         self.BREAK_TIME = 5.0
         self.IMAGE_HEIGHT = 720 # CHANGE MANUALLY DEPENDING ON CAMERA
@@ -48,6 +49,24 @@ class Maneuver(Node):
         self.is_gone_down_already = False
         self.NED = False # True
         
+    def publish_vehicle_command(self, command, **params) -> None:
+        """Publish a vehicle command."""
+        msg = VehicleCommand()
+        msg.command = command
+        msg.param1 = params.get("param1", 0.0)
+        msg.param2 = params.get("param2", 0.0)
+        msg.param3 = params.get("param3", 0.0)
+        msg.param4 = params.get("param4", 0.0)
+        msg.param5 = params.get("param5", 0.0)
+        msg.param6 = params.get("param6", 0.0)
+        msg.param7 = params.get("param7", 0.0)
+        msg.target_system = 1
+        msg.target_component = 1
+        msg.source_system = 1
+        msg.source_component = 1
+        msg.from_external = True
+        msg.timestamp = int(self.get_clock().now().nanoseconds / 1000)
+        self.vehicle_command_publisher.publish(msg)
 
     def vehicle_local_position_callback(self, msg):
         # Set the current drone states.
@@ -246,9 +265,17 @@ class Maneuver(Node):
                     else:
                         self.go_on_top()
 
+    def engage_offboard_mode(self):
+        """Switch to offboard mode."""
+        self.publish_vehicle_command(VehicleCommand.VEHICLE_CMD_DO_SET_MODE, param1=1.0, param2=6.0)
+        self.publish_vehicle_command(VehicleCommand.VEHICLE_CMD_COMPONENT_ARM_DISARM, param1=1.0)
+        self.get_logger().info("Switching to offboard mode")
+
 def main(args=None):
     rclpy.init(args=args)
     node = Maneuver()
+    time.sleep(0.5)
+    node.engage_offboard_mode()
     node.start_moving()
     rclpy.spin(node)
     node.destroy_node()
