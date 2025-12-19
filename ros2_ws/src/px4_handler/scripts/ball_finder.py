@@ -60,19 +60,13 @@ class Maneuver(Node):
             # Boilerplate code for handling ball detection.
             for detection in msg.detections:
                 for hypothesis in detection.results:
-                    # Check for class_id 0 (person), 0.0 was leftover from last year but don't mess with success
+                    # class_id 0.0 is a 'person'
                     if hypothesis.hypothesis.class_id == "0.0":  
                         self.ball_center_x = detection.bbox.center.position.x
                         self.ball_center_y = detection.bbox.center.position.y
                         if not self.something_detected:
                             self.get_logger().info(f"Object with class_id {hypothesis.hypothesis.class_id}  detected!")
                             self.something_detected = True
-                # This feels like it would break everything...?
-                #self.ball_center_x = detection.bbox.center.position.x
-                #self.ball_center_y = detection.bbox.center.position.y
-                #if not self.something_detected:
-                #    self.get_logger().info(f"Object with class_id 0 detected!")
-                #    self.something_detected = True
 
                 return
         except Exception:
@@ -209,7 +203,7 @@ class Maneuver(Node):
         x, y, z = self.getxyz()
         current_coords = np.array([x, y, z])
         target_location = current_coords + rotated_direction_vector
-        self.move_to_waypoint(target_location, yaw=self.current_yaw, stop_at_middle=False, go_down=False)
+        self.move_to_waypoint(target_location, yaw=self.current_yaw, stop_at_middle=True, go_down=True)
 
         return
 
