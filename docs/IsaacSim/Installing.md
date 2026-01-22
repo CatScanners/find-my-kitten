@@ -2,6 +2,8 @@
 This tutorial is built upon [Pegasus Simulator documentation](https://pegasussimulator.github.io/PegasusSimulator/source/setup/installation.html), repurposed for this project.
 This tutorial assumes you have set up find-my-kitten repository locally, as well as ROS2 and QGroundControl.
 
+
+
 ## Installing Isaac Sim
 
 Run the following commands in terminal to install Isaac Sim:
@@ -165,6 +167,35 @@ Running a simulation with Isaac Sim and Pegasus Simulator requires the path for 
 The input field can be found in the bottom right of Isaac Sim in the Pegasus Simulator tab, under `PX4 Configurations`.
 
 Set the value to the path of your PX4-Autopilot directory, for our purposes we can use the directory in this repository's simulation directory: <br/>
-`find-my-kitten/simulation/PX4-Autopilot`
+`find-my-kitten/simulation/PX4-Autopilot` (use full path)
 
 Press `Make Default` next to the path input field.
+
+## Building PX4-Autopilot
+
+Before running the simulation, you have to build `px4_sitl_default`. This will allow isaac_sim to run PX4 on simulation start.
+
+These are the steps you need to take:
+
+* cd to project directory
+
+* Ensure you have synced uv: `uv sync`
+
+* Activate venv: `source .venv/bin/activate`
+
+* Navigate to PX4-Autopilot `find-my-kitten/simulation/PX4-Autopilot`
+
+
+* Run `make px4_sitl` to build the default px4_sitl. This might take a minute.
+
+## Build ros2_ws using colcon
+
+To run our scripts, we need to build the ROS2 Workstation:
+
+* `cd find-my-kitten/ros2_ws`
+
+* Source your ROS2 installment: </br>
+`source /opt/ros/humble/setup.bash` for Ubuntu 22.04 </br>
+`source /opt/ros/jazzy/setup.bash` for Ubuntu 24.04
+
+* Build with `colcon build`
