@@ -1,0 +1,23 @@
+[project]
+name = "find-my-kitten"
+version = "0.1.0"
+requires-python = "==3.12.3"
+dependencies = [
+    "numpy>=1.26.1",
+    "opencv-python",
+    "torch>=1.1.0",
+    "torchvision",
+    "pandas",
+    "yt-dlp",
+    "supervision",
+    "empy==3.3.4",
+    "pyros-genmsg",
+    "setuptools",
+    "kconfiglib",
+    "jsonschema",
+    "jinja2",
+    "pyserial",
+    "pyyaml",
+    "packaging",
+    "toml",
+]
