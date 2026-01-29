@@ -24,4 +24,8 @@ dependencies = [
     "lark"
     "ultralytics",
     "seaborn",
+<<<<<<< HEAD
 ]
+=======
+]
+>>>>>>> e4c4a02 (feat: Add script to run Isaac Sim and required scripts)
