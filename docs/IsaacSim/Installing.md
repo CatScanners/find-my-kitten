@@ -185,9 +185,6 @@ These are the steps you need to take:
 
 * Activate venv: `source .venv/bin/activate`
 
-* Install ros vision msgs: <br/>
-On Ubuntu 22 ->`sudo apt install ros-humble-vision-msgs`<br/>On Ubuntu 24 -> `sudo apt install ros-jazzy-vision-msgs`
-
 * Navigate to PX4-Autopilot `find-my-kitten/simulation/PX4-Autopilot`
 
 
@@ -198,6 +195,9 @@ On Ubuntu 22 ->`sudo apt install ros-humble-vision-msgs`<br/>On Ubuntu 24 -> `su
 To run our scripts, we need to build the ROS2 Workstation:
 
 * `cd find-my-kitten/ros2_ws`
+
+* Install ros vision msgs: <br/>
+On Ubuntu 22 ->`sudo apt install ros-humble-vision-msgs`<br/>On Ubuntu 24 -> `sudo apt install ros-jazzy-vision-msgs`
 
 * Source your ROS2 installment: </br>
 `source /opt/ros/humble/setup.bash` for Ubuntu 22.04 </br>
