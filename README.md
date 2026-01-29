@@ -16,6 +16,13 @@ You have our drone and have [set up our toolchain](https://catscanners.github.io
       - **px4_handler**: once the drone is flying and offboard-mode is enabled, refer to [Actions startup](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Actions%20startup)
 - Want to make any changes? Make your changes on the packages in ``ros2_ws``, ``colcon build --packages-select <your-package>``, ``source install/setup.bash``.
 
+## Development environment
+This project uses UV dependency management for python dependencies. To get started:
+* Install UV using: `pip install uv`
+* Setup venv using `uv sync` in project root directory
+* Activate venv: `source .venv/bin/activate`
+
+
 ## Directory structure
 
 Refer to [architecture](https://catscanners.github.io/find-my-kitten/assets/RealLife-Architecture.png) for the general architecture.
