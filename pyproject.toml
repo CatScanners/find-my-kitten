@@ -3,7 +3,7 @@ name = "find-my-kitten"
 version = "0.1.0"
 requires-python = "==3.12.3"
 dependencies = [
-    "numpy>=1.26.1",
+    "numpy==1.26.1",
     "opencv-python",
     "torch>=1.1.0",
     "torchvision",
@@ -20,4 +20,6 @@ dependencies = [
     "pyyaml",
     "packaging",
     "toml",
+    "ultralytics",
+    "seaborn",
 ]

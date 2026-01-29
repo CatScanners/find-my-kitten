@@ -9,6 +9,8 @@ import numpy as np
 import time
 import math
 
+INITIAL_FLIGHT_ALTITUDE = 5.0
+
 
 class Maneuver(Node):
     def __init__(self):
@@ -234,6 +236,7 @@ class Maneuver(Node):
         rclpy.spin_once(self, timeout_sec=self.BREAK_TIME)
         x, y, z = self.getxyz()
         yaw = self.current_yaw
+        z = z - INITIAL_FLIGHT_ALTITUDE
 
         waypoints = [
             (x, y, z, yaw),
