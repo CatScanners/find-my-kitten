@@ -24,4 +24,6 @@ dependencies = [
     "seaborn",
     "catkin_pkg",
     "lark"
+    "ultralytics",
+    "seaborn",
 ]
