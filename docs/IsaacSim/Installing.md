@@ -179,9 +179,14 @@ These are the steps you need to take:
 
 * cd to project directory
 
+* Install uv: `pip install uv`
+
 * Ensure you have synced uv: `uv sync`
 
 * Activate venv: `source .venv/bin/activate`
+
+* Install ros vision msgs: <br/>
+On Ubuntu 22 ->`sudo apt install ros-humble-vision-msgs`<br/>On Ubuntu 24 -> `sudo apt install ros-jazzy-vision-msgs`
 
 * Navigate to PX4-Autopilot `find-my-kitten/simulation/PX4-Autopilot`
 
