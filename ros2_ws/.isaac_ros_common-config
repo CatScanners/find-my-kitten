@@ -1,0 +1,6 @@
+__CONFIG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+CONFIG_IMAGE_KEY=ros2_humble.catscanners
+CONFIG_DOCKER_SEARCH_DIRS=("$__CONFIG_DIR")
+
+unset __CONFIG_DIR

@@ -1,0 +1,12 @@
+#syntax=docker/dockerfile:1.7.0-labs
+
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+
+COPY --parents src/**/package.xml /packagexmls/
+
+RUN apt-get update && rosdep update && \
+    rosdep install --from-paths /packagexmls/ \
+    --rosdistro=humble --ignore-src -y
+
+RUN rm -r /packagexmls
