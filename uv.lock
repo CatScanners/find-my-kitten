@@ -174,12 +174,8 @@ requires-dist = [
     { name = "jinja2" },
     { name = "jsonschema" },
     { name = "kconfiglib" },
-<<<<<<< Updated upstream
     { name = "lark" },
-    { name = "numpy", specifier = ">=1.26.1" },
-=======
     { name = "numpy", specifier = ">=2.0.0" },
->>>>>>> Stashed changes
     { name = "opencv-python" },
     { name = "packaging" },
     { name = "pandas" },

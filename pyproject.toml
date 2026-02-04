@@ -20,8 +20,6 @@ dependencies = [
     "pyyaml",
     "packaging",
     "toml",
-    "ultralytics",
-    "seaborn",
     "catkin_pkg",
     "lark"
     "ultralytics",
