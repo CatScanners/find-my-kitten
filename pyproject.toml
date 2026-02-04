@@ -22,4 +22,6 @@ dependencies = [
     "toml",
     "ultralytics",
     "seaborn",
+    "catkin_pkg",
+    "lark"
 ]
