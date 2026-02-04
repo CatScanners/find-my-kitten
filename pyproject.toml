@@ -25,7 +25,13 @@ dependencies = [
     "ultralytics",
     "seaborn",
 <<<<<<< HEAD
+<<<<<<< HEAD
 ]
 =======
 ]
 >>>>>>> e4c4a02 (feat: Add script to run Isaac Sim and required scripts)
+=======
+    "catkin_pkg",
+    "lark"
+]
+>>>>>>> 4bb0a63 (Added the lock file)
