@@ -9,7 +9,7 @@ import numpy as np
 import time
 import math
 
-INITIAL_FLIGHT_ALTITUDE = 5.0
+INITIAL_FLIGHT_ALTITUDE = 15.0
 
 
 class Maneuver(Node):
