@@ -19,26 +19,58 @@ permissions:
 jobs:
   build_ros2_ws:
     runs-on: ubuntu-22.04
-    container: ghcr.io/catscanners/ros-humble-ci:humble
+    container: ros:humble-ros-base-jammy
+
     steps:
       - uses: actions/checkout@v6
 
-      - name: init px4_msgs
+      - name: init submodules
         run: |
           # Needed to not get `detected dubious ownership in repository` caused
           # by using a different container
-          git config --global --add safe.directory $GITHUB_WORKSPACE
-          git submodule update --init ros2_ws/src/px4_msgs
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git submodule update --init --recursive ros2_ws
 
-      - name: cache px4_msgs build
-        id: cache-px4-msgs
-        uses: actions/cache@v4
+      - name: Restore build cache
+        uses: actions/cache@v5
         with:
-          path: ros2_ws/build/px4_msgs
-          key: ${{ runner.os }}-ros-humble-px4_msgs-${{ hashFiles('ros2_ws/src/px4_msgs/**') }}
+          path: |
+            ros2_ws/build
+            ros2_ws/install
+          key: |
+            ros2_ws-${{ runner.os }}-humble-${{ hashFiles(
+              'ros2_ws/src/**',
+              '!ros2_ws/src/**/build/**',
+              '!ros2_ws/src/**/install/**'
+            ) }}
+          restore-keys: ros2_ws-${{ runner.os }}-humble-
 
-      - name: build ros2_ws
+      - name: Add IsaacROS repos
+        run: |
+          apt-get update
+          apt-get install software-properties-common wget gnupg -y
+          add-apt-repository universe -y
+
+          wget -qO - https://isaac.download.nvidia.com/isaac-ros/repos.key | apt-key add -
+          grep -qxF "deb https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" /etc/apt/sources.list || \
+            echo "deb https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" | tee -a /etc/apt/sources.list
+          apt-get update
+
+          cp ros2_ws/src/isaac_ros_common/docker/rosdep/extra_rosdeps.yaml \
+            /etc/ros/rosdep/sources.list.d/nvidia-isaac.yaml
+          echo "yaml file:///etc/ros/rosdep/sources.list.d/nvidia-isaac.yaml" > /etc/ros/rosdep/sources.list.d/00-nvidia-isaac.list
+
+      - name: Install dependencies
+        run: |
+          rosdep update
+          rosdep install --from-paths ros2_ws/src --ignore-src --default-yes
+
+      - name: Colcon build
+        shell: bash
         run: |
           cd ros2_ws
-          . /opt/ros/humble/setup.sh
-          colcon build
+          source /opt/ros/humble/setup.bash
+          [ -f install/setup.bash ] && source install/setup.bash
+
+          # Cannot build isaac_ros_common due to missing NVIDIA tooling
+          colcon build --packages-skip isaac_ros_common --packages-skip-by-dep isaac_ros_common
