@@ -10,3 +10,6 @@
 [submodule "ros2_ws/src/px4_msgs"]
 	path = ros2_ws/src/px4_msgs
 	url = https://github.com/PX4/px4_msgs.git
+[submodule "isaac_ros_common"]
+	path = ros2_ws/src/isaac_ros_common
+	url = https://github.com/CatScanners/isaac_ros_common.git
