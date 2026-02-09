@@ -17,9 +17,6 @@
   <depend>image_transport</depend>
   <depend>vision_msgs</depend>
 
-  <exec_depend>opencv-python</exec_depend>
-  <exec_depend>torch</exec_depend>
-  <exec_depend>torchvision</exec_depend>
   <exec_depend>ament_index_python</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>

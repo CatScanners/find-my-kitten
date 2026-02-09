@@ -17,11 +17,26 @@ You have our drone and have [set up our toolchain](https://catscanners.github.io
 - Want to make any changes? Make your changes on the packages in ``ros2_ws``, ``colcon build --packages-select <your-package>``, ``source install/setup.bash``.
 
 ## Development environment
+### Python
 This project uses UV dependency management for python dependencies. To get started:
 * Install UV using: `pip install uv`
 * Setup venv using `uv sync` in project root directory
 * Activate venv: `source .venv/bin/activate`
 
+### Development Container
+This project uses a development container from `isaac_ros_common`. There is a
+wrapper script to build and start the container in [`ros2_ws/start_isaac_dev.sh`](ros2_ws/start_isaac_dev.sh).
+The script uses the custom configuration in `ros2_ws` to install the dependencies
+into the container. Any arguments passed to the script will be passed to
+`isaac_ros_common`'s `run_dev.sh` script as is. Check [here](https://nvidia-isaac-ros.github.io/v/release-3.1/repositories_and_packages/isaac_ros_common/index.html#isaac-ros-dev-scripts)
+for documentation on the arguments.
+
+For Python dependencies you'll still use `uv` as mentioned in the above section.
+
+> [!Note]
+> The `run_dev.sh` script will always query container registries for the newest
+> containers. Using `--skip_image_build` just uses the cached built image, but
+> also won't rerun the build if something has changed.
 
 ## Directory structure
 
