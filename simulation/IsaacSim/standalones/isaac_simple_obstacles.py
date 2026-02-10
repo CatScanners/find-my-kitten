@@ -85,7 +85,7 @@ class PegasusApp:
                 ),
                 "diagonal_fov": 100.0, 
                 "resolution": (1920, 1080),
-                "position": np.array([0.10, -0.06, 0.0]),  # Front of drone, left side
+                "position": np.array([0.10, -0.06, 0.0]),
                 "orientation": np.array([0.0, 0.0, 180.0]),
             }
         )
@@ -100,8 +100,8 @@ class PegasusApp:
                 ),
                 "diagonal_fov": 100.0,
                 "resolution": (1920, 1080),
-                "position": np.array([0.10, 0.06, 0.0]),  # Front of drone, right side
-                "orientation": np.array([0.0, 0.0, 180.0]),  # Front-facing, rotated to the right
+                "position": np.array([0.10, 0.06, 0.0]),
+                "orientation": np.array([0.0, 0.0, 180.0]),
             }
         )
 
