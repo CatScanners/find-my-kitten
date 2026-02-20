@@ -3,8 +3,8 @@
 ## System requirements
 - Ubuntu 24, aka Ubuntu Jazzy
 - 150 GB of storage (excl. the OS)
-- Nvidia GPU (only required for simulator tests)
-- docker (installation instructions can be found from: https://docs.docker.com/engine/install/ubuntu/)
+- Nvidia GPU (required for simulator tests)
+- docker (installation instructions can be found at: https://docs.docker.com/engine/install/ubuntu/)
 
 
 ## Initial Setup 
@@ -62,9 +62,9 @@ cd into /ros2_ws
 sudo ./start_isaac_dev.sh
 ```
 
-If after the last command you get and error and the message: "have you initialized submodules?", circle back to the git-lfs section of [Initial setup](#initial-setup)
+If after the last command you get an error and the message: "have you initialized submodules?", circle back to the git-lfs section of [Initial setup](#initial-setup)
 
-If the script runs without errors, then you will notice that it starts the docker container. This step can take several tens of minutes, so you'll have to wait a while. <br/>
+If the script runs without errors, then you will notice that it starts the docker container. This step will take around 30 minutes, so you'll have to wait a while. <br/>
 
 
 After you have successfully started the container, cd into /ros2_ws in the container, and build the package by running: <br/>
