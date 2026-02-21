@@ -2,6 +2,7 @@ __CONFIG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 CONFIG_IMAGE_KEY=ros2_humble.catscanners
 SUFFIX_IMAGE_KEY=catscanners # used by docker_deploy.sh
+BASE_DOCKER_REGISTRY_NAMES=("nvcr.io/nvidia/isaac/ros" "ghcr.io/catscanners/isaac_ros")
 
 CONFIG_DOCKER_SEARCH_DIRS=("$__CONFIG_DIR")
 
