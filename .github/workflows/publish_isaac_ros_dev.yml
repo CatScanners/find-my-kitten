@@ -1,0 +1,53 @@
+name: Build and publish isaac ros x86_64.ros2_humble image
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Init submodules
+        run: |
+          git submodule update --init --recursive -j 10 ros2_ws/src/isaac_ros_common
+
+      # an uppercase name in a ghcr link is not allowed
+      - name: Set lower case owner name
+        run: |
+          echo "OWNER_LC=${OWNER,,}" >> "$GITHUB_ENV"
+        env:
+          OWNER: '${{ github.repository_owner }}'
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        id: build
+        run: |
+          export TERM=xterm
+          ros2_ws/src/isaac_ros_common/scripts/build_image_layers.sh \
+            --image_key x86_64.ros2_humble \
+            --image_name isaac_ros \
+            --docker_arg "--cache-from" \
+            --docker_arg "ghcr.io/$OWNER_LC/isaac_ros:latest"
+
+      - name: Push image
+        run: |
+          IMAGE=${{ steps.build.outputs.image }}
+          IMAGE_FULL="ghcr.io/$OWNER_LC/$IMAGE"
+          IMAGE_LATEST=${IMAGE_FULL%:*}:latest
+          docker tag "$IMAGE" "$IMAGE_FULL"
+          docker tag "$IMAGE" "$IMAGE_LATEST"
+          docker push "$IMAGE_FULL"
+          docker push "$IMAGE_LATEST"
