@@ -7,6 +7,8 @@ if [ $# -lt 2 ]; then
     exit 1
 fi
 
+sudo apt install -y libcanberra-gtk-module libcanberra-gtk3-module
+
 PX4_SCRIPT="$1"
 ISAAC_SCRIPT="$2"
 
