@@ -33,7 +33,7 @@ def generate_launch_description():
     subpixel       = LaunchConfiguration('subpixel', default = True)
     confidence     = LaunchConfiguration('confidence', default = 200)
     LRchecktresh   = LaunchConfiguration('LRchecktresh', default = 5)
-    monoResolution = LaunchConfiguration('monoResolution',  default = '720p')
+    monoResolution = LaunchConfiguration('monoResolution',  default = '400p')
 
     angularVelCovariance  = LaunchConfiguration('angularVelCovariance', default = 0.0)
     linearAccelCovariance = LaunchConfiguration('linearAccelCovariance', default = 0.0)
