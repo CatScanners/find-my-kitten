@@ -68,10 +68,10 @@ def generate_launch_description():
         # }],
 
         parameters=[{
-            'enable_image_denoising': True,
+            'enable_image_denoising': False,
             'rectified_images': False,
-            'enable_localization_n_mapping': False,
-            'enable_imu_fusion': False,
+            'enable_localization_n_mapping': True,
+            'enable_imu_fusion': True,
             'gyro_noise_density': 4.9522e-03,
             'gyro_random_walk': 2.3666e-05,
             'accel_noise_density': 2.5703e-02,
@@ -85,7 +85,7 @@ def generate_launch_description():
             'enable_slam_visualization': False,
             'enable_landmarks_view': False,
             'enable_observations_view': False,
-            'gravitational_force': [-9.8, 0.0, 0.0],
+            'gravitational_force': [-8.95, -0.47, -0.45],
             'camera_optical_frames': [
                 'oak_left_camera_optical_frame',
                 'oak_right_camera_optical_frame',
