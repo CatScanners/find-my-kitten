@@ -3,10 +3,24 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
+# Some package build fetches deps from github via SSH
+RUN mkdir -p /home/admin/.ssh && \
+    ssh-keyscan github.com >> /home/admin/.ssh/known_hosts
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+COPY ../pyproject.toml ../uv.lock /tmp/uv/
+RUN cd /tmp/uv && \
+    uv export | uv pip install --system -r - && \
+    rm -r /tmp/uv
+
 COPY --parents src/**/package.xml /packagexmls/
 
-RUN apt-get update && rosdep update && \
-    rosdep install --from-paths /packagexmls/ \
-    --rosdistro=humble --ignore-src -y
+RUN apt-get update && \
+    rosdep update --rosdistro=humble && \
+    rosdep install --rosdistro=humble \
+    --from-paths /packagexmls/ --ignore-src -y
 
 RUN rm -r /packagexmls
+
+RUN apt-get update && apt-get install -y \
+    tmux

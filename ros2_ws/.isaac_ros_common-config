@@ -6,4 +6,7 @@ BASE_DOCKER_REGISTRY_NAMES=("nvcr.io/nvidia/isaac/ros" "ghcr.io/catscanners/isaa
 
 CONFIG_DOCKER_SEARCH_DIRS=("$__CONFIG_DIR")
 
+# Set repo root as context
+DOCKER_CONTEXT_DIR="$__CONFIG_DIR/.."
+
 unset __CONFIG_DIR
