@@ -56,9 +56,18 @@ def generate_launch_description():
 
 
         def env_prefix(extra=None):
+            ros_setup = None
+            for distro in ["jazzy", "humble"]:
+                candidate = Path(f"/opt/ros/{distro}/setup.bash")
+                if candidate.exists():
+                    ros_setup = str(candidate)
+                    break
+            if ros_setup is None:
+                raise RuntimeError("Neither /opt/ros/jazzy/setup.bash nor /opt/ros/humble/setup.bash found")
+
             base = (
                 "unset LD_LIBRARY_PATH GTK_PATH GIO_MODULE_DIR && "
-                f"source /opt/ros/jazzy/setup.bash && "
+                f"source {ros_setup} && "
                 f"source {venv_activate} && "
                 f"cd {ros2_ws} && "
                 "source install/setup.bash"
@@ -66,6 +75,7 @@ def generate_launch_description():
             if extra:
                 base += " && " + extra
             return base
+
 
 
         actions = []
