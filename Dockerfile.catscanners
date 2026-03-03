@@ -3,19 +3,12 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
-COPY simulation/Micro-XRCE-DDS-Agent /tmp/microxrce
-
-RUN cd /tmp/microxrce && \
-    cmake . && make -j$(nproc) && \
-    make install && ldconfig /usr/local/lib && \
-    rm -r /tmp/microxrce
-
 # Some package build fetches deps from github via SSH
 RUN mkdir -p /home/admin/.ssh && \
     ssh-keyscan github.com >> /home/admin/.ssh/known_hosts
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-COPY ../pyproject.toml ../uv.lock /tmp/uv/
+COPY pyproject.toml uv.lock /tmp/uv/
 RUN cd /tmp/uv && \
     uv export | uv pip install --system -r - && \
     rm -r /tmp/uv
@@ -25,9 +18,8 @@ COPY --parents ros2_ws/src/**/package.xml /packagexmls/
 RUN apt-get update && \
     rosdep update --rosdistro=humble && \
     rosdep install --rosdistro=humble \
-    --from-paths /packagexmls/ --ignore-src -y
-
-RUN rm -r /packagexmls
+    --from-paths /packagexmls/ --ignore-src -y && \
+    rm -r /packagexmls
 
 RUN apt-get update && apt-get install -y \
     tmux

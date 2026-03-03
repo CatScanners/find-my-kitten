@@ -25,11 +25,13 @@ This project uses UV dependency management for python dependencies. To get start
 
 ### Development Container
 This project uses a development container from `isaac_ros_common`. There is a
-wrapper script to build and start the container in [`ros2_ws/start_isaac_dev.sh`](ros2_ws/start_isaac_dev.sh).
-The script uses the custom configuration in `ros2_ws` to install the dependencies
-into the container. Any arguments passed to the script will be passed to
-`isaac_ros_common`'s `run_dev.sh` script as is. Check [here](https://nvidia-isaac-ros.github.io/v/release-3.1/repositories_and_packages/isaac_ros_common/index.html#isaac-ros-dev-scripts)
-for documentation on the arguments.
+wrapper script to build and start the container in [`start_isaac_dev.sh`](start_isaac_dev.sh).
+The script uses the custom configuration to install the dependencies
+into the container. Check [here](https://nvidia-isaac-ros.github.io/v/release-3.1/repositories_and_packages/isaac_ros_common/index.html#isaac-ros-dev-scripts)
+for documentation on the wrapped script's arguments, which you can pass after `--`.
+
+You can enable the simulator layer of the container by passing `-s|--sim` to
+the script, which installs extra dependencies only required for running IsaacSim
 
 The container will also install Python dependencies via uv. ROS2 installs some
 python modules into the system's Python, so the container installs the
@@ -37,9 +39,11 @@ dependencies into the systme's Python as well. A virtual environment will bypass
 the system Python, and should not be used inside the container.
 
 > [!Note]
-> The `run_dev.sh` script will always query container registries for the newest
-> containers. Using `--skip_image_build` just uses the cached built image, but
-> also won't rerun the build if something has changed.
+> The `start_isaac_dev.sh` script will always query remote registries for
+> ready-built images. You can make it skip this and query locally with the
+> `-c|--no-check` flag, which is a lot faster. You can also skip building
+> entirely with `-b|--no-build`, but this also won't take into account any
+> possible changes.
 
 ## Directory structure
 
