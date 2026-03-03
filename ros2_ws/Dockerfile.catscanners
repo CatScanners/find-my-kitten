@@ -3,6 +3,10 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
+# Some package build fetches deps from github via SSH
+RUN mkdir -p /home/admin/.ssh && \
+    ssh-keyscan github.com >> /home/admin/.ssh/known_hosts
+
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 COPY ../pyproject.toml ../uv.lock /tmp/uv/
 RUN cd /tmp/uv && \
