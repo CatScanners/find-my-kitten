@@ -8,10 +8,11 @@ from launch.actions import ExecuteProcess, TimerAction, DeclareLaunchArgument, O
 from launch.substitutions import LaunchConfiguration
 from launch.launch_context import LaunchContext
 from launch_ros.substitutions import FindPackageShare
+from typing import Any
 
 
 
-def load_config(config_path: Path):
+def load_config(config_path: Path) -> dict[Any, Any]:
     if not config_path.exists():
         raise RuntimeError(f"Config file not found: {config_path}")
     with open(config_path, 'r') as f:
@@ -48,7 +49,7 @@ def generate_launch_description():
         package_share_path = package_share.perform(context)
         config_path = Path(package_share_path) / config_filename
         config = load_config(config_path)
-
+        ros_subpath_name = config["distro_info"].get("name", "jazzy")
 
         # Find project root and venv
         share_path = Path(package_share_path).resolve()
@@ -58,7 +59,7 @@ def generate_launch_description():
         def env_prefix(extra=None):
             base = (
                 "unset LD_LIBRARY_PATH GTK_PATH GIO_MODULE_DIR && "
-                f"source /opt/ros/jazzy/setup.bash && "
+                f"source /opt/ros/{ros_subpath_name}/setup.bash && "
                 f"source {venv_activate} && "
                 f"cd {ros2_ws} && "
                 "source install/setup.bash"

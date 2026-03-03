@@ -18,3 +18,7 @@ object_detector:
   enabled: true
   input_topic_name: "/drone1/down_facing_camera/color/image_raw"
   pytorch_model_path: "yolov5s.pt"
+
+
+distro_info:
+  name: "jazzy"
