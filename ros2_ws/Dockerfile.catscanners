@@ -3,6 +3,12 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+COPY ../pyproject.toml ../uv.lock /tmp/uv/
+RUN cd /tmp/uv && \
+    uv export | uv pip install --system -r - && \
+    rm -r /tmp/uv
+
 COPY --parents src/**/package.xml /packagexmls/
 
 RUN apt-get update && \
