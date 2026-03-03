@@ -17,6 +17,8 @@ RUN_DEV_ARGS=()
 RUN_DEV_ARGS+=("--isaac_ros_dev_dir" "$REPO_ROOT")
 RUN_DEV_ARGS+=("--docker_arg" "--volume /dev/bus/usb:/dev/bus/usb")
 RUN_DEV_ARGS+=("--docker_arg" "--device /dev/video0")
+RUN_DEV_ARGS+=("--docker_arg" "--volume $HOME/isaacsim:/home/admin/isaacsim")
+RUN_DEV_ARGS+=("--docker_arg" "--volume $HOME/PegasusSimulator:/home/admin/PegasusSimulator")
 
 if [[ ! -x "$RUN_DEV" ]]; then
     eprint "not found: $RUN_DEV"

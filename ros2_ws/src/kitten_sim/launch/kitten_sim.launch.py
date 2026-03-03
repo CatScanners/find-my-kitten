@@ -89,7 +89,9 @@ def generate_launch_description():
 
 
         # 2. Isaac Sim (replace COMMAND_HERE with what you run manually)
-        isaac_command = "isaac_run isaac_simple_obstacles.py --headless"  # your working command
+        package_share_path = package_share.perform(context)
+        isaac_run_script = Path(package_share_path) / "scripts" / "isaac_run.sh"
+        isaac_command = f"source {isaac_run_script} && isaac_run isaac_simple_obstacles.py --headless"
         actions.append(ExecuteProcess(
             cmd=['bash', '-ic', env_prefix(f"cd {isaac_sim_standalones} && {isaac_command}")],
             output='screen'
