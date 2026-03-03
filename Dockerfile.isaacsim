@@ -1,0 +1,13 @@
+ARG BASE_IMAGE=scratch # default arg to silence warn
+FROM ${BASE_IMAGE}
+
+RUN mkdir -p /home/admin/PegasusSimulator && \
+    wget -qO - https://github.com/PegasusSimulator/PegasusSimulator/archive/refs/tags/v5.1.0.tar.gz | \
+    tar xzf - --strip-components=1 -C /home/admin/PegasusSimulator
+
+COPY simulation/Micro-XRCE-DDS-Agent /tmp/microxrce
+RUN cd /tmp/microxrce && \
+    cmake . && make -j$(nproc) && \
+    make install && ldconfig /usr/local/lib && \
+    rm -r /tmp/microxrce
+
