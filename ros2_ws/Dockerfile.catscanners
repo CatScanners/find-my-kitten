@@ -13,7 +13,7 @@ RUN cd /tmp/uv && \
     uv export | uv pip install --system -r - && \
     rm -r /tmp/uv
 
-COPY --parents src/**/package.xml /packagexmls/
+COPY --parents ros2_ws/src/**/package.xml /packagexmls/
 
 RUN apt-get update && \
     rosdep update --rosdistro=humble && \

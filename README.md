@@ -31,7 +31,10 @@ into the container. Any arguments passed to the script will be passed to
 `isaac_ros_common`'s `run_dev.sh` script as is. Check [here](https://nvidia-isaac-ros.github.io/v/release-3.1/repositories_and_packages/isaac_ros_common/index.html#isaac-ros-dev-scripts)
 for documentation on the arguments.
 
-For Python dependencies you'll still use `uv` as mentioned in the above section.
+The container will also install Python dependencies via uv. ROS2 installs some
+python modules into the system's Python, so the container installs the
+dependencies into the systme's Python as well. A virtual environment will bypass
+the system Python, and should not be used inside the container.
 
 > [!Note]
 > The `run_dev.sh` script will always query container registries for the newest
