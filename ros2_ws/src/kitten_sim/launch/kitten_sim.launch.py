@@ -56,7 +56,7 @@ def generate_launch_description():
         ros2_ws, isaac_sim_standalones, venv_activate = find_project_paths(share_path)
 
 
-        def env_prefix(extra=None):
+        def env_prefix(extra=None) -> str:
             ros_setup = None
             for distro in ["jazzy", "humble"]:
                 candidate = Path(f"/opt/ros/{distro}/setup.bash")
