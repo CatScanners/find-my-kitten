@@ -11,6 +11,10 @@ find_package(camera_info_manager REQUIRED)
 find_package(stereo_msgs REQUIRED)
 find_package(depthai REQUIRED)
 find_package(depthai_bridge REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(px4_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -38,13 +42,17 @@ add_executable(stereo_node
   src/stereo_publisher.cpp
 )
 
+add_executable(vslam_message_transform
+  src/vslam_message_transform.cpp
+)
+
 install(
   DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
 )
 
 install(
-  TARGETS stereo_node
+  TARGETS stereo_node vslam_message_transform
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -55,6 +63,14 @@ ament_target_dependencies(stereo_node
   stereo_msgs
   depthai
   depthai_bridge
+)
+
+ament_target_dependencies(vslam_message_transform
+  rclcpp
+  nav_msgs
+  px4_msgs
+  tf2
+  tf2_ros
 )
 
 ament_package()
