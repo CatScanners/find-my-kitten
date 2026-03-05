@@ -71,7 +71,7 @@ def generate_launch_description():
             'enable_image_denoising': True,
             'rectified_images': False,
             'enable_localization_n_mapping': False,
-            'enable_imu_fusion': False,
+            'enable_imu_fusion': True,
             'gyro_noise_density': 4.9522e-03,
             'gyro_random_walk': 2.3666e-05,
             'accel_noise_density': 2.5703e-02,
