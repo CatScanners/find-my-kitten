@@ -25,3 +25,10 @@ dependencies = [
     "ultralytics",
     "seaborn",
 ]
+
+[dependency-groups]
+isaacsim = [
+    "gitpython",
+    "scipy",
+    "smmap",
+]

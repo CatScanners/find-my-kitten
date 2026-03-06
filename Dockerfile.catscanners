@@ -10,8 +10,7 @@ RUN mkdir -p /home/admin/.ssh && \
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 COPY pyproject.toml uv.lock /tmp/uv/
 RUN cd /tmp/uv && \
-    uv export | uv pip install --system -r - && \
-    rm -r /tmp/uv
+    uv export | uv pip install --system -r -
 
 COPY --parents ros2_ws/src/**/package.xml /packagexmls/
 
