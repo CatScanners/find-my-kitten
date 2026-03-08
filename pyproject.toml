@@ -24,4 +24,7 @@ dependencies = [
     "lark",
     "ultralytics",
     "seaborn",
+    "smmap>=5.0.2",
+    "gitpython>=3.1.46",
+    "scipy>=1.15.3",
 ]

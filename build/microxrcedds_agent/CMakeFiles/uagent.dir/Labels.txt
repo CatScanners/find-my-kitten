@@ -1,0 +1,13 @@
+# Target labels
+ uagent
+# Source files and their labels
+/workspaces/isaac_ros-dev/build/microxrcedds_agent/CMakeFiles/uagent
+/workspaces/isaac_ros-dev/build/microxrcedds_agent/CMakeFiles/uagent.rule
+/workspaces/isaac_ros-dev/build/microxrcedds_agent/CMakeFiles/uagent-complete.rule
+/workspaces/isaac_ros-dev/build/microxrcedds_agent/uagent-prefix/src/uagent-stamp/uagent-build.rule
+/workspaces/isaac_ros-dev/build/microxrcedds_agent/uagent-prefix/src/uagent-stamp/uagent-configure.rule
+/workspaces/isaac_ros-dev/build/microxrcedds_agent/uagent-prefix/src/uagent-stamp/uagent-download.rule
+/workspaces/isaac_ros-dev/build/microxrcedds_agent/uagent-prefix/src/uagent-stamp/uagent-install.rule
+/workspaces/isaac_ros-dev/build/microxrcedds_agent/uagent-prefix/src/uagent-stamp/uagent-mkdir.rule
+/workspaces/isaac_ros-dev/build/microxrcedds_agent/uagent-prefix/src/uagent-stamp/uagent-patch.rule
+/workspaces/isaac_ros-dev/build/microxrcedds_agent/uagent-prefix/src/uagent-stamp/uagent-update.rule

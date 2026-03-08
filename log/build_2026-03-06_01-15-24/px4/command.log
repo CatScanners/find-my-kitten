@@ -1,0 +1,1 @@
+Invoking command in '/workspaces/isaac_ros-dev/build/px4': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble PS1=(find-my-kitten) ${debian_chroot:+($debian_chroot)}\u@\h:\w\$ /usr/bin/cmake /workspaces/isaac_ros-dev/simulation/PX4-Autopilot -DCMAKE_INSTALL_PREFIX=/workspaces/isaac_ros-dev/install/px4

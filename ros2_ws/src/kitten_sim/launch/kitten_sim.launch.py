@@ -49,13 +49,13 @@ def generate_launch_description():
         package_share_path = package_share.perform(context)
         config_path = Path(package_share_path) / config_filename
         config = load_config(config_path)
-        ros_subpath_name = config["distro_info"].get("name", "jazzy")
+        ros_subpath_name = config["distro_info"].get("name", "humble")
 
         # Find project root and venv
         share_path = Path(package_share_path).resolve()
         ros2_ws, isaac_sim_standalones, venv_activate = find_project_paths(share_path)
 
-
+                
         def env_prefix(extra=None) -> str:
             ros_setup = None
             for distro in ["jazzy", "humble"]:
@@ -65,9 +65,10 @@ def generate_launch_description():
                     break
             if ros_setup is None:
                 raise RuntimeError("Neither /opt/ros/jazzy/setup.bash nor /opt/ros/humble/setup.bash found")
-
+            print(f"the ros_subpath_name: {ros_subpath_name}")
             base = (
                 "unset LD_LIBRARY_PATH GTK_PATH GIO_MODULE_DIR && "
+                f'echo "the ros subpath {ros_subpath_name}"'
                 f"source /opt/ros/{ros_subpath_name}/setup.bash && "
                 f"source {venv_activate} && "
                 f"cd {ros2_ws} && "

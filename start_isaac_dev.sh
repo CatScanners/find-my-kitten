@@ -10,6 +10,27 @@ die() {
     exit 1
 }
 
+
+help() {
+    echo "
+        start_isaac_dev.sh - start the docker container.
+
+        Usage:
+        start_isaac_dev.sh -- [OPTIONS]
+
+        Description:
+        Script for setting up and starting the docker container, in which you can run the drone simulator.
+
+        Options:
+        -h, --help            Show this help message and exit
+        -s, --sim             Uses IsaacSim and builds the container from scratch.
+        -b, --no-build        Skip rebuilding the container image
+        -c, --no-check        Skips the registry check
+        -d, --docker          Add a custom docker argument to when the script start up the container
+
+    "
+}
+
 if getopt --test &>/dev/null; then
     die "GNU getopt required"
 fi
@@ -37,6 +58,11 @@ while true; do
         -d|--docker)
             RUN_DEV_ARGS+=("--docker_arg" "$2")
             shift 2
+            ;;
+        -h|--help)
+            echo "juu"
+            help
+            exit 0
             ;;
         --)
             shift

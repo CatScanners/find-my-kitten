@@ -12,7 +12,7 @@ sudo apt install -y libcanberra-gtk-module libcanberra-gtk3-module
 PX4_SCRIPT="$1"
 ISAAC_SCRIPT="$2"
 
-ROS_DISTRO=${ROS_DISTRO}
+ROS_DISTRO=${ROS_DISTRO:-humble}
 
 # Resolve directory of this script (handles symlinks too)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

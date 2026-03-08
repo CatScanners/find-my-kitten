@@ -1,0 +1,70 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Release-2e4f5b4615fed3169d2e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "microxrcedds_agent",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "MicroXRCEAgent::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MicroXRCEAgent-Release-ae352c2c3bae2a4833a8.json",
+					"name" : "MicroXRCEAgent",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "microxrcedds_agent::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-microxrcedds_agent-Release-e634460e0a4f7f234992.json",
+					"name" : "microxrcedds_agent",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/workspaces/isaac_ros-dev/build/microxrcedds_agent",
+		"source" : "/workspaces/isaac_ros-dev/simulation/Micro-XRCE-DDS-Agent"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

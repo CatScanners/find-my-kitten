@@ -1,0 +1,14 @@
+[0.011s] Invoking command in '/workspaces/isaac_ros-dev/build/px4_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble PS1=(find-my-kitten) ${debian_chroot:+($debian_chroot)}\u@\h:\w\$ /usr/bin/cmake /workspaces/isaac_ros-dev/ros2_ws/src/px4_msgs -DCMAKE_INSTALL_PREFIX=/workspaces/isaac_ros-dev/install/px4_msgs
+[0.045s] -- The C compiler identification is GNU 11.4.0
+[0.086s] -- The CXX compiler identification is GNU 11.4.0
+[0.090s] -- Detecting C compiler ABI info
+[0.135s] -- Detecting C compiler ABI info - done
+[0.139s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.139s] -- Detecting C compile features
+[0.139s] -- Detecting C compile features - done
+[0.141s] -- Detecting CXX compiler ABI info
+[0.192s] -- Detecting CXX compiler ABI info - done
+[0.195s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.196s] -- Detecting CXX compile features
+[0.196s] -- Detecting CXX compile features - done
+[0.200s] -- Found ament_cmake: 1.3.13 (/opt/ros/humble/share/ament_cmake/cmake)

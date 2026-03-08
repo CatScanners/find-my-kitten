@@ -1,0 +1,4 @@
+gmake[3]: *** [Makefile:1430: cmake_check_build_system] Interrupt
+gmake[2]: *** [CMakeFiles/uagent.dir/build.make:86: uagent-prefix/src/uagent-stamp/uagent-build] Interrupt
+gmake[1]: *** [CMakeFiles/Makefile2:83: CMakeFiles/uagent.dir/all] Interrupt
+gmake: *** [Makefile:91: all] Interrupt

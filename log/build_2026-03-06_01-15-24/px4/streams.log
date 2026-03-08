@@ -1,0 +1,17 @@
+[0.007s] Invoking command in '/workspaces/isaac_ros-dev/build/px4': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble PS1=(find-my-kitten) ${debian_chroot:+($debian_chroot)}\u@\h:\w\$ /usr/bin/cmake /workspaces/isaac_ros-dev/simulation/PX4-Autopilot -DCMAKE_INSTALL_PREFIX=/workspaces/isaac_ros-dev/install/px4
+[0.024s] -- PX4_GIT_TAG: v1.16.1
+[0.037s] -- Found PythonInterp: /workspaces/isaac_ros-dev/.venv/bin/python3 (found suitable version "3.10.12", minimum required is "3") 
+[0.045s] -- PX4 config file: /workspaces/isaac_ros-dev/simulation/PX4-Autopilot/boards/px4/ros2/default.px4board
+[0.210s] -- PLATFORM ros2
+[0.210s] -- ROMFSROOT px4fmu_common
+[0.211s] -- ROOT_PATH /fs/microsd
+[0.211s] -- PARAM_FILE /fs/mtd_params
+[0.217s] -- PX4 config: px4_ros2_default
+[0.217s] -- PX4 platform: ros2
+[0.256s] -- The CXX compiler identification is GNU 11.4.0
+[0.260s] -- Detecting CXX compiler ABI info
+[0.309s] -- Detecting CXX compiler ABI info - done
+[0.311s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.311s] -- Detecting CXX compile features
+[0.312s] -- Detecting CXX compile features - done
+[0.313s] -- Found ament_cmake: 1.3.13 (/opt/ros/humble/share/ament_cmake/cmake)

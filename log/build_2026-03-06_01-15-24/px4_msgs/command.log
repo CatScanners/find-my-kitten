@@ -1,0 +1,1 @@
+Invoking command in '/workspaces/isaac_ros-dev/build/px4_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble PS1=(find-my-kitten) ${debian_chroot:+($debian_chroot)}\u@\h:\w\$ /usr/bin/cmake /workspaces/isaac_ros-dev/ros2_ws/src/px4_msgs -DCMAKE_INSTALL_PREFIX=/workspaces/isaac_ros-dev/install/px4_msgs

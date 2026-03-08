@@ -1,0 +1,39 @@
+[0.007s] Invoking command in '/workspaces/isaac_ros-dev/build/microxrcedds_agent': PS1=(find-my-kitten) ${debian_chroot:+($debian_chroot)}\u@\h:\w\$ /usr/bin/cmake /workspaces/isaac_ros-dev/simulation/Micro-XRCE-DDS-Agent -DUAGENT_ISOLATED_INSTALL=OFF -DUAGENT_USE_SYSTEM_FASTCDR=ON -DUAGENT_USE_SYSTEM_FASTDDS=ON -DCMAKE_INSTALL_PREFIX=/workspaces/isaac_ros-dev/install/microxrcedds_agent
+[0.047s] -- The C compiler identification is GNU 11.4.0
+[0.052s] -- Detecting C compiler ABI info
+[0.098s] -- Detecting C compiler ABI info - done
+[0.103s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.103s] -- Detecting C compile features
+[0.103s] -- Detecting C compile features - done
+[0.136s] -- The CXX compiler identification is GNU 11.4.0
+[0.140s] -- Detecting CXX compiler ABI info
+[0.193s] -- Detecting CXX compiler ABI info - done
+[0.197s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.197s] -- Detecting CXX compile features
+[0.197s] -- Detecting CXX compile features - done
+[0.206s] -- Looking for pthread.h
+[0.251s] -- Looking for pthread.h - found
+[0.251s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[0.297s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[0.297s] -- Found Threads: TRUE  
+[0.305s] -- Configuring done
+[0.306s] -- Generating done
+[0.306s] -- Build files have been written to: /workspaces/isaac_ros-dev/build/microxrcedds_agent
+[0.308s] Invoked command in '/workspaces/isaac_ros-dev/build/microxrcedds_agent' returned '0': PS1=(find-my-kitten) ${debian_chroot:+($debian_chroot)}\u@\h:\w\$ /usr/bin/cmake /workspaces/isaac_ros-dev/simulation/Micro-XRCE-DDS-Agent -DUAGENT_ISOLATED_INSTALL=OFF -DUAGENT_USE_SYSTEM_FASTCDR=ON -DUAGENT_USE_SYSTEM_FASTDDS=ON -DCMAKE_INSTALL_PREFIX=/workspaces/isaac_ros-dev/install/microxrcedds_agent
+[0.310s] Invoking command in '/workspaces/isaac_ros-dev/build/microxrcedds_agent': PS1=(find-my-kitten) ${debian_chroot:+($debian_chroot)}\u@\h:\w\$ /usr/bin/cmake --build /workspaces/isaac_ros-dev/build/microxrcedds_agent -- -j20 -l20
+[0.341s] [ 12%] [34m[1mCreating directories for 'uagent'[0m
+[0.380s] [ 25%] [34m[1mNo download step for 'uagent'[0m
+[0.398s] [ 37%] [34m[1mNo update step for 'uagent'[0m
+[0.414s] [ 50%] [34m[1mNo patch step for 'uagent'[0m
+[0.431s] [ 62%] [34m[1mPerforming configure step for 'uagent'[0m
+[0.437s] loading initial cache file /workspaces/isaac_ros-dev/build/microxrcedds_agent/uagent-prefix/tmp/uagent-cache-.cmake
+[0.440s] -- Setting build type to 'Release' as none was specified.
+[0.451s] -- Configuring done
+[0.456s] -- Generating done
+[0.457s] -- Build files have been written to: /workspaces/isaac_ros-dev/build/microxrcedds_agent
+[0.468s] [ 75%] [34m[1mPerforming build step for 'uagent'[0m
+[0.472s] gmake[3]: *** [Makefile:1430: cmake_check_build_system] Interrupt
+[0.472s] gmake[2]: *** [CMakeFiles/uagent.dir/build.make:86: uagent-prefix/src/uagent-stamp/uagent-build] Interrupt
+[0.472s] gmake[1]: *** [CMakeFiles/Makefile2:83: CMakeFiles/uagent.dir/all] Interrupt
+[0.472s] gmake: *** [Makefile:91: all] Interrupt
+[0.473s] Invoked command in '/workspaces/isaac_ros-dev/build/microxrcedds_agent' returned '-2': PS1=(find-my-kitten) ${debian_chroot:+($debian_chroot)}\u@\h:\w\$ /usr/bin/cmake --build /workspaces/isaac_ros-dev/build/microxrcedds_agent -- -j20 -l20
