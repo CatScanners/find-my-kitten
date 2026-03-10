@@ -14,7 +14,7 @@ if [[ ! -f "$ISAACSIM_PATH/initialized" ]]; then
     rm "$ZIP"
 
     ./post_install.sh
-    ./isaac-sim.selector.sh
+    [[ -f ./isaac-sim.selector.sh ]] && ./isaac-sim.selector.sh
     "${ISAACSIM_PYTHON:?}" -m pip install --editable ~/PegasusSimulator/extensions/pegasus.simulator
 
     touch "$ISAACSIM_PATH/initialized"
