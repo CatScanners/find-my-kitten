@@ -17,7 +17,7 @@ class ObjectDetectionNode(Node):
     def __init__(self):
         super().__init__('object_detection_node')
         
-        self.declare_parameter("input_topic_name", "image_topic")
+        self.declare_parameter("input_topic_name", "left/image_raw")#"image_topic")
         self.declare_parameter("output_topic_name", "detected_objects_topic")
         self.declare_parameter("image_dimension_topic", "image_dimension_topic")
         self.declare_parameter("pytorch_model_path", "yolov5s.pt")

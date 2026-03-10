@@ -23,68 +23,32 @@ from launch_ros.descriptions import ComposableNode
 def generate_launch_description():
     """Launch file which brings up visual slam node configured for Oak-d pro."""
 
-    # THE OAK-D PRO COULD ALSO BE LAUNCHED FROM HERE INSTEAD OF THE CURRENT depthai_examples directory
-
-    # realsense_camera_node = Node(
-    #     name='camera',
-    #     namespace='camera',
-    #     package='oak',
-    #     executable='realsense2_camera_node',
-    #     parameters=[{
-    #         'enable_infra1': True,
-    #         'enable_infra2': True,
-    #         'enable_color': False,
-    #         'enable_depth': False,
-    #         'depth_module.emitter_enabled': 0,
-    #         'depth_module.profile': '640x360x90',
-    #         'enable_gyro': True,
-    #         'enable_accel': True,
-    #         'gyro_fps': 200,
-    #         'accel_fps': 200,
-    #         'unite_imu_method': 2
-    #     }],
-    # )
-
     visual_slam_node = ComposableNode(
         name='visual_slam_node',
         package='isaac_ros_visual_slam',
         plugin='nvidia::isaac_ros::visual_slam::VisualSlamNode',
 
-        # parameters=[{
-        #     # 'use_sim_time': False,
-        #     # 'denoise_input_images': True,
-        #     'rectified_images': False,
-        #     'enable_slam_visualization': True,
-        #     'enable_observations_view': True,
-        #     'enable_landmarks_view': True,
-        #     'enable_debug_mode': False,
-        #     'publish_tf': True,
-        #     'enable_imu': True,
-        #     'debug_dump_path': '/tmp/elbrus',
-        #     'map_frame': 'map',
-        #     'odom_frame': 'odom',
-        #     'input_imu_frame': 'imu',
-        #     'gravitational_force': [-9.8, 0.0, 0.0]
-        # }],
-
         parameters=[{
-            'enable_image_denoising': False,
+            'enable_image_denoising': True,
             'rectified_images': False,
             'enable_localization_n_mapping': True,
-            'enable_imu_fusion': True,
+            'enable_imu_fusion': False,
+            'enable_ground_constraint_in_odometry': False,
+            'enable_ground_constraint_in_slam': False,
             'gyro_noise_density': 4.9522e-03,
             'gyro_random_walk': 2.3666e-05,
             'accel_noise_density': 2.5703e-02,
             'accel_random_walk': 6.1030e-04,
-            'calibration_frequency': 200.0,
+            'calibration_frequency': 400.0,
             'image_jitter_threshold_ms': 40.00,
             'imu_jitter_threshold_ms': 10.00,
             'localize_on_startup': False,
             'base_frame': 'oak-d_frame',
             'imu_frame': 'oak_imu_frame',
-            'enable_slam_visualization': False,
-            'enable_landmarks_view': False,
-            'enable_observations_view': False,
+            'enable_slam_visualization': True,
+            'enable_landmarks_view': True,
+            'enable_observations_view': True,
+            #'gravitational_force': [-9.8, 0.0, 0.0],
             'gravitational_force': [-8.95, -0.47, -0.45],
             'camera_optical_frames': [
                 'oak_left_camera_optical_frame',
@@ -109,8 +73,7 @@ def generate_launch_description():
         output='screen',
     )
 
-    return launch.LaunchDescription([visual_slam_launch_container]) #, realsense_camera_node])
-
+    return launch.LaunchDescription([visual_slam_launch_container])
 
 
 
