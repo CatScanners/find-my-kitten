@@ -7,9 +7,9 @@ from cv_bridge import CvBridge
 import cv2
 
 
-class ZEDGrayscaleConverter(Node):
+class StereoGrayscaleConverter(Node):
     def __init__(self):
-        super().__init__('zed_grayscale_converter')
+        super().__init__('stereo_grayscale_converter')
         self.bridge = CvBridge()
         
         # Use sensor-compatible QoS
@@ -20,16 +20,16 @@ class ZEDGrayscaleConverter(Node):
         )
         
         self.sub_left = self.create_subscription(
-            Image, '/drone1/zed_left_camera/color/image_raw', 
+            Image, '/drone1/stereo_left_camera/color/image_raw', 
             self.left_cb, sensor_qos)
         self.sub_right = self.create_subscription(
-            Image, '/drone1/zed_right_camera/color/image_raw', 
+            Image, '/drone1/stereo_right_camera/color/image_raw', 
             self.right_cb, sensor_qos)
         
-        self.pub_left = self.create_publisher(Image, '/zed_left_gray/image_raw', 10)
-        self.pub_right = self.create_publisher(Image, '/zed_right_gray/image_raw', 10)
+        self.pub_left = self.create_publisher(Image, '/drone1/stereo_left_camera/grayscale/image_raw', 10)
+        self.pub_right = self.create_publisher(Image, '/drone1/stereo_right_camera/grayscale/image_raw', 10)
         
-        self.get_logger().info('ZED RGB→Grayscale node started')
+        self.get_logger().info('Stereo RGB→Grayscale node started')
 
     def left_cb(self, msg):
         try:
@@ -67,7 +67,7 @@ class ZEDGrayscaleConverter(Node):
 
 def main():
     rclpy.init()
-    node = ZEDGrayscaleConverter()
+    node = StereoGrayscaleConverter()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
