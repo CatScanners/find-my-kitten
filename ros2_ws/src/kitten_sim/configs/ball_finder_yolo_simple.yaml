@@ -5,7 +5,10 @@ isaac:
 
 px4:
   script: "ball_finder.py"
-  delay_seconds: 30.0
+  delay_seconds: 70.0
+
+offboard:
+  delay_seconds: 45.0
 
 cameras:
   down_facing:
