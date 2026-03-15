@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 
+from logging import config
+
 import yaml
 from pathlib import Path
 from launch import LaunchDescription
@@ -115,15 +117,23 @@ def generate_launch_description():
 
 
         # 3. Offboard control
-        actions.append(ExecuteProcess(
-            cmd=['bash', '-c', env_prefix("ros2 run px4_handler offboard_control")],
-            output='screen'
+        offboard_delay = config['offboard'].get('delay_seconds', 30.0)
+
+        actions.append(TimerAction(
+            period=offboard_delay,
+            actions=[ExecuteProcess(
+                cmd=['bash', '-c', env_prefix(
+                    "ros2 run px4_handler offboard_control "
+                    "--ros-args --disable-stdout-logs --log-level error"
+                )],
+                output='screen'
+            )]
         ))
 
-
         # 4. PX4 handler delayed
-        px4_delay = config['px4'].get('delay_seconds', 30.0)
+        px4_delay = config['px4'].get('delay_seconds', 60.0)
         px4_script = config['px4']['script']
+
         actions.append(TimerAction(
             period=px4_delay,
             actions=[ExecuteProcess(
@@ -142,7 +152,7 @@ def generate_launch_description():
             )
             actions.append(ExecuteProcess(
                 cmd=['bash', '-c', env_prefix(cmd)],
-                output='screen'
+                output='log'
             ))
 
 
@@ -173,6 +183,9 @@ def generate_launch_description():
                 output='screen'
             ))
 
+        print(f"[kitten_sim.launch] config_path={config_path}")
+        print(f"[kitten_sim.launch] px4_delay={config['px4'].get('delay_seconds')}")
+        print(f"[kitten_sim.launch] offboard_delay={config['offboard'].get('delay_seconds')}")
 
         return actions
 
