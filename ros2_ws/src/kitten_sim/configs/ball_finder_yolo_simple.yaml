@@ -1,6 +1,7 @@
 isaac:
   script: "isaac_simple_obstacles.py"
-  args: ['']  # Optional
+  px4_dir: "/workspaces/isaac_ros-dev/simulation/PX4-Autopilot"
+  args: ["--headless"]
 
 px4:
   script: "ball_finder.py"
