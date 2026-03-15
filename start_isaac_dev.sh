@@ -76,19 +76,12 @@ cd "$SCRIPT_DIR"
 RUN_DEV="$SCRIPT_DIR/ros2_ws/src/isaac_ros_common/scripts/run_dev.sh"
 IMAGE_KEY="ros2_humble.catscanners"
 
-export ISAAC_ROS_COMMON_CONFIG="$SCRIPT_DIR/.isaac_ros_common-config"
+export ISAAC_ROS_COMMON_CONFIG="$SCRIPT_DIR/devcontainer/.isaac_ros_common-config"
 
 if [[ "$USE_ISAACSIM" == true ]]; then
     eprint "Using image with IsaacSim"
-    if [[ ! -d "$HOME/isaacsim" ]]; then
-        die "Using IsaacSim, but '$HOME/isaacsim' not found."
-    fi
-
     IMAGE_KEY="$IMAGE_KEY.isaacsim"
-    TARGET="/home/admin/isaacsim"
-    RUN_DEV_ARGS+=("--docker_arg" "--volume $HOME/isaacsim:$TARGET")
-    RUN_DEV_ARGS+=("--docker_arg" "--env ISAACSIM_PATH=$TARGET")
-    RUN_DEV_ARGS+=("--docker_arg" "--env ISAAC_PYTHON=$TARGET/python.sh")
+    RUN_DEV_ARGS+=("--docker_arg" "--volume isaacsim-catscanners:/home/admin/isaacsim")
 fi
 
 RUN_DEV_ARGS+=("--isaac_ros_dev_dir" "$SCRIPT_DIR")
