@@ -73,7 +73,7 @@ def generate_launch_description():
 
             base = (
                 "unset LD_LIBRARY_PATH GTK_PATH GIO_MODULE_DIR && "
-                f'echo "the ros subpath {subpath}" '
+                f'echo "the ros subpath {subpath}" &&'
                 f"source /opt/ros/{subpath}/setup.bash && "
                 f"source {venv_activate} && "
                 f"cd {ros2_ws} && "

@@ -27,7 +27,6 @@ help() {
         -b, --no-build        Skip rebuilding the container image
         -c, --no-check        Skips the registry check
         -d, --docker          Add a custom docker argument to when the script start up the container
-
     "
 }
 
