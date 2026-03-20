@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 
+from logging import config
+
 import yaml
 from pathlib import Path
 from launch import LaunchDescription
@@ -90,8 +92,26 @@ def generate_launch_description():
         ))
 
 
-        # 2. Isaac Sim (replace COMMAND_HERE with what you run manually)
-        isaac_command = "isaac_run isaac_simple_obstacles.py --headless"  # your working command
+        # 2. Isaac Sim
+        isaac_config = config.get('isaac', {})
+        isaac_script = isaac_config.get('script')
+        isaac_px4_dir = isaac_config.get('px4_dir', '')
+        isaac_args = isaac_config.get('args', [])
+
+        if not isaac_script:
+            raise RuntimeError("Config is missing 'isaac.script'")
+
+        if not isinstance(isaac_args, list):
+            raise RuntimeError("'isaac.args' must be a YAML list")
+
+        isaac_parts = ["isaac_run", isaac_script]
+
+        if isaac_px4_dir:
+            isaac_parts.append(isaac_px4_dir)
+
+        isaac_parts.extend(str(arg) for arg in isaac_args)
+        isaac_command = " ".join(isaac_parts)
+
         actions.append(ExecuteProcess(
             cmd=['bash', '-ic', env_prefix(f"cd {isaac_sim_standalones} && {isaac_command}")],
             output='screen'
@@ -99,15 +119,23 @@ def generate_launch_description():
 
 
         # 3. Offboard control
-        actions.append(ExecuteProcess(
-            cmd=['bash', '-c', env_prefix("ros2 run px4_handler offboard_control")],
-            output='screen'
+        offboard_delay = config['offboard'].get('delay_seconds', 30.0)
+
+        actions.append(TimerAction(
+            period=offboard_delay,
+            actions=[ExecuteProcess(
+                cmd=['bash', '-c', env_prefix(
+                    "ros2 run px4_handler offboard_control "
+                    "--ros-args --disable-stdout-logs --log-level error"
+                )],
+                output='screen'
+            )]
         ))
 
-
         # 4. PX4 handler delayed
-        px4_delay = config['px4'].get('delay_seconds', 30.0)
+        px4_delay = config['px4'].get('delay_seconds', 60.0)
         px4_script = config['px4']['script']
+
         actions.append(TimerAction(
             period=px4_delay,
             actions=[ExecuteProcess(
@@ -126,7 +154,7 @@ def generate_launch_description():
             )
             actions.append(ExecuteProcess(
                 cmd=['bash', '-c', env_prefix(cmd)],
-                output='screen'
+                output='log'
             ))
 
 
@@ -157,6 +185,9 @@ def generate_launch_description():
                 output='screen'
             ))
 
+        print(f"[kitten_sim.launch] config_path={config_path}")
+        print(f"[kitten_sim.launch] px4_delay={config['px4'].get('delay_seconds')}")
+        print(f"[kitten_sim.launch] offboard_delay={config['offboard'].get('delay_seconds')}")
 
         return actions
 
