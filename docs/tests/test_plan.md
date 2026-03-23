@@ -15,9 +15,9 @@ git lfs fetch
 git lfs pull
 ```
 
-Before beginning the tests, you'll need to download and install the following dependencies and drivers. <br/>
+Before beginning the tests, you'll need to download and install the dependencies and drivers defined below: <br/>
 
-You can install Ubuntu drivers by running: `sudo ubuntu-drivers install` <br/>
+Install necessary Ubuntu drivers by running: `sudo ubuntu-drivers install` <br/>
 
 Make sure you have **python3 version 3.12.4** or newer installed. <br/>
 
@@ -53,16 +53,28 @@ export NVIDIA_CONTAINER_TOOLKIT_VERSION=1.18.2-1
       libnvidia-container1=${NVIDIA_CONTAINER_TOOLKIT_VERSION}
 ```
 
+<br/> 
+
+
+**After installing the drivers, you have to install the remaining apps and projects by following the installation guide given in this repository at the subpath:**
+```
+/find-my-kitten/docs/IsaacSim/Installing.md
+```
+
+or by reading it through this link: https://github.com/CatScanners/find-my-kitten/blob/main/docs/IsaacSim/Installing.md  <br/> 
+
+
+
+
 ## Plan 2. Running the simulator inside docker container
 ### Setup
-Before running the simulation inside a container, you'll first have to build ros2 by following these steps: <br/> 
+Before running the simulation inside a container, you'll first have to start the container and build ros2 by following the following steps: <br/> 
 
 ```
-cd into /ros2_ws
-sudo ./start_isaac_dev.sh -sc
+./start_isaac_dev.sh -sc
 ```
 
-If after the last command you get an error and the message: "have you initialized submodules?", circle back to the git-lfs section of [Initial setup](#initial-setup)
+NOTE: If after the last command you get an error and the message: "have you initialized submodules?", circle back to the git-lfs section of [Initial setup](#initial-setup)
 
 If the script runs without errors, then you will notice that it starts the docker container. This step will take around 30 minutes, so you'll have to wait a while. <br/>
 
