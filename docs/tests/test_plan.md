@@ -53,13 +53,13 @@ export NVIDIA_CONTAINER_TOOLKIT_VERSION=1.18.2-1
       libnvidia-container1=${NVIDIA_CONTAINER_TOOLKIT_VERSION}
 ```
 
-
-## Plan 1. Running the simulator inside docker container
+## Plan 2. Running the simulator inside docker container
+### Setup
 Before running the simulation inside a container, you'll first have to build ros2 by following these steps: <br/> 
 
 ```
 cd into /ros2_ws
-sudo ./start_isaac_dev.sh
+sudo ./start_isaac_dev.sh -sc
 ```
 
 If after the last command you get an error and the message: "have you initialized submodules?", circle back to the git-lfs section of [Initial setup](#initial-setup)
@@ -72,7 +72,33 @@ After you have successfully started the container, cd into /ros2_ws in the conta
 colcon build
 ```
 
-After building, return to the parent directory and cd into /simulation , where you can start the simulation by running: <br/>
+After building, return to the parent directory and run the following list of commands (You can copy paste all of them at once into the terminal and press enter):
 ```
-./start_isaac_sim.sh
+cd /home/admin/isaacsim/
+./post_install.sh
+./isaac-sim.selector.sh
+source ~/.bashrc
+cd /workspaces/isaac_ros-dev
+sudo apt update
+sudo apt install libcanberra-gtk-module libcanberra-gtk3-module
+uv sync
+uv add smmap gitpython numpy scipy
+source .venv/bin/activate
+sudo chown -R admin:admin /home/admin/PegasusSimulator
+export ISAACSIM_PYTHON=/home/admin/isaacsim/python.sh
+export ISAACSIM_PATH=/home/admin/isaacsim
+$ISAACSIM_PYTHON -m pip install --editable /home/admin/PegasusSimulator/extensions/pegasus.simulator
+cd ros2_ws
+source install/setup.bash
+source /opt/ros/humble/setup.bash
 ```
+
+When runnin these commands, you should get a small GUI pop-up that is the setup for the simulator UI.<br/>
+In this window, Just press the large green button at the bottom, wait for a larger UI to open, and then you can close both GUI's and go to the next step. <br/>
+
+<br/>
+
+### Runnig the simulator
+After the last series of commands, you should be at the path: `/workspaces/isaac_ros-dev/ros2_ws` <br/>
+In this folder, you can start the simulation by running the following command: <br/>
+`ros2 launch kitten_sim kitten_sim.launch.py`
