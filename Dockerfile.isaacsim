@@ -20,7 +20,9 @@ RUN apt-get update && apt-get install -y \
 RUN cd /tmp/uv && \
     uv export --only-group isaacsim | uv pip install --system -r -
 
-COPY devcontainer/isaacsim_bashrc.sh /home/admin/.bashrc
+COPY devcontainer/isaacsim_bashrc.sh /tmp/.bashrc
+RUN cat /tmp/.bashrc >> /home/admin/.bashrc && \
+    rm /tmp/.bashrc
 
 COPY --chmod=0755 devcontainer/isaacsim_entrypoint.sh \
     /usr/local/bin/scripts/entrypoint_additions/isaacsim.user.sh
