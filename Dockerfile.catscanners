@@ -10,7 +10,14 @@ RUN mkdir -p /home/admin/.ssh && \
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 COPY pyproject.toml uv.lock /tmp/uv/
 RUN cd /tmp/uv && \
-    uv export | uv pip install --system -r -
+    uv export --frozen --no-hashes | \
+    uv pip install --system -r - \
+	--index-url https://pypi.org/simple \
+	--extra-index-url https://download.pytorch.org/whl/cu126 \
+	--index-strategy unsafe-best-match
+
+RUN [[ "$(uname -m)" == "aarch64" ]] && \
+    uv pip install --reinstall --system torch torchvision --index-url "https://pypi.jetson-ai-lab.io/jp6/cu126"
 
 COPY --parents ros2_ws/src/**/package.xml /packagexmls/
 
