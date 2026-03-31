@@ -22,3 +22,7 @@ RUN apt-get update && \
 
 RUN apt-get update && apt-get install -y \
     tmux
+
+COPY ./devcontainer/general_bashrc.sh /tmp/.bashrc
+RUN cat /tmp/.bashrc >> /home/admin/.bashrc && \
+    rm /tmp/.bashrc
