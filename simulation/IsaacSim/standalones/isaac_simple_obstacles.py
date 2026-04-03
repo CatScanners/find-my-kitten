@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+from pathlib import Path
 import carb
 import numpy as np
 
@@ -28,6 +29,9 @@ class PegasusApp:
 
         self.pg = PegasusInterface()
 
+        repo_root = Path(__file__).resolve().parents[3]
+        self.px4_autopilot_path = (repo_root / "simulation" / "PX4-Autopilot").resolve()
+
         self.pg._world = World(**self.pg._world_settings)
         self.world = self.pg.world
 
@@ -36,10 +40,14 @@ class PegasusApp:
 
         # Multirotor configuration
         config_multirotor = MultirotorConfig()
+        px4_dir = self.px4_autopilot_path
+        if not px4_dir.exists():
+            raise FileNotFoundError(f"PX4-Autopilot path not found: {px4_dir}")
+
         mavlink_config = PX4MavlinkBackendConfig({
             "vehicle_id": 0,
             "px4_autolaunch": True,
-            "px4_dir": self.pg.px4_path,
+            "px4_dir": str(px4_dir),
             "px4_vehicle_model": self.pg.px4_default_airframe,
             "udp_port": 14550,
         })
