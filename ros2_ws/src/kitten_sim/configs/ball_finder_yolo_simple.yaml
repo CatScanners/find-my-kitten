@@ -26,3 +26,6 @@ object_detector:
 custom_executables:
   - package: "kitten_sim"
     executable: "zed_grayscale_converter.py"
+
+distro_info:
+  - name: "jazzy"
