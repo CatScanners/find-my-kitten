@@ -10,10 +10,11 @@ from launch.actions import ExecuteProcess, TimerAction, DeclareLaunchArgument, O
 from launch.substitutions import LaunchConfiguration
 from launch.launch_context import LaunchContext
 from launch_ros.substitutions import FindPackageShare
+from typing import Any
 
 
 
-def load_config(config_path: Path):
+def load_config(config_path: Path) -> dict[Any, Any]:
     if not config_path.exists():
         raise RuntimeError(f"Config file not found: {config_path}")
     with open(config_path, 'r') as f:
@@ -50,14 +51,14 @@ def generate_launch_description():
         package_share_path = package_share.perform(context)
         config_path = Path(package_share_path) / config_filename
         config = load_config(config_path)
-
+        ros_subpath_name = config.get("distro_info", {}).get("name", "humble")
 
         # Find project root and venv
         share_path = Path(package_share_path).resolve()
         ros2_ws, isaac_sim_standalones, venv_activate = find_project_paths(share_path)
 
-
-        def env_prefix(extra=None):
+                
+        def env_prefix(extra=None) -> str:
             ros_setup = None
             for distro in ["jazzy", "humble"]:
                 candidate = Path(f"/opt/ros/{distro}/setup.bash")
@@ -66,10 +67,14 @@ def generate_launch_description():
                     break
             if ros_setup is None:
                 raise RuntimeError("Neither /opt/ros/jazzy/setup.bash nor /opt/ros/humble/setup.bash found")
+            
+
+            subpath = ros_setup if ros_setup != None else ros_subpath_name
 
             base = (
                 "unset LD_LIBRARY_PATH GTK_PATH GIO_MODULE_DIR && "
-                f"source {ros_setup} && "
+                f'echo "the ros subpath {subpath}" '
+                f"source /opt/ros/{subpath}/setup.bash && "
                 f"source {venv_activate} && "
                 f"cd {ros2_ws} && "
                 "source install/setup.bash"
