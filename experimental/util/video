@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e 
+
+cd ./modules/video/
+./compile.sh
+./run.sh

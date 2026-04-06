@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e 
+
+cd ./modules/display/
+./compile.sh
+./run.sh
