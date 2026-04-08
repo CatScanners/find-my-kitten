@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import carb
 import numpy as np
+import sys
 
 from isaacsim import SimulationApp
 simulation_app = SimulationApp({
@@ -24,7 +25,7 @@ from pegasus.simulator.logic.graphical_sensors.monocular_camera import Monocular
 
 class PegasusApp:
 
-    def __init__(self):
+    def __init__(self, px4_path):
         self.timeline = omni.timeline.get_timeline_interface()
 
         self.pg = PegasusInterface()
@@ -47,7 +48,7 @@ class PegasusApp:
         mavlink_config = PX4MavlinkBackendConfig({
             "vehicle_id": 0,
             "px4_autolaunch": True,
-            "px4_dir": str(px4_dir),
+            "px4_dir": px4_path,
             "px4_vehicle_model": self.pg.px4_default_airframe,
             "udp_port": 14550,
         })
@@ -145,7 +146,13 @@ class PegasusApp:
         simulation_app.close()
 
 def main():
-    pg_app = PegasusApp()
+    px4_path = os.environ.get("PX4_PATH", "/workspaces/isaac_ros-dev/simulation/PX4-Autopilot")
+    if len(sys.argv) > 1:
+        px4_path = sys.argv[1]
+
+    os.environ["PX4_HOME_DIR"] = px4_path
+
+    pg_app = PegasusApp(px4_path)
     # Run the application loop
     pg_app.run()
 
