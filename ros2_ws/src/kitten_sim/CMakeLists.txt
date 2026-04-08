@@ -7,4 +7,8 @@ install(DIRECTORY launch/
   DESTINATION share/${PROJECT_NAME}/
 )
 
+install(DIRECTORY configs/
+  DESTINATION share/${PROJECT_NAME}/configs
+)
+
 ament_package()
