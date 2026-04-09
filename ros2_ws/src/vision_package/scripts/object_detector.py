@@ -1,110 +1,116 @@
 #!/usr/bin/env python3
 
+import warnings
+
 import rclpy
+from cv_bridge import CvBridge
 from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from sensor_msgs.msg import Image
 from std_msgs.msg import Int32MultiArray
-from vision_msgs.msg import Detection2DArray, Detection2D, ObjectHypothesisWithPose
-from cv_bridge import CvBridge
-import torch
-import warnings
 from ultralytics import YOLO
+from vision_msgs.msg import Detection2D, Detection2DArray, ObjectHypothesisWithPose
+
 warnings.filterwarnings("ignore")
 
 
 class ObjectDetectionNode(Node):
     def __init__(self):
-        super().__init__('object_detection_node')
-        
-        self.declare_parameter("input_topic_name", "image_topic")
-        self.declare_parameter("output_topic_name", "detected_objects_topic")
-        self.declare_parameter("image_dimension_topic", "image_dimension_topic")
-        self.declare_parameter("pytorch_model_path", "yolov5s.pt")
-        self.declare_parameter("pytorch_model", "custom")
-        self.declare_parameter("pytorch_repo_or_dir", "ultralytics/yolov5")
+        super().__init__("object_detection_node")
+
+        self.declare_parameter("image_topic", "/argus/left/image_raw")
+        self.declare_parameter("detections_topic", "/detections")
+        self.declare_parameter("dimension_topic", "/dimensions")
         self.declare_parameter("yolo_file", None)
 
-        self.input_topic_name = self.get_parameter("input_topic_name").value
-        self.output_topic_name = self.get_parameter("output_topic_name").value
-        self.image_dimension_topic = self.get_parameter("image_dimension_topic").value
-        self.pytorch_model_path = self.get_parameter("pytorch_model_path").value
-        self.pytorch_model = self.get_parameter("pytorch_model").value
-        self.pytorch_repo_or_dir = self.get_parameter("pytorch_repo_or_dir").value
+        self.image_topic = self.get_parameter("image_topic").value
+        self.detections_topic = self.get_parameter("detections_topic").value
+        self.dimension_topic = self.get_parameter("dimension_topic").value
         self.yolo_file = self.get_parameter("yolo_file").value
 
-        if self.yolo_file is None:
-            self.model = torch.hub.load(repo_or_dir=self.pytorch_repo_or_dir, model=self.pytorch_model, path=self.pytorch_model_path)
-        else:
-            self.model = YOLO(self.yolo_file)
-
-
-
-        # Load the PyTorch model
-        self.model.conf = 0.5  # Confidence threshold
+        assert self.yolo_file is not None, (
+            "Must give argument for yolo_file to take the yolo model from"
+        )
+        self.model = YOLO(self.yolo_file, task="detect")
 
         # Initialize CV Bridge
         self.bridge = CvBridge()
 
         # Subscribe to the image topic
         self.subscription = self.create_subscription(
-            Image,
-            self.input_topic_name,
-            self.image_callback,
-            10
+            Image, self.image_topic, self.image_callback, 10
         )
 
         # Publisher for detected objects
         self.detection_pub = self.create_publisher(
-            Detection2DArray,
-            self.output_topic_name,
-            10
+            Detection2DArray, self.detections_topic, 10
         )
-
-        # Publisher for image dimensions
+        dimension_qos = QoSProfile(
+            depth=1,
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+        )
         self.dimension_pub = self.create_publisher(
-            Int32MultiArray,
-            self.image_dimension_topic,
-            10
+            Int32MultiArray, self.dimension_topic, dimension_qos
         )
 
     def image_callback(self, msg):
         try:
             # Convert ROS Image message to OpenCV image
-            cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-            print(cv_image.shape)
-            height, width, _ = cv_image.shape
-
-            # Publish image dimensions
+            cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
+            height, width = cv_image.shape[:2]
             dimension_msg = Int32MultiArray()
-            dimension_msg.data = [width, height]
+            dimension_msg.data = [int(width), int(height)]
             self.dimension_pub.publish(dimension_msg)
 
             # Perform object detection
-            results = self.model(cv_image)
+            results = self.model.track(
+                cv_image,
+                persist=True,
+                conf=0.3,
+                verbose=False,
+            )
+            # We get just one image each time, so only one result
+            boxes = results[0].cpu().boxes
+            if boxes is None or len(boxes) == 0:
+                return
 
-            # Parse detection results
-            #detections = results.xyxy[0].cpu().numpy()  # Get detections as numpy array
-            detections = [ ]
+            xywh_coords = boxes.xywh
+            confidences = boxes.conf
+            detected_classes = boxes.cls
+            tracking_ids = boxes.id
 
             detection_array = Detection2DArray()
             detection_array.header = msg.header
 
-            for detection in detections:
-                x1, y1, x2, y2, conf, cls = detection
+            for box_idx in range(len(boxes)):
+                center_x, center_y, box_width, box_height = xywh_coords[box_idx]
+                tracking_id = (
+                    tracking_ids[box_idx] if tracking_ids is not None else None
+                )
+                confidence = confidences[box_idx]
+                detected_class = detected_classes[box_idx]
+
                 detection_msg = Detection2D()
-                detection_msg.bbox.center.position.x = (x1 + x2) / 2.0
-                detection_msg.bbox.center.position.y = (y1 + y2) / 2.0
-                detection_msg.bbox.size_x = float(x2 - x1)
-                detection_msg.bbox.size_y = float(y2 - y1)
-                
+                detection_msg.id = (
+                    str(int(tracking_id)) if tracking_id is not None else ""
+                )
+
+                detection_msg.bbox.center.position.x = float(center_x)
+                detection_msg.bbox.center.position.y = float(center_y)
+                detection_msg.bbox.size_x = float(box_width)
+                detection_msg.bbox.size_y = float(box_height)
+
                 # Add object hypothesis
                 hypothesis = ObjectHypothesisWithPose()
-                hypothesis.hypothesis.class_id = str(cls)
-                hypothesis.hypothesis.score = float(conf)
+                hypothesis.hypothesis.class_id = str(int(detected_class))
+                hypothesis.hypothesis.score = float(confidence)
                 detection_msg.results.append(hypothesis)
-                
+
                 detection_array.detections.append(detection_msg)
-                self.get_logger().info(f"Detected: {self.model.names[int(cls)]} {conf:.2f} at ({float(x1+x2)/2}, {float(y1+y2)/2})")
+                self.get_logger().info(
+                    f"Detected: {self.model.names[int(detected_class)]} {confidence:.2f} at ({center_x}, {center_y})"
+                )
 
             # Publish detection results
             self.detection_pub.publish(detection_array)
@@ -120,5 +126,6 @@ def main(args=None):
     node.destroy_node()
     rclpy.shutdown()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
