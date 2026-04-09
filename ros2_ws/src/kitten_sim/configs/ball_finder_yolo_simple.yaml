@@ -28,4 +28,4 @@ custom_executables:
     executable: "zed_grayscale_converter.py"
 
 distro_info:
-  - name: "jazzy"
+  name: "jazzy"

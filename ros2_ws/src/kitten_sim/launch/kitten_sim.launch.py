@@ -41,7 +41,7 @@ def generate_launch_description():
 
     config_arg = DeclareLaunchArgument(
         'config',
-        default_value='configs/ball_finder_yolo_simple.yaml',
+        default_value='configs/ball_finder_yolo_simple2.yaml',
         description='Config filename relative to package share'
     )
 

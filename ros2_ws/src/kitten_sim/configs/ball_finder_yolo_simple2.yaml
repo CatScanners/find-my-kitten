@@ -1,0 +1,31 @@
+isaac:
+  script: "isaac_simple_obstacles2.py"
+  px4_dir: "/workspaces/isaac_ros-dev/simulation/PX4-Autopilot"
+  args: ["--headless"]
+
+px4:
+  script: "ball_finder.py"
+  delay_seconds: 70.0
+
+offboard:
+  delay_seconds: 45.0
+
+cameras:
+  down_facing:
+    topic: "/drone1/down_facing_camera/color/image_raw"
+  zed_left:
+    topic: "/zed_left_gray/image_raw"
+  zed_right:
+    topic: "/zed_right_gray/image_raw"
+
+object_detector:
+  enabled: true
+  input_topic_name: "/drone1/down_facing_camera/color/image_raw"
+  pytorch_model_path: "yolov5s.pt"
+
+custom_executables:
+  - package: "kitten_sim"
+    executable: "zed_grayscale_converter.py"
+
+distro_info:
+  name: "jazzy"
