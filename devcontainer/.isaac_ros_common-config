@@ -2,5 +2,5 @@ __CONFIG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 BASE_DOCKER_REGISTRY_NAMES=("nvcr.io/nvidia/isaac/ros" "ghcr.io/catscanners/isaac_ros")
 
-CONFIG_DOCKER_SEARCH_DIRS=("$__CONFIG_DIR")
+CONFIG_DOCKER_SEARCH_DIRS=("$__CONFIG_DIR/..")
 unset __CONFIG_DIR

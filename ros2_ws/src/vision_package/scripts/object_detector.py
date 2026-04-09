@@ -6,10 +6,9 @@ from sensor_msgs.msg import Image
 from std_msgs.msg import Int32MultiArray
 from vision_msgs.msg import Detection2DArray, Detection2D, ObjectHypothesisWithPose
 from cv_bridge import CvBridge
-import cv2
 import torch
-import numpy as np
 import warnings
+from ultralytics import YOLO
 warnings.filterwarnings("ignore")
 
 
@@ -23,6 +22,7 @@ class ObjectDetectionNode(Node):
         self.declare_parameter("pytorch_model_path", "yolov5s.pt")
         self.declare_parameter("pytorch_model", "custom")
         self.declare_parameter("pytorch_repo_or_dir", "ultralytics/yolov5")
+        self.declare_parameter("yolo_file", None)
 
         self.input_topic_name = self.get_parameter("input_topic_name").value
         self.output_topic_name = self.get_parameter("output_topic_name").value
@@ -30,9 +30,16 @@ class ObjectDetectionNode(Node):
         self.pytorch_model_path = self.get_parameter("pytorch_model_path").value
         self.pytorch_model = self.get_parameter("pytorch_model").value
         self.pytorch_repo_or_dir = self.get_parameter("pytorch_repo_or_dir").value
+        self.yolo_file = self.get_parameter("yolo_file").value
+
+        if self.yolo_file is None:
+            self.model = torch.hub.load(repo_or_dir=self.pytorch_repo_or_dir, model=self.pytorch_model, path=self.pytorch_model_path)
+        else:
+            self.model = YOLO(self.yolo_file)
+
+
 
         # Load the PyTorch model
-        self.model = torch.hub.load(repo_or_dir=self.pytorch_repo_or_dir, model=self.pytorch_model, path=self.pytorch_model_path)
         self.model.conf = 0.5  # Confidence threshold
 
         # Initialize CV Bridge
