@@ -12,6 +12,7 @@ find_package(stereo_msgs REQUIRED)
 find_package(depthai REQUIRED)
 find_package(depthai_bridge REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(vision_msgs REQUIRED)
 find_package(px4_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -82,6 +83,10 @@ ament_target_dependencies(vslam_message_transform
 ament_target_dependencies(point_odometry
   rclcpp
   std_msgs
+  px4_msgs
+  vision_msgs
+  tf2
+  tf2_ros
 )
 
 

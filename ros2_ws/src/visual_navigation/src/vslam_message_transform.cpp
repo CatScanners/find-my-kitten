@@ -9,8 +9,7 @@
 #include <tf2/LinearMath/Transform.hpp>
 #include <tf2/LinearMath/Vector3.hpp>
 
-#define LOG(severity, fmt, ...)                                                \
-  RCLCPP_##severity(this->get_logger(), fmt, ##__VA_ARGS__)
+#define LOG(severity, fmt, ...) RCLCPP_##severity(this->get_logger(), fmt, ##__VA_ARGS__)
 
 using std::placeholders::_1;
 
@@ -49,12 +48,9 @@ private:
     // https://docs.ros.org/en/noetic/api/geometry_msgs/html/msg/TwistWithCovariance.html
     std::array<double, 36> pose_covar = msg->pose.covariance;
     std::array<double, 36> twist_covar = msg->twist.covariance;
-    tf2::Vector3 position_variance(pose_covar[0], pose_covar[7],
-                                   pose_covar[14]);
-    tf2::Vector3 orientation_variance(pose_covar[21], pose_covar[28],
-                                      pose_covar[35]);
-    tf2::Vector3 velocity_variance(twist_covar[0], twist_covar[7],
-                                   twist_covar[14]);
+    tf2::Vector3 position_variance(pose_covar[0], pose_covar[7], pose_covar[14]);
+    tf2::Vector3 orientation_variance(pose_covar[21], pose_covar[28], pose_covar[35]);
+    tf2::Vector3 velocity_variance(twist_covar[0], twist_covar[7], twist_covar[14]);
 
     // the vslam uses the axes x=forward, y=left, z=up.
     // PX4 wants x=forward, y=right, z=down
@@ -73,9 +69,8 @@ private:
 
     px4_msgs::msg::VehicleOdometry out = px4_msgs::msg::VehicleOdometry();
     out.timestamp = now().nanoseconds() / 1'000;
-    out.timestamp_sample =
-        static_cast<uint64_t>(msg->header.stamp.sec) * 1'000'000 +
-        static_cast<uint64_t>(msg->header.stamp.nanosec) / 1'000;
+    out.timestamp_sample = static_cast<uint64_t>(msg->header.stamp.sec) * 1'000'000 +
+                           static_cast<uint64_t>(msg->header.stamp.nanosec) / 1'000;
 
     out.pose_frame = out.POSE_FRAME_FRD;
     out.position[0] = position.getX();
