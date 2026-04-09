@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 
-
+// fitness is the squared distance between the feature location on the screen and the point where 3D point would be on the screen.
 float fitness(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState) {
     if (positions.size() != features.size()) {
         std::cout << "3D points and their 2D points do not match\n";
@@ -39,7 +39,7 @@ DroneState optimalLocation(
         std::cout << "3D points and their 2D points do not match\n";
         return previousState;
     }
-    vector3D gradientLoc = { 0, 0, 0 };
+    vector3D gradientLoc = EMPTY_VECTOR3D;
     DroneState newState = previousState;
     
     for (int n = 0; n < 100; n++){
@@ -114,18 +114,24 @@ struct Sphere {
     }
 };
 
-DroneState optimalRotation(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState) {
+DroneState optimalRotation(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ) {
     if (positions.size() != features.size()) {
         std::cout << "3D points and their 2D points do not match\n";
         return previousState;
     }
+    // These can be tinkered with. //
+    constexpr float closeEnough = 0.0f;// How close to the identity rotation should it be before incrementing smallChanges counter;
+    constexpr int maxLoops = 50; // for majority of loops loopNum does not reach 15 loops
+    constexpr int maxAmountOfSmallChanges = 1; // How many times is the Quaternioin identity rotation applied before considering it optimal
+    constexpr float dt = 0.07f; // change in time to get the amount of movement from the momentum of the impulse shpere.
+    // ----- //
+
+    int smallChanges = 0;
+
     DroneState newState = previousState;
     Quaternion step;
-    //for (int n = 0; n < 10; n++){
-    constexpr float closeEnough = 0.00001f;
-    int n = 0;
-    do {
-        Sphere rotationSphere = {positions.size(),0,0,0};
+    for (int loopNum = 0; loopNum < maxLoops && smallChanges < maxAmountOfSmallChanges; loopNum++){
+                Sphere rotationSphere = {positions.size(),EMPTY_VECTOR3D};
         for (int i = 0; i < positions.size(); i++){
             auto& [w,h] = features[i];
             vector3D vec3D = (positions[i]-newState.loc).normalize();
@@ -133,21 +139,19 @@ DroneState optimalRotation(const std::vector<vector3D>& positions, const std::ve
             vector3D forceOnSphere = vec3D.projectToNormal(vec2D);
             rotationSphere.applyImpulse(forceOnSphere,vec2D);
         }
-        step = rotationSphere.toQuaternion(0.07f);
+        step = rotationSphere.toQuaternion(dt);
+        if (lockZ) step = step.z_axis_component();
         newState.rot = step*newState.rot;
-        n += step.w >= 1;
-    } while (n != 5);
+        smallChanges += step.w >= 1;
+    }
     return newState;
 }
-
 
 int mult = 1;
 int total = 0;
 
-
-
 float pointSD(const std::vector<vector3D>& positions){
-    vector3D sum = {0,0,0};
+    vector3D sum = EMPTY_VECTOR3D;
     for (int i = 0; i < positions.size(); i++){
         sum += positions[i];
     }
@@ -159,31 +163,31 @@ float pointSD(const std::vector<vector3D>& positions){
     return std::sqrt(var)/positions.size();
 }
 
-void axisStep(float &axis, const std::vector<vector3D>& positions, const std::vector<vector2D>& features, DroneState &previousState, int size) {
+// axisStep is most likely suboptimal.
+void axisStep(float &axis, const std::vector<vector3D>& positions, const std::vector<vector2D>& features, DroneState &previousState, float stepSize) {
     previousState = optimalRotation(positions, features, previousState);
     float fit = fitness(positions, features, previousState);
-    float quant = pointSD(positions)*0.1/size;
-    axis += quant;
+    axis += stepSize;
     previousState = optimalRotation(positions, features, previousState);
     float fit2 = fitness(positions, features, previousState);
     if (fit2 < fit) return;
-    axis -= 2*quant;
+    axis -= 2*stepSize;
     previousState = optimalRotation(positions, features, previousState);
     float fit3 = fitness(positions, features, previousState);
     if (fit3 < fit) return;
-    axis += quant;
+    axis += stepSize;
     if (fit2 < fit3) {
-        axis += fit/(fit2+fit)*quant;
+        axis += fit/(fit2+fit)*stepSize;
     }else{
-        axis -= fit/(fit3+fit)*quant;
+        axis -= fit/(fit3+fit)*stepSize;
     };
     
 }
 #include <chrono>
 #include <thread>
 
-DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, DroneState previousState, bool display) {
-    constexpr int extraIterationsV2 = 100;
+DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ , const bool display) {
+    constexpr int extraIterationsV2 = 10;
     constexpr float momentumDecay =  0.8f;
     if (positions.size() != features.size()) {
         std::cout << "3D points and their 2D points do not match\n";
@@ -193,39 +197,100 @@ DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, 
     std::vector<vector3D> locations; 
     float fitp = fitness(positions, features, previousState); 
     float fit  = fitness(positions, features, previousState); 
-    vector3D momentum = {0,0,0};
+    vector3D momentum = EMPTY_VECTOR3D;
+    vector3D sum      = EMPTY_VECTOR3D;
     int count = 1;
+    int n = 0;
+    constexpr float d = 0.1;
+    float stepSize = pointSD(positions)*d;
     do {
-        momentum *= momentumDecay;
+        //momentum *= momentumDecay;
         newState.loc += momentum;
         vector3D start = newState.loc;
         //gradientStep(positions, features, newState);
-        axisStep(newState.loc.x, positions, features, newState, count);
-        axisStep(newState.loc.y, positions, features, newState, count);
-        axisStep(newState.loc.z, positions, features, newState, count);
+        axisStep(newState.loc.x, positions, features, newState, stepSize/count);
+        axisStep(newState.loc.y, positions, features, newState, stepSize/count);
+        if (!42 || !lockZ){
+            axisStep(newState.loc.z, positions, features, newState, stepSize/count);
+        }
         momentum += newState.loc-start;
+        momentum *= momentumDecay;//momentum*(1+momentum.dot(newState.loc-start))/2*momentumDecay;//momentumDecay;
         fitp = fit;
         fit = fitness(positions, features, newState);
-        count += fitp < fit;
+        count += fitp <= fit;
+        if (count != 1) {
+            sum += newState.loc;
+            n += 1;
+        }
         if (display){
             drone temp = {newState};
-            std::vector<vector2D> m = temp.render(positions);
-            m.insert( m.end(), features.begin(), features.end() );
-            temp.display(m);
-            if (count == extraIterationsV2) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            }
+            temp.display(positions,features);
+            //if (count == extraIterationsV2) {
+            //    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            //}
         }
     } while (count != extraIterationsV2);
+    newState.loc = sum*(1.0f/n);
     return optimalRotation(positions, features, newState);;
 }
 
+// unreliable
+DroneState gradientDescentLocateDrone(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ , const bool display) {
+    if (positions.size() != features.size()) std::cout << "positions and their coresponding positions on camera do not match\n";
+    DroneState bestState = previousState;
+    float Minfitness = 340282346638528859811704183484516925440.0000000000000000f; 
+    DroneState newState = previousState;
+    constexpr int maxLoops = 1000;
+    vector3D momentum = EMPTY_VECTOR3D;
+    
+    for (int loopNum = 0; loopNum < maxLoops; loopNum++){ //&& smallChanges < maxAmountOfSmallChanges
+        vector3D gradientLoc = EMPTY_VECTOR3D;
+        Sphere rotationSphere = {positions.size(),EMPTY_VECTOR3D};
+        float fitness = 0.0f;
+        for (int i = 0; i < positions.size(); i++){
+            auto& [w,h] = features[i];
+            vector3D vec3D = (positions[i]-newState.loc).normalize();
+            vector3D vec2D = (newState.forwardRot()+newState.rightRot()*w+newState.downRot()*h).normalize();
+            vector3D forceOnSphere = vec3D.projectToNormal(vec2D);
+            float sing = (newState.forwardRot().dot(forceOnSphere) >= 0)*2-1;
+            vector3D movement = ((vec3D-vec2D)-forceOnSphere)*sing;
+            gradientLoc -= movement;
+            rotationSphere.applyImpulse(forceOnSphere,vec2D);
+
+        }
+        constexpr float momentumDecay = 0.5;
+        momentum += gradientLoc/positions.size();
+        momentum *= momentumDecay*(momentum.dot(gradientLoc)>0);
+        
+        newState.loc = newState.loc + momentum;
+        newState.rot = rotationSphere.toQuaternion(0.07f)*newState.rot;
+        if (display){
+            drone temp = {newState};
+            temp.display(positions,features);
+            //if (count == extraIterationsV2) {
+            //    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            //}
+        }
+    }
+
+    if (lockZ){
+        // this is horible
+        newState.loc.z = previousState.loc.z;
+        newState.rot = newState.rot.z_axis_component();
+        return newState;
+    } else {
+        return newState;
+    }
+}
+
+
 DroneState locateDrone(
-    const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, bool display
+    const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ , const bool display
 ){
     if (positions.size() != features.size()) {
         std::cout << "3D points and their 2D points do not match\n";
         return previousState;
     }
-    return gradientDescentLocateDroneV2(positions, features, previousState, display);
+    return gradientDescentLocateDroneV2(positions, features, previousState, lockZ, display);
+    //return gradientDescentLocateDrone(positions, features, previousState, lockZ, display);
 }; 

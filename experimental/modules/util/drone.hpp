@@ -6,6 +6,10 @@
 #include "Quaternion.hpp"
 #include "frameData.hpp"
 #include <optional>
+#include <iostream>
+#include <unordered_map>
+#include <cmath>
+#include <vector>
 vector2D solvePointOnPlane(const vector3D& pointOnPlain, const vector3D& wVec,const vector3D& hVec, const vector3D& line) ;
 
 
@@ -22,8 +26,7 @@ struct DroneState{
     void rotateCamera(float rad) ;
 };
 
-constexpr int minimumNumberOfPoints = 6;
-#include <opencv2/opencv.hpp>
+constexpr int minimumNumberOfPoints = 8;
 struct drone{
     DroneState state;
     std::unordered_map<int,vector3D> data;
@@ -33,21 +36,26 @@ struct drone{
 
     std::vector<vector2D> render(const std::vector<vector3D> &points);
     
-    void display(const std::vector<vector2D> &points);
+    void display(const std::vector<vector3D> &positions, const std::vector<vector2D> &features);
 
-    std::vector<vector3D> reverseRenderAllFeaturesOnFloor(const std::vector<vector2D> &features);
-    void reverseRenderAllFeaturesOnFloor(const std::vector<inputPoint> &features);
+private:
+    void initEstimate3DPositions(const std::vector<inputPoint> &features);
+    void estimate3DPositions(const std::vector<inputPoint> &features);
     
     std::optional<DroneState> initialize(const std::vector<inputPoint>& trackedPoints, const DroneState& start);
-
-    std::optional<DroneState> FEEDMEE(const std::vector<inputPoint>& trackedPoints, const DroneState start);
-
+public:
+    std::optional<DroneState> prosess_frames(
+        const std::vector<inputPoint>& trackedPoints, 
+        const DroneState start,
+        const bool lockZ = true, 
+        const bool display = false
+    );
 };
 
 drone giveDroneExample(int i,float distance);
 
 drone giveDroneExampleError(drone start, int i,float distance);
 
-
+drone droneRandomWalk(drone start,float distance);
 
 #endif

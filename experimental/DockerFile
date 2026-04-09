@@ -19,5 +19,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tmux
 
 FROM compiler-base AS main
-
+    # It might be helpful if non criticals helpers are sepparated here.
+    RUN apt-get install -y python3.6 python3-matplotlib
 WORKDIR /src

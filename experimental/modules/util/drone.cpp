@@ -40,7 +40,6 @@ void DroneState::rotateCamera(float rad) {
     rot = rot*rotate;
 }
 
-#include <opencv2/opencv.hpp>
 std::vector<vector2D> drone::render(const std::vector<vector3D> &points){
     vector3D loc        = state.loc;
     vector3D rot        = state.forwardRot();
@@ -59,7 +58,11 @@ std::vector<vector2D> drone::render(const std::vector<vector3D> &points){
     return features;
 }
 
-void drone::display(const std::vector<vector2D> &points){
+#ifdef HAS_OPENCV
+#include <opencv2/opencv.hpp>
+void drone::display(const std::vector<vector3D> &positions,const std::vector<vector2D> &features){
+    std::vector<vector2D> points = render(positions);
+    points.insert( points.end(), features.begin(), features.end() );
     int w = imgW;
     int h = imgH;
     std::vector<unsigned char> vec(w*h);
@@ -78,23 +81,15 @@ void drone::display(const std::vector<vector2D> &points){
     cv::imshow("Raw Image", img);
     cv::waitKey(1);
 }
-
-std::vector<vector3D> drone::reverseRenderAllFeaturesOnFloor(const std::vector<vector2D> &features){
-    vector3D loc        = state.loc;
-    vector3D rot        = state.forwardRot();
-    vector3D framedown  = state.downRot(); 
-    vector3D frameright = state.rightRot();
-    std::vector<vector3D> points;
-    for (vector2D p : features){
-        vector3D onplane = rot + frameright*p.x + framedown*p.y;
-        float t = -loc.z/onplane.z; 
-        points.push_back(loc + onplane*t);
-    }
-    return points;
+#else
+void drone::display(const std::vector<vector3D> &positions,const std::vector<vector2D> &features){
+    return;
 }
+#endif
 
 
-void drone::reverseRenderAllFeaturesOnFloor(const std::vector<inputPoint> &features){
+
+void drone::initEstimate3DPositions(const std::vector<inputPoint> &features){
     vector3D loc        = state.loc;
     vector3D rot        = state.forwardRot();
     vector3D framedown  = state.downRot(); 
@@ -102,31 +97,52 @@ void drone::reverseRenderAllFeaturesOnFloor(const std::vector<inputPoint> &featu
     for (inputPoint feature : features){
         auto& [id, p] = feature;
         vector3D onplane = rot + frameright*p.x + framedown*p.y;
-        float t = -loc.z/onplane.z; 
-        data[id] = loc + onplane*t;
+        // TODO make better point estimator.
+        //onplane = onplane.normalize();
+        //float t = -loc.z/onplane.z; 
+        //data[id] = loc + onplane*t;
+        data[id] += (loc + onplane*loc.z);
+    }
+}
+
+void drone::estimate3DPositions(const std::vector<inputPoint> &features){
+    vector3D loc        = state.loc;
+    vector3D rot        = state.forwardRot();
+    vector3D framedown  = state.downRot(); 
+    vector3D frameright = state.rightRot();
+    for (inputPoint feature : features){
+        auto& [id, p] = feature;
+        vector3D onplane = rot + frameright*p.x + framedown*p.y;
+        // TODO make better point estimator.
+        //float t = -loc.z/onplane.z; 
+        //data[id] = loc + onplane*t;
+        //onplane = onplane.normalize();
+        constexpr float retention = 0.9;
+        data[id] *= retention;
+        data[id] += (loc +  onplane*loc.z)*(1-retention);
     }
 }
 
 std::optional<DroneState> drone::initialize(const std::vector<inputPoint>& trackedPoints, const DroneState& start){
     if (trackedPoints.size() >= minimumNumberOfPoints){
         state = start;
-        reverseRenderAllFeaturesOnFloor(trackedPoints);
-        return std::nullopt;
+        estimate3DPositions(trackedPoints);
         lost = false;
+        return std::nullopt;
     }
 }
 
-std::optional<DroneState> drone::FEEDMEE(const std::vector<inputPoint>& trackedPoints, const DroneState start){
+std::optional<DroneState> drone::prosess_frames(const std::vector<inputPoint>& trackedPoints, const DroneState start,const bool lockZ,const bool display){
     if (lost){
         return initialize(trackedPoints, start);
     }
-    std::vector<inputPoint> newPoint;
+    std::vector<inputPoint> newTrackedPoint;
     std::vector<vector3D> point3D;
     std::vector<vector2D> point2D;
     for (auto trackedPoint : trackedPoints){
         auto& [id, point] = trackedPoint;
         if (data.find(id) == data.end()){
-            newPoint.push_back(trackedPoint);
+            newTrackedPoint.push_back(trackedPoint);
         } else {
             point3D.push_back(data[id]);
             point2D.push_back(point);
@@ -136,32 +152,40 @@ std::optional<DroneState> drone::FEEDMEE(const std::vector<inputPoint>& trackedP
         return std::nullopt;
         lost = true;
     }
-    locateDrone(point3D,point2D,state,false);
-    reverseRenderAllFeaturesOnFloor(newPoint);
+    state = locateDrone(point3D,point2D,state,lockZ,display);
+    //state = optimalLocation(point3D,point2D,state);
+    initEstimate3DPositions(newTrackedPoint); 
+    estimate3DPositions(trackedPoints);
     return std::optional<DroneState>{state};
 };
 
-
-//DroneState drone::FEEDMEE(std::vector<inputPoint> trackedPoints){
-//    drone::reverseRenderAllFeaturesOnFloor()
-//    return state;
-//}
 
 drone giveDroneExample(int i,float distance){
     Quaternion startRot = {1,0,0,0};
     vector3D startLoc = {distance*std::sin(i/10.0),0,distance*std::cos(i/10.0)};
     drone flying = drone({startLoc,startRot});
-    flying.state.rotateTowards({0,0,0});
+    flying.state.rotateTowards(EMPTY_VECTOR3D);
     return flying;
 }
 
 
 drone giveDroneExampleError(drone start, int i,float distance){
     drone copyError = start;
-    vector3D offset = {-distance*5,distance*5,distance*5};
+    vector3D offset = {-distance,distance,distance};
     vector3D offsetRot = start.state.loc.crossProduct((vector3D){-distance,-distance,-distance}).normalize()+start.state.loc;
     copyError.state.loc += offset;
     copyError.state.rotateTowards(offsetRot);//(vector3D){-distance,-distance,-distance}
     copyError.state.rotateTowards({-distance/3,-distance/3,-distance/3});
+    return copyError;
+}
+#include "examplePoints.hpp"
+
+drone droneRandomWalk(drone start,float distance){
+    drone copyError = start;
+    vector3D offsetLoc = random3D();
+    copyError.state.loc += offsetLoc*distance;
+    vector3D offsetRot = random3D();
+    offsetRot += copyError.state.loc;
+    copyError.state.rotateTowards(offsetRot);
     return copyError;
 }

@@ -27,6 +27,7 @@ struct Quaternion {
 
     Quaternion fromTwoVectorsScaledDown(const vector3D from, const vector3D to, const float factor) ;
     Quaternion inverse() const ;
+    Quaternion z_axis_component() const ;
 
 
     vector3D rotateVector(vector3D v) const ;

@@ -18,8 +18,14 @@ void random(std::vector<vector3D>& points, float radius, int resolution) {
         float z = radius*dist(gen);
         points.push_back({x, y, z});
     }
-
 }
+
+vector3D random3D() {
+    std::uniform_real_distribution<float> dist(-1.0f, 1.0f); // range [-1, 1]
+    return {dist(gen),dist(gen),dist(gen)};;
+}
+
+
 void add(std::vector<vector3D>& points, std::vector<vector3D>& points2) {
     for (int i = 0; i < points.size(); ++i) {
         points[i] += points2[i];

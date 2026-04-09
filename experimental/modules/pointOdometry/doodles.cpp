@@ -5,8 +5,8 @@
 // 
 DroneState gradientDescentLocateDrone(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, DroneState previousState) {
     if (positions.size() != features.size()) std::cout << "positions and their coresponding positions on camera do not match\n";
-    vector3D gradientLoc = { 0, 0, 0 };
-    Sphere rotationSphere = {positions.size(),0,0,0};
+    vector3D gradientLoc = EMPTY_VECTOR3D;
+            Sphere rotationSphere = {positions.size(),EMPTY_VECTOR3D};
     float fitness = 0.0f;
     for (int i = 0; i < positions.size(); i++){
         auto& [x,y,z] = positions[i];
@@ -40,11 +40,79 @@ DroneState gradientDescentLocateDrone(const std::vector<vector3D>& positions, co
     return newState;
 }
 
+// reliable?
+DroneState gradientDescentLocateDrone(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ , const bool display) {
+    if (positions.size() != features.size()) std::cout << "positions and their coresponding positions on camera do not match\n";
+    DroneState bestState = previousState;
+    float Minfitness = 340282346638528859811704183484516925440.0000000000000000f; 
+    DroneState newState = previousState;
+    constexpr int maxLoops = 100000;
+    
+    for (int loopNum = 0; loopNum < maxLoops; loopNum++){ //&& smallChanges < maxAmountOfSmallChanges
+        vector3D gradientLoc = EMPTY_VECTOR3D;
+                Sphere rotationSphere = {positions.size(),EMPTY_VECTOR3D};
+        float fitness = 0.0f;
+        for (int i = 0; i < positions.size(); i++){
+            auto& [x,y,z] = positions[i];
+            auto& [w,h] = features[i];
+            //// optimal location
+            //auto& [locx,locy,locz] = newState.loc; 
+            //auto [x1,y1,z1] = newState.forwardRot();
+            //auto [x2,y2,z2] = newState.rightRot();
+            //auto [x3,y3,z3] = newState.downRot();
+            //float fw = ((y2*z3-y3*z2)*(x-locx)-(x2*z3-x3*z2)*(y-locy)+(x2*y3-x3*y2)*(z-locz))*w+((y1*z3-y3*z1)*(x-locx)-(x1*z3-x3*z1)*(y-locy)+(x1*y3-x3*y1)*(z-locz)); //= 0
+            //float dxfw = -(y2*z3-y3*z2)*w-y1*z3+y3*z1;
+            //float dyfw =  (x2*z3-x3*z2)*w+x1*z3-x3*z1;
+            //float dzfw = -(x2*y3-x3*y2)*w-x1*y3+x3*y1;
+            //vector3D gradientLocw = { 2*fw*dxfw, 2*fw*dyfw, 2*fw*dzfw };
+            //float fh = ((y2*z3-y3*z2)*(x-locx)-(x2*z3-x3*z2)*(y-locy)+(x2*y3-x3*y2)*(z-locz))*h-((y1*z2-y2*z1)*(x-locx)-(x1*z2-x2*z1)*(y-locy)+(x1*y2-x2*y1)*(z-locz)); //= 0
+            //float dxfh = -h*(y2*z3-y3*z2)+y1*z2-y2*z1;
+            //float dyfh =  h*(x2*z3-x3*z2)-x1*z2+x2*z1;
+            //float dzfh = -h*(x2*y3-x3*y2)+x1*y2-x2*y1;
+            //vector3D gradientLoch = { 2*fh*dxfh, 2*fh*dyfh, 2*fh*dzfh };
+            //gradientLoc -= gradientLocw;
+            //gradientLoc -= gradientLoch;
+            //fitness += fw*fw+fh*fh;
+
+            // optimal rotation
+            vector3D vec3D = (positions[i]-newState.loc).normalize();
+            vector3D vec2D = (newState.forwardRot()+newState.rightRot()*w+newState.downRot()*h).normalize();
+            vector3D forceOnSphere = vec3D.projectToNormal(vec2D);
+            float sing = (newState.forwardRot().dot(forceOnSphere) >= 0)*2-1;
+            vector3D movement = ((vec3D-vec2D)-forceOnSphere)*sing;
+            gradientLoc -= movement;
+            rotationSphere.applyImpulse(forceOnSphere,vec2D);
+
+        }
+        //if (fitness < Minfitness){
+        //    Minfitness = fitness;
+        //    bestState = newState;
+        //}
+        if (lockZ){
+            gradientLoc.z = 0;
+            newState.loc = newState.loc + gradientLoc/positions.size()*0.5f;
+            newState.rot = rotationSphere.toQuaternion(0.07f).z_axis_component()*newState.rot;
+        }else {
+            newState.loc = newState.loc + gradientLoc/positions.size()*0.5f;
+            newState.rot = rotationSphere.toQuaternion(0.07f)*newState.rot;
+        }
+        if (display){
+            drone temp = {newState};
+            temp.display(positions,features);
+            //if (count == extraIterationsV2) {
+            //    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            //}
+
+        }
+        //std::cout << "fitness: " << fitness << "\n";
+    }
+    return newState;
+}
 
 // IF given correct orientation then This will produce correct location VERY FAST.
 DroneState optimalLocation(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, DroneState previousState) {
     if (positions.size() != features.size()) std::cout << "positions and their coresponding positions on camera do not match\n";
-    vector3D gradientLoc = { 0, 0, 0 };
+    vector3D gradientLoc = EMPTY_VECTOR3D;
     DroneState newState = previousState;
     
     for (int n = 0; n < 100; n++){
@@ -109,7 +177,7 @@ struct instance {
 void pointGradientDecent(std::vector<vector3D>& positions, std::vector<instance>& frames) {
 
     for (int p = 0; p < positions.size(); p++){   
-        vector3D dv = {0,0,0};
+        vector3D dv = EMPTY_VECTOR3D;
         for (int i = 0; i < frames.size(); i++){
             auto&[x, y, z ]   = positions[p];
             auto [vx,vy,vz] = frames[i].dir(p);
@@ -168,5 +236,5 @@ void adjust3DpointsToAllignWithTheCamera(std::vector<vector3D>& positions, const
     //    positions[i] -= previousState.rightRot() *(diff.x-features[i].x)*scale;
     //    positions[i] -= previousState.downRot()  *(diff.y-features[i].y)*scale;
     //}
-    positions = temp.reverseRenderAllFeaturesOnFloor(features);
+    positions = temp.estimate3DPositions(features);
 }

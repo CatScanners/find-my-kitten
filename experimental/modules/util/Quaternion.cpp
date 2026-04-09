@@ -80,6 +80,10 @@ Quaternion Quaternion::fromTwoVectorsScaledDown(const vector3D from, const vecto
 Quaternion Quaternion::inverse() const {
     return {w, -x, -y, -z};
 }
+Quaternion Quaternion::z_axis_component() const {
+    float yaw = std::atan2(2*(w*z+x*y),1-2*(y*y+z*z));
+    return {std::cos(yaw/2), 0, 0, std::sin(yaw/2)};
+}
 
 
 vector3D Quaternion::rotateVector(vector3D v) const
