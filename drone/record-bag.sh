@@ -10,10 +10,10 @@ shift
 mapfile -t topics < "$topics_file"
 
 GIT_TOP=$(git rev-parse --show-toplevel)
-bags_dir="$GIT_TOP/flight/bags/$(date '+%F')/"
+bags_dir="$GIT_TOP/drone/bags/$(date '+%F')/"
 mkdir -p "$bags_dir"
 
 bag_name="${topics_file##*/}_$(date '+%T')"
 
 printf "%s\n" "${topics[@]}"
-ros2 bag record -o "$bags_dir/$bag_name" "${topics[@]}"
+ros2 bag record --storage mcap -o "$bags_dir/$bag_name" "${topics[@]}"

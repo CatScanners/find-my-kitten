@@ -1,0 +1,7 @@
+/fmu/out/vehicle_attitude
+/fmu/out/sensor_combined
+/fmu/out/vehicle_gps_position
+/fmu/out/vehicle_local_position
+/fmu/out/vehicle_odometry
+/argus/left/image_raw
+/argus/left/camera_info
