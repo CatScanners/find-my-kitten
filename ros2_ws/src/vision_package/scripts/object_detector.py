@@ -71,6 +71,7 @@ class ObjectDetectionNode(Node):
         try:
             # Convert ROS Image message to OpenCV image
             cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            print(cv_image.shape)
             height, width, _ = cv_image.shape
 
             # Publish image dimensions
@@ -82,7 +83,8 @@ class ObjectDetectionNode(Node):
             results = self.model(cv_image)
 
             # Parse detection results
-            detections = results.xyxy[0].cpu().numpy()  # Get detections as numpy array
+            #detections = results.xyxy[0].cpu().numpy()  # Get detections as numpy array
+            detections = [ ]
 
             detection_array = Detection2DArray()
             detection_array.header = msg.header
