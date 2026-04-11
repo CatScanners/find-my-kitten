@@ -1,8 +1,30 @@
 # find-my-kitten
 
-This repository contains the ROS2 packages and the documentation website files for the Find My Kitten, AI! software project.
+This repository contains the ROS2 packages, simulation's and the documentation website files for the Find My Kitten, AI! software project.
 
 Documentation website here: https://catscanners.github.io/find-my-kitten/
+
+## System requirements
+
+- Ubuntu 24, aka Ubuntu Jazzy (WMs wont be enough, you need a full dual boot)
+- 150 GB of storage (excl. the OS)
+- Nvidia GPU (required for simulator tests)
+- docker (installation instructions can be found at: https://docs.docker.com/engine/install/ubuntu/)
+
+## General terminology
+
+| term    | description | doc link |
+| -------- | ------- | ------- |
+| ROS 2 | Software libraries that for developing robots | https://docs.ros.org/en/kilted/index.html |
+| PX4 | Autopilot software for drone that can be integrated with ROS 2 | https://docs.px4.io/main/en/ |
+| Isaac ROS (Isaac for short) | Nvidia's version of ROS that supports Nvidia GPU acceleration | https://developer.nvidia.com/isaac/ros |
+
+
+<br/>
+
+**For Quick start, follow the document at the location:** ```docs/Quick Start/Quick Start.md```
+
+**For a simple setup of the environment and tools, follow the rest of the README**
 
 ## Very quick start
 You have our drone and have [set up our toolchain](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Setup%20toolchain) on the drone? What should you do to get the drone running?
@@ -15,6 +37,7 @@ You have our drone and have [set up our toolchain](https://catscanners.github.io
       - **vision_package**: get the camera input and enable object detection by referring to [Machine vision guide](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Machine%20vision%20startup)
       - **px4_handler**: once the drone is flying and offboard-mode is enabled, refer to [Actions startup](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Actions%20startup)
 - Want to make any changes? Make your changes on the packages in ``ros2_ws``, ``colcon build --packages-select <your-package>``, ``source install/setup.bash``.
+
 
 ## Development environment
 ### Python
