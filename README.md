@@ -1,10 +1,8 @@
 # find-my-kitten
-
 This repository contains the ROS2 packages, simulation's and the documentation website files for the Find My Kitten, AI! software project.
-
 Documentation website here: https://catscanners.github.io/find-my-kitten/
 
-## System requirements
+## Minimum system requirements
 
 - Ubuntu 24, aka Ubuntu Jazzy (WMs wont be enough, you need a full dual boot)
 - 150 GB of storage (excl. the OS)
@@ -13,22 +11,25 @@ Documentation website here: https://catscanners.github.io/find-my-kitten/
 
 ## General terminology
 
-| term    | description | doc link |
-| -------- | ------- | ------- |
-| ROS 2 | Software libraries that for developing robots | https://docs.ros.org/en/kilted/index.html |
-| PX4 | Autopilot software for drone that can be integrated with ROS 2 | https://docs.px4.io/main/en/ |
-| Isaac ROS (Isaac for short) | Nvidia's version of ROS that supports Nvidia GPU acceleration | https://developer.nvidia.com/isaac/ros |
-| ROS 2 Humble (Humble for short) | ROS 2 version compatible with Ubuntu 22 | https://docs.ros.org/en/humble/index.html |
-| ROS 2 Jazzy (Jazzy for short) | ROS 2 version compatible with Ubuntu 24 | https://docs.ros.org/en/jazzy/Installation.html |
+| term | shortened name | description | doc link |
+| -------- | ------- | ------- | ------- |
+| ROS 2 | ROS 2 | Software libraries that for developing robots | https://docs.ros.org/en/kilted/index.html |
+| PX4 | PX4 | Autopilot software for drone that can be integrated with ROS 2 | https://docs.px4.io/main/en/ |
+| Isaac ROS | Isaac | Nvidia's version of ROS that supports Nvidia GPU acceleration | https://developer.nvidia.com/isaac/ros |
+| ROS 2 Humble | Humble | ROS 2 version compatible with Ubuntu 22 | https://docs.ros.org/en/humble/index.html |
+| ROS 2 Jazzy | Jazzy | ROS 2 version compatible with Ubuntu 24 | https://docs.ros.org/en/jazzy/Installation.html |
 
 <br/>
 
-**For Quick start, follow the document at the location:** ```docs/Quick Start/Quick Start.md```
+**For Quick start, follow the document at the location:** ```docs/Quick Start/Quick Start.md```,
+**or you can find it [by clicking this link](https://github.com/CatScanners/find-my-kitten/blob/main/docs/Quick%20Start/Quick%20start.md)**
 
 **For a simple setup of the environment and tools, follow the rest of the README**
 
-## Very quick start
-You have our drone and have [set up our toolchain](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Setup%20toolchain) on the drone? What should you do to get the drone running?
+## Shortened quick start
+After receiving the drone, set up the toolchain on the drone by [following these instructions](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Setup%20toolchain)
+
+After the drone's toolchain is set up, what should you do to get the drone running?
 - Pull this repository and ``cd ros2_ws``
 - The run operation can be divided into two parts: **drone pilot part** and **ROS2 packages part**.
   - **Drone pilot part**
@@ -82,3 +83,9 @@ Shortly explained the directory structure:
 | `/ros2_ws/src/launch`                          | Some ROS2 launch files, have not really used.                              |
 | `/simulation`                           | Some files for the simulation, refer to [this](https://catscanners.github.io/find-my-kitten/Simulation%20&%20flight%20analysis/Simulation%20setup.html)                                                    |
 | `/docs/`                            | Documentation files.                                                             |
+
+
+
+## Contributing 
+Contributions are mainly introduced and added through PRs, which require at least one project member's approval. <br/>
+Commits cannot be added directly to main.
