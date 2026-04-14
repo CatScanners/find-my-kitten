@@ -11,13 +11,13 @@ Documentation website here: https://catscanners.github.io/find-my-kitten/
 
 ## General terminology
 
-| term | shortened name | description | doc link |
-| -------- | ------- | ------- | ------- |
-| ROS 2 | ROS 2 | Software libraries that for developing robots | https://docs.ros.org/en/kilted/index.html |
-| PX4 | PX4 | Autopilot software for drone that can be integrated with ROS 2 | https://docs.px4.io/main/en/ |
-| Isaac ROS | Isaac | Nvidia's version of ROS that supports Nvidia GPU acceleration | https://developer.nvidia.com/isaac/ros |
-| ROS 2 Humble | Humble | ROS 2 version compatible with Ubuntu 22 | https://docs.ros.org/en/humble/index.html |
-| ROS 2 Jazzy | Jazzy | ROS 2 version compatible with Ubuntu 24 | https://docs.ros.org/en/jazzy/Installation.html |
+|     term     | shortened name |                  description                  | doc link |
+| ------------ | -------------- | --------------------------------------------- | ------- |
+| ROS 2        | ROS 2          | Software libraries that for developing robots | https://docs.ros.org/en/kilted/index.html |
+| PX4          | PX4            | Autopilot software for drone that can be integrated with ROS 2 | https://docs.px4.io/main/en/ |
+| Isaac ROS    | Isaac          | Nvidia's version of ROS that supports Nvidia GPU acceleration | https://developer.nvidia.com/isaac/ros |
+| ROS 2 Humble | Humble         | ROS 2 version compatible with Ubuntu 22 | https://docs.ros.org/en/humble/index.html |
+| ROS 2 Jazzy  | Jazzy          | ROS 2 version compatible with Ubuntu 24 | https://docs.ros.org/en/jazzy/Installation.html |
 
 <br/>
 
