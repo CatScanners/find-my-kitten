@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cuda_runtime.h>
+#include "gpu.h"
 
 static inline void check(cudaError_t err, const char* context) {
     if (err != cudaSuccess) {

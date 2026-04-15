@@ -2,7 +2,7 @@
 #include "vector3D.hpp" 
 #include "Quaternion.hpp"
 #include "drone.hpp"
-#include "imagePosition.hpp"
+#include "vector2D.hpp"
 #include <unordered_map>
 
 
@@ -261,7 +261,7 @@ DroneState gradientDescentLocateDrone(const std::vector<vector3D>& positions, co
         constexpr float momentumDecay = 0.5;
         momentum += gradientLoc/positions.size();
         momentum *= momentumDecay*(momentum.dot(gradientLoc)>0);
-        
+
         newState.loc = newState.loc + momentum;
         newState.rot = rotationSphere.toQuaternion(0.07f)*newState.rot;
         if (display){

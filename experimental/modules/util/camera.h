@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -18,7 +19,7 @@ private:
     int fd;
     int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     v4l2_format fmt;
-    std::vector<IMG> buffers; 
+    std::vector<IMG> buffers;
     bool stream_is_on = false;
     bool stream_to_gpu_pointer;
 public:
@@ -33,7 +34,7 @@ public:
         if (stream_is_on){
             if (ioctl(fd, VIDIOC_STREAMOFF, &type) < 0) perror("Stream off failed");
         }
-        
+
         // --- Cleanup ---
         for (__u32 i = 0; i < n_buffers; i++) {
             munmap(buffers[i].data, buffers[i].size());
@@ -52,7 +53,7 @@ public:
         record_new_image();
         return buffers[buf.index];
     }
-    
+
 
 private:
 
@@ -108,7 +109,7 @@ private:
 //        }else{
 //            req.memory = V4L2_MEMORY_MMAP;
 //        }
-          
+
         if (ioctl(fd, VIDIOC_REQBUFS, &req) < 0) {
             perror("Requesting buffer failed");
             return false;
@@ -139,14 +140,14 @@ private:
                 cout << "Recieved  image with total size of bytes = " << buf.length             << endl;
                 return false;
             }
-            
+
             //if (stream_to_gpu_pointer){
             //    //buffers[i].start =
             //}else{
             //    buffers[i].start = (char*)mmap(NULL, buf.length, PROT_READ | PROT_WRITE,
             //                                    MAP_SHARED, fd, buf.m.offset);
             //}
-            
+
             if (i == 0){
                 if (ioctl(fd, VIDIOC_QBUF, &buf) < 0) {
                     perror("Queue buffer failed");
@@ -157,7 +158,7 @@ private:
         return true;
     }
 
-    
+
     bool init_start_stream(){
         // --- Start streaming ---
         if (ioctl(fd, VIDIOC_STREAMON, &type) < 0) {
@@ -170,7 +171,7 @@ private:
 
     void record_new_image() {
         next_frame_index = (next_frame_index+1)%n_buffers;
-        v4l2_buffer buf = get_v4l2_buffer(next_frame_index); 
+        v4l2_buffer buf = get_v4l2_buffer(next_frame_index);
         if (ioctl(fd, VIDIOC_QBUF, &buf) < 0) perror("Requeue buffer failed");
 
     }
@@ -185,5 +186,5 @@ private:
         return buf;
     }
 
-    
+
 };

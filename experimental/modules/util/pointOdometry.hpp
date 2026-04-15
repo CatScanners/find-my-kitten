@@ -1,9 +1,9 @@
 #ifndef POINT_ODOMETRY_HPP
 #define POINT_ODOMETRY_HPP
 #include <vector>
-#include "../util/vector3D.hpp" 
-#include "../util/drone.hpp"
-#include "../util/imagePosition.hpp"
+#include "vector3D.hpp" 
+#include "drone.hpp"
+#include "vector2D.hpp"
 
 
 // OPTIMAL means minimum squared distance of each feature 

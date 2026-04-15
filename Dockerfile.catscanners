@@ -17,7 +17,8 @@ RUN cd /tmp/uv && \
 	--index-strategy unsafe-best-match
 
 RUN [[ "$(uname -m)" == "aarch64" ]] && \
-    uv pip install --no-deps --reinstall --system torch torchvision --index-url "https://pypi.jetson-ai-lab.io/jp6/cu126"
+    uv pip install --no-deps --reinstall --system torch torchvision --index-url "https://pypi.jetson-ai-lab.io/jp6/cu126" \
+    || true
 
 COPY --parents ros2_ws/src/**/package.xml /packagexmls/
 

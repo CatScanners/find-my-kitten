@@ -43,7 +43,7 @@ void DroneState::rotateCamera(float rad) {
 std::vector<vector2D> drone::render(const std::vector<vector3D> &points){
     vector3D loc        = state.loc;
     vector3D rot        = state.forwardRot();
-    vector3D framedown  = state.downRot(); 
+    vector3D framedown  = state.downRot();
     vector3D frameright = state.rightRot();
     std::vector<vector2D> features;
     for (vector3D p : points){
@@ -92,14 +92,14 @@ void drone::display(const std::vector<vector3D> &positions,const std::vector<vec
 void drone::initEstimate3DPositions(const std::vector<inputPoint> &features){
     vector3D loc        = state.loc;
     vector3D rot        = state.forwardRot();
-    vector3D framedown  = state.downRot(); 
+    vector3D framedown  = state.downRot();
     vector3D frameright = state.rightRot();
     for (inputPoint feature : features){
         auto& [id, p] = feature;
         vector3D onplane = rot + frameright*p.x + framedown*p.y;
         // TODO make better point estimator.
         //onplane = onplane.normalize();
-        //float t = -loc.z/onplane.z; 
+        //float t = -loc.z/onplane.z;
         //data[id] = loc + onplane*t;
         data[id] += (loc + onplane*loc.z);
     }
@@ -108,13 +108,13 @@ void drone::initEstimate3DPositions(const std::vector<inputPoint> &features){
 void drone::estimate3DPositions(const std::vector<inputPoint> &features){
     vector3D loc        = state.loc;
     vector3D rot        = state.forwardRot();
-    vector3D framedown  = state.downRot(); 
+    vector3D framedown  = state.downRot();
     vector3D frameright = state.rightRot();
     for (inputPoint feature : features){
         auto& [id, p] = feature;
         vector3D onplane = rot + frameright*p.x + framedown*p.y;
         // TODO make better point estimator.
-        //float t = -loc.z/onplane.z; 
+        //float t = -loc.z/onplane.z;
         //data[id] = loc + onplane*t;
         //onplane = onplane.normalize();
         constexpr float retention = 0.9;
@@ -132,13 +132,19 @@ std::optional<DroneState> drone::initialize(const std::vector<inputPoint>& track
     }
 }
 
-std::optional<DroneState> drone::prosess_frames(const std::vector<inputPoint>& trackedPoints, const DroneState start,const bool lockZ,const bool display){
+std::optional<DroneState> drone::process_frames(
+    const std::vector<inputPoint>& trackedPoints,
+    const DroneState givenEstimate,
+    const bool assumeCorrectRotationIsGiven,
+    const bool lockZ,
+    const bool display
+){
     if (lost){
-        return initialize(trackedPoints, start);
+        return initialize(trackedPoints, givenEstimate);
     }
     std::vector<inputPoint> newTrackedPoint;
-    std::vector<vector3D> point3D;
-    std::vector<vector2D> point2D;
+    std::vector<vector3D>   point3D;
+    std::vector<vector2D>   point2D;
     for (auto trackedPoint : trackedPoints){
         auto& [id, point] = trackedPoint;
         if (data.find(id) == data.end()){
@@ -148,13 +154,17 @@ std::optional<DroneState> drone::prosess_frames(const std::vector<inputPoint>& t
             point2D.push_back(point);
         }
     }
+    initEstimate3DPositions(newTrackedPoint);
     if (point3D.size() < minimumNumberOfPoints){
-        return std::nullopt;
         lost = true;
+        return std::nullopt;
     }
-    state = locateDrone(point3D,point2D,state,lockZ,display);
-    //state = optimalLocation(point3D,point2D,state);
-    initEstimate3DPositions(newTrackedPoint); 
+    if (!assumeCorrectRotationIsGiven){
+        state = locateDrone(point3D,point2D,state,lockZ,display);
+    } else {
+        state.rot = givenEstimate.rot;
+        state = optimalLocation(point3D,point2D,state);
+    }
     estimate3DPositions(trackedPoints);
     return std::optional<DroneState>{state};
 };

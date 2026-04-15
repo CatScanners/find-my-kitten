@@ -2,7 +2,6 @@
 #define QUATERNION_HPP
 
 #include "vector3D.hpp"
-#include "Quaternion.hpp"
 #include <iosfwd>
 
 struct Quaternion {
@@ -12,7 +11,7 @@ struct Quaternion {
 
     Quaternion(float w_, float x_, float y_, float z_)
         : w(w_), x(x_), y(y_), z(z_) {}
-    
+
     Quaternion fromAxisAngle(const vector3D vec, float angleRad) ;
 
     void normalize() ;
