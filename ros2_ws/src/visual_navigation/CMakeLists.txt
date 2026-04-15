@@ -12,6 +12,7 @@ find_package(stereo_msgs REQUIRED)
 find_package(depthai REQUIRED)
 find_package(depthai_bridge REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(vision_msgs REQUIRED)
 find_package(px4_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -46,13 +47,19 @@ add_executable(vslam_message_transform
   src/vslam_message_transform.cpp
 )
 
+add_executable(point_odometry
+  src/point_odometry.cpp
+)
+
 install(
   DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
 )
 
-install(
-  TARGETS stereo_node vslam_message_transform
+install(TARGETS 
+  stereo_node
+  vslam_message_transform
+  point_odometry
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -72,5 +79,15 @@ ament_target_dependencies(vslam_message_transform
   tf2
   tf2_ros
 )
+
+ament_target_dependencies(point_odometry
+  rclcpp
+  std_msgs
+  px4_msgs
+  vision_msgs
+  tf2
+  tf2_ros
+)
+
 
 ament_package()

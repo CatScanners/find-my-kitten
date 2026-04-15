@@ -13,9 +13,9 @@
   <depend>stereo_msgs</depend>
   <depend>depthai_ros</depend>
 
-  <!-- vslam_message_transform -->
   <depend>px4_msgs</depend>
   <depend>nav_msgs</depend>
+  <depend>vision_msgs</depend>
   <depend>tf2</depend>
   <depend>tf2_ros</depend>
 
@@ -24,6 +24,10 @@
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+
+  <!-- point_odometry dependencies -->
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
