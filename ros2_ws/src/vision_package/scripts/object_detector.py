@@ -57,7 +57,7 @@ class ObjectDetectionNode(Node):
     def image_callback(self, msg):
         try:
             # Convert ROS Image message to OpenCV image
-            cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="rgb8")
+            cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
             height, width = cv_image.shape[:2]
             dimension_msg = Int32MultiArray()
             dimension_msg.data = [int(width), int(height)]
@@ -69,7 +69,6 @@ class ObjectDetectionNode(Node):
                 persist=True,
                 conf=0.3,
                 verbose=False,
-                tracker="bytetrack.yaml",
             )
             # We get just one image each time, so only one result
             boxes = results[0].cpu().boxes
