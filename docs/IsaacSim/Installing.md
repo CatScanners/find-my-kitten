@@ -129,6 +129,16 @@ Test the current environment by running `isaac_run` in terminal. This should ope
 Test that the Isaac Sim python interpreter path variable is correct by running in the terminal:</br> 
 `$ISAACSIM_PYTHON ${ISAACSIM_PATH}/standalone_examples/api/isaacsim.core.api/add_cubes.py`</br>
 
+## Installing project dependencies
+
+For this repository, do not manually install Python dependencies one by one. Use `uv` to sync the environment from the project configuration:
+
+```bash
+cd find-my-kitten
+uv sync
+source .venv/bin/activate
+```
+
 ## Installing Pegasus Simulator extension
 1. Launch Isaac Sim with `isaac_run` in terminal.
 2. Open the Window->extensions on the top menubar inside Isaac Sim.
@@ -155,6 +165,16 @@ cd extensions
 $ISAACSIM_PYTHON -m pip install --editable pegasus.simulator
 ```
 
+## Building PX4-Autopilot
+
+PX4-Autopilot is included in this repository at `simulation/PX4-Autopilot`.
+
+After entering that directory, build SITL with:
+
+```bash
+cd find-my-kitten/simulation/PX4-Autopilot
+make px4_sitl
+```
 
 ## Setting PX4 Path
 
