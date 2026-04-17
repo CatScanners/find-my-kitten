@@ -8,6 +8,18 @@ Documentation website here: https://catscanners.github.io/find-my-kitten/
 - 150 GB of storage (excl. the OS)
 - Nvidia GPU (required for simulator tests)
 - docker (installation instructions can be found at: https://docs.docker.com/engine/install/ubuntu/)
+- python3 version 3.12.4 or newer
+
+<br/>
+
+**NOTE: Make sure to have installed git-lfs, after which you should clone the repository. <br/>
+If you have already cloned the repository, run the following commands:**
+
+```bash
+git lfs fetch
+git lfs pull
+```
+
 
 ## General terminology
 
@@ -26,7 +38,7 @@ Documentation website here: https://catscanners.github.io/find-my-kitten/
 
 **For a simple setup of the environment and tools, follow the rest of the README**
 
-## Shortened quick start
+## Shortened Quick Start for setting up the drone
 After receiving the drone, set up the toolchain on the drone by [following these instructions](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Setup%20toolchain)
 
 After the drone's toolchain is set up, what should you do to get the drone running?
