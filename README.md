@@ -9,10 +9,11 @@ Documentation website here: https://catscanners.github.io/find-my-kitten/
 - Nvidia GPU (required for simulator tests)
 - docker (installation instructions can be found at: https://docs.docker.com/engine/install/ubuntu/)
 - python3 version 3.12.4 or newer
+- the git-lfs plugin from: https://git-lfs.com/
 
 <br/>
 
-**NOTE: Make sure to have installed git-lfs, after which you should clone the repository. <br/>
+**NOTE: When cloning onto your own computer, make sure you have installed git-lfs, after which you should clone the repository. <br/>
 If you have already cloned the repository, run the following commands:**
 
 ```bash
