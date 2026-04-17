@@ -290,18 +290,19 @@ In this window, Just press the large green button at the bottom, wait for a larg
 
 <br/>
 
-#### Running the simulator
+### Building and Running the simulator inside docker container
 
-After the last series of commands, you should be at the path: `/workspaces/isaac_ros-dev/ros2_ws` <br/>
-In this folder, you can start the simulation by running the following command: <br/>
-`ros2 launch kitten_sim kitten_sim.launch.py`
-
-** NOTE: You can also run the simulator outside of the docker container by omitting the 
-initial ./start_isaac_dev.sh -sc   command, but YOu have to make sure that your directory names 
+** You can also run the simulator outside of the docker container by omitting the 
+initial ./start_isaac_dev.sh -sc   command, but You have to make sure that your directory names 
 are the same OR you change the code accordingly**
+
+<br/>
 
 If you want to run the simulator outside of the docker container, run the following command series instead of the ones given before:
 ```bash
+cd /home/admin/isaacsim/
+./post_install.sh
+./isaac-sim.selector.sh
 source ~/.bashrc
 cd /workspaces/isaac_ros-dev
 sudo apt update
@@ -318,6 +319,11 @@ source install/setup.bash
 source /opt/ros/humble/setup.bash
 ```
 
+#### Running the simulator
+
+After the last series of commands, you should be at the path: `/workspaces/isaac_ros-dev/ros2_ws` <br/>
+In this folder, you can start the simulation by running the following command: <br/>
+`ros2 launch kitten_sim kitten_sim.launch.py`
 
 ### Machine vision startup
 1. IMPORTANT. On drone startup make sure that all connected cameras are visible. This can be done with command `ls /dev/ | grep video`. If you have only the arducam globalshutter camera connected, you should only see /dev/Video0. 
