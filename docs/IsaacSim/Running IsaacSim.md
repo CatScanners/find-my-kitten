@@ -21,6 +21,18 @@ cd simulation/IsaacSim/standalones
 isaac_run isaac_simple_obstacles.py
 ```
 
+## Run inside the container
+
+You can also run Isaac Sim inside the project container. Start it with:
+
+```bash
+./start-isaac-dev.sh -cs
+```
+
+This creates/starts a container variant with Isaac Sim installed. Inside that container, the same run commands in this document work (`isaac_run ...`, `ros2 launch ...`, and so on).
+
+When running inside the container, some scripts or configs may need path updates because directory roots can differ from host paths.
+
 ## Running `kitten_sim` from `ros2_ws`
 
 The `ros2_ws/src/kitten_sim` package can be run:
