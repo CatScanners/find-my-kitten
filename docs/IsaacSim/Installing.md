@@ -141,14 +141,14 @@ source .venv/bin/activate
 
 ## Installing Pegasus Simulator extension
 1. Launch Isaac Sim with `isaac_run` in terminal.
-2. Open the Window->extensions on the top menubar inside Isaac Sim.
-![Extensions Menu Bar](../assets/extensions_menu_bar.png)
-3. On the Extensions manager menu, we can enable or disable extensions. By pressing the settings button, we can add a path to the Pegasus-Simulator repository.
-![Extensions Widget](../assets/extensions_widget.png)
-4. The path inserted should be the path to the repository followed by /extensions.
-![Extensions Path](../assets/adding_extension_path.png)
-5. After adding the path to the extension, we can enable the Pegasus Simulator extension on the third-party tab. Enable AUTOLOAD.
-![Extensions Menu](../assets/pegasus_inside_extensions_menu.png)
+2. Open the Window->extensions on the top menubar inside Isaac Sim. <br>
+![Extensions Menu Bar](../assets/extensions_menu_bar.png)<br>
+3. On the Extensions manager menu, we can enable or disable extensions. By pressing the settings button, we can add a path to the Pegasus-Simulator repository.<br>
+![Extensions Widget](../assets/extensions_widget.png)<br>
+4. The path inserted should be the path to the repository followed by /extensions.<br>
+![Extensions Path](../assets/adding_extension_path.png)<br>
+5. After adding the path to the extension, we can enable the Pegasus Simulator extension on the third-party tab. Enable AUTOLOAD.<br>
+![Extensions Menu](../assets/pegasus_inside_extensions_menu.png)<br>
 
 ## Installing the extension as a library
 
