@@ -131,7 +131,7 @@ DroneState optimalRotation(const std::vector<vector3D>& positions, const std::ve
     DroneState newState = previousState;
     Quaternion step;
     for (int loopNum = 0; loopNum < maxLoops && smallChanges < maxAmountOfSmallChanges; loopNum++){
-                Sphere rotationSphere = {positions.size(),EMPTY_VECTOR3D};
+        Sphere rotationSphere = {positions.size(),EMPTY_VECTOR3D};
         for (int i = 0; i < positions.size(); i++){
             auto& [w,h] = features[i];
             vector3D vec3D = (positions[i]-newState.loc).normalize();

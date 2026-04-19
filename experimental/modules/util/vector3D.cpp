@@ -35,6 +35,10 @@ void vector3D::operator*=(const float& other) {
     z *= other;
 }
 
+vector3D vector3D::elementProduct(const vector3D& other) const {
+    return {x * other.x , y * other.y , z * other.z};
+}
+
 float vector3D::dot(const vector3D& other) const {
     return x * other.x + y * other.y + z * other.z;
 }

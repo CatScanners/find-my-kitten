@@ -34,7 +34,7 @@ struct drone{
 
     drone(DroneState s) : state(s) {};
 
-    std::vector<vector2D> render(const std::vector<vector3D> &points);
+    std::vector<vector2D> render(const std::vector<vector3D> &points) const;
 
     void display(const std::vector<vector3D> &positions, const std::vector<vector2D> &features);
 
@@ -47,16 +47,11 @@ public:
     std::optional<DroneState> process_frames(
         const std::vector<inputPoint>& trackedPoints,
         const DroneState start,
-        const bool assumeCorrectRotationIsGiven = false, // if internal sensors are accurate in rotational orientation this could be helpful
+        const bool assumeCorrectRotationIsGiven = false, // if internal sensors are accurate in rotational orientation this could be helpful.
         const bool lockZ = true,
         const bool display = false
     );
 };
 
-drone giveDroneExample(int i,float distance);
-
-drone giveDroneExampleError(drone start, int i,float distance);
-
-drone droneRandomWalk(drone start,float distance);
 
 #endif

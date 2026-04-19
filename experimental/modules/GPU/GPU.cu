@@ -50,7 +50,7 @@ __global__ void RG10toBW8(short* from, char* to,int width, int height){
     to[loc] = pixelOperation(from[loc]);
 }
 
-#include "timer.h"
+#include "timer.hpp"
 void process_GPU_RG10toBW8(char* data, char* result,int width,int height,int size){
     void* from = allocate_GPU(size);
     void* to   = allocate_GPU(height*width);

@@ -3,7 +3,7 @@
 #include <vector>
 #include <cstdlib>
 #include "../../util/pipe.cpp"
-#include "../../util/timer.h"
+#include "../../util/timer.hpp"
 #include <iostream>
 #include <signal.h>
 volatile sig_atomic_t stop = 0;

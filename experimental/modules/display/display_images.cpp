@@ -4,7 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <cstdlib>
 #include "../util/pipe.cpp"
-#include "../util/timer.h"
+#include "../util/timer.hpp"
 
 #include <signal.h>
 volatile sig_atomic_t stop = 0;

@@ -17,6 +17,11 @@ struct Quaternion {
     void normalize() ;
 
     Quaternion operator*(const Quaternion& q) const ;
+    void operator*=(const float f) ;
+
+    Quaternion elementProduct(const Quaternion& q) const;
+
+    void operator+=(const Quaternion& q);
 
     float fakeMagnitude() ;
 

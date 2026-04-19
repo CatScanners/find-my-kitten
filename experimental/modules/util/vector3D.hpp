@@ -18,8 +18,9 @@ struct vector3D {
 
     void operator+=(const vector3D& other) ;
     void operator-=(const vector3D& other) ;
-    
     void operator*=(const float& other) ;
+
+    vector3D elementProduct(const vector3D& other) const ;
     
     float dot(const vector3D& other) const ;
 

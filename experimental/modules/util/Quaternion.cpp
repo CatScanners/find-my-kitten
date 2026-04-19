@@ -37,6 +37,31 @@ Quaternion Quaternion::operator*(const Quaternion& q) const
     );
 }
 
+Quaternion Quaternion::elementProduct(const Quaternion& q) const
+{
+    return Quaternion(
+        w*q.w,
+        x*q.x,
+        y*q.y,
+        z*q.z
+    );
+}
+
+void Quaternion::operator+=(const Quaternion& q)
+{
+    w += q.w;
+    x += q.x;
+    y += q.y;
+    z += q.z;
+}
+void Quaternion::operator*=(const float f) 
+{
+    w *= f;
+    x *= f;
+    y *= f;
+    z *= f;
+}
+
 float Quaternion::fakeMagnitude() {return std::sqrt(w*w + x*x + y*y + z*z);}
 Quaternion Quaternion::operator-(const Quaternion q) const
 {

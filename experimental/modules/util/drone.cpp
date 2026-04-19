@@ -40,7 +40,7 @@ void DroneState::rotateCamera(float rad) {
     rot = rot*rotate;
 }
 
-std::vector<vector2D> drone::render(const std::vector<vector3D> &points){
+std::vector<vector2D> drone::render(const std::vector<vector3D> &points) const{
     vector3D loc        = state.loc;
     vector3D rot        = state.forwardRot();
     vector3D framedown  = state.downRot();
@@ -169,33 +169,3 @@ std::optional<DroneState> drone::process_frames(
     return std::optional<DroneState>{state};
 };
 
-
-drone giveDroneExample(int i,float distance){
-    Quaternion startRot = {1,0,0,0};
-    vector3D startLoc = {distance*std::sin(i/10.0),0,distance*std::cos(i/10.0)};
-    drone flying = drone({startLoc,startRot});
-    flying.state.rotateTowards(EMPTY_VECTOR3D);
-    return flying;
-}
-
-
-drone giveDroneExampleError(drone start, int i,float distance){
-    drone copyError = start;
-    vector3D offset = {-distance,distance,distance};
-    vector3D offsetRot = start.state.loc.crossProduct((vector3D){-distance,-distance,-distance}).normalize()+start.state.loc;
-    copyError.state.loc += offset;
-    copyError.state.rotateTowards(offsetRot);//(vector3D){-distance,-distance,-distance}
-    copyError.state.rotateTowards({-distance/3,-distance/3,-distance/3});
-    return copyError;
-}
-#include "examplePoints.hpp"
-
-drone droneRandomWalk(drone start,float distance){
-    drone copyError = start;
-    vector3D offsetLoc = random3D();
-    copyError.state.loc += offsetLoc*distance;
-    vector3D offsetRot = random3D();
-    offsetRot += copyError.state.loc;
-    copyError.state.rotateTowards(offsetRot);
-    return copyError;
-}

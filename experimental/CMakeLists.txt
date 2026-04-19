@@ -11,6 +11,7 @@ link_directories(${OPENCV_LIBRARY_DIRS})
 
 add_library(pointOdometry_test_lib
     modules/util/pointOdometry.cpp
+    modules/util/timer.cpp
     modules/util/examplePoints.cpp
     modules/util/drone.cpp
     modules/util/Quaternion.cpp

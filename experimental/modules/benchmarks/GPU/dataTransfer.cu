@@ -1,7 +1,7 @@
 #include <cuda_runtime.h>
 #include "../../util/GPU.h"
 #include "../../kernels/kernel.h"
-#include "../../util/timer.h"
+#include "../../util/timer.hpp"
 
 #include <iostream>
 #include <signal.h>
