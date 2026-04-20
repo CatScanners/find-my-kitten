@@ -21,6 +21,11 @@ cd simulation/IsaacSim/standalones
 isaac_run isaac_simple_obstacles.py
 ```
 
+## Creating and editing existing scenes
+Existing scenes and objects are stored in .usd filed in the directory: `simulation/IsaacSim/scenes/`.
+To edit these, open them in the the IsaacSim GUI by clicking the `File` button at the top left and choosing `open`
+
+
 ## Run inside the container
 
 You can also run Isaac Sim inside the project container. Start it with:
