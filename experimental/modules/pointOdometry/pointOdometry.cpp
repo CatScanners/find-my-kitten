@@ -12,7 +12,7 @@
 #include "../util/timer.hpp"
 
 constexpr float scale = 1;
-constexpr bool displayTest = true; // with display on, it is recommended to set fps that suits the usecase in drone::display
+constexpr bool displayTest = false; // with display on, it is recommended to set fps that suits the usecase in drone::display
 constexpr int iterations = displayTest ? 10 : 100;
 constexpr float amountOfErrorPoints = scale / 20;
 constexpr float amountOfErrorDrone = scale;
@@ -62,7 +62,7 @@ struct TrackError{
 };
 
 
-void testGeneric_helper(
+void testPointOdometry_helper(
   const std::vector<vector3D> points, 
   const drone real, 
   float noiseOn3D, 
@@ -95,7 +95,7 @@ void testGeneric_helper(
     if (!rotationError) inaccurateLocation.state.rot = real.state.rot; 
     // solve 
     if (test == 0){
-      inaccurateLocation.state = optimalRotation(pointsCopy,cameraReal,inaccurateLocation.state);
+      inaccurateLocation.state = optimalRotation(pointsCopy,cameraReal,inaccurateLocation.state,false,displayTest);
     } else if (test == 1){
       inaccurateLocation.state = optimalLocation(pointsCopy,cameraReal,inaccurateLocation.state,false,displayTest);
     } else if (test == 2){
@@ -113,7 +113,7 @@ void testGeneric_helper(
   if (rotationError) tracker.printErrorRotations();
 }
 
-void testGeneric(std::string name, void (*test_helper)(const std::vector<vector3D>, const drone, float, float)) {
+void testPointOdometry(std::string name, void (*test_helper)(const std::vector<vector3D>, const drone, float, float)) {
   // Test optimal rotations error free
   std::vector<vector3D> points;
   // Generates hear shape on xy plane.
@@ -136,50 +136,31 @@ void testGeneric(std::string name, void (*test_helper)(const std::vector<vector3
 
 
 void testOptimalRotation_helper(const std::vector<vector3D> points, const drone real, float noiseOn3D, float noiceOn2D){
-  testGeneric_helper(points,real,noiseOn3D,noiceOn2D,false,true,0);
+  testPointOdometry_helper(points,real,noiseOn3D,noiceOn2D,false,true,0);
 }
-
 void testOptimalRotation() {
-  return testGeneric("optimalRotation",testOptimalRotation_helper);
+  return testPointOdometry("optimalRotation",testOptimalRotation_helper);
 }
 
-void testOptimalLocation_helper(
-  const std::vector<vector3D> points, 
-  const drone real, 
-  float noiseOn3D, 
-  float noiceOn2D
-){
-  testGeneric_helper(points,real,noiseOn3D,noiceOn2D,true,false,1);
+void testOptimalLocation_helper(const std::vector<vector3D> points, const drone real, float noiseOn3D, float noiceOn2D){
+  testPointOdometry_helper(points,real,noiseOn3D,noiceOn2D,true,false,1);
 }
-
 void testOptimalLocation() {
-  return testGeneric("optimalLocation",testOptimalLocation_helper);
+  return testPointOdometry("optimalLocation",testOptimalLocation_helper);
 }
 
-void testGradientDecent_helper(
-  const std::vector<vector3D> points, 
-  const drone real, 
-  float noiseOn3D, 
-  float noiceOn2D
-){
-  testGeneric_helper(points,real,noiseOn3D,noiceOn2D,true,true,3);
+void testGradientDecent_helper(const std::vector<vector3D> points, const drone real, float noiseOn3D, float noiceOn2D){
+  testPointOdometry_helper(points,real,noiseOn3D,noiceOn2D,true,true,3);
 }
-
 void testGradientDecent() {
-  return testGeneric("gradientDescentLocateDrone",testGradientDecent_helper);
+  return testPointOdometry("gradientDescentLocateDrone",testGradientDecent_helper);
 }
 
-void testGradientDecentV2_helper(
-  const std::vector<vector3D> points, 
-  const drone real, 
-  float noiseOn3D, 
-  float noiceOn2D
-){
-  testGeneric_helper(points,real,noiseOn3D,noiceOn2D,true,true,3);
+void testGradientDecentV2_helper(const std::vector<vector3D> points, const drone real, float noiseOn3D, float noiceOn2D){
+  testPointOdometry_helper(points,real,noiseOn3D,noiceOn2D,true,true,3);
 }
-
 void testGradientDecentV2() {
-  return testGeneric("gradientDescentLocateDroneV2",testGradientDecentV2_helper);
+  return testPointOdometry("gradientDescentLocateDroneV2",testGradientDecentV2_helper);
 }
 
 // Generate own test data and experiment with it.
@@ -243,43 +224,44 @@ std::vector<std::vector<inputPoint>> readFile(const std::string &filename) {
   for (auto frame : frames) {
     std::vector<inputPoint> resultFrame;
     for (auto [a, b, c, d] : frame) {
-      // resultFrame.push_back({b,{c,d}});
-      // 3840x2160
-      float fov = 1500; // this should be changed to some more appropriate value
-      resultFrame.push_back(
-          {b, {(c - 3840 / 2) * 1.0f / fov, (d - 2160 / 2) * 1.0f / fov}});
+      resultFrame.push_back(convertToUsableForm(3840, 2160, 170, b, c, d, true));
     }
     result.push_back(resultFrame);
   }
   return result;
 }
 
+void testOnRealData(int argc, char *argv[]) {
+  if (argc != 2) {
+    std::cerr << "Usage: " << argv[0] << " <fileName>\n";
+    exit(1);
+  }
+
+  const char *fileName = argv[1];
+  auto video = readFile(fileName);
+  drone flying = giveDroneExample(0, 1);
+  BenchMark t;
+  int n = 0;
+  for (auto cameraFeed : video) {
+    flying.process_frames(cameraFeed, flying.state, false, true, true);
+    std::cout << flying.state.loc << "\n";
+    //std::cout << ++n << "," << flying.state.loc.x << "," << flying.state.loc.y << "\n";
+    t.cycle_Completed("location");
+  }
+  t.show_benchmark();
+}   
+
 #include <iostream>
 #include <vector>
 
 int main(int argc, char *argv[]) {
-  if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " <fileName>\n";
-    return 1;
-  }
-  testOptimalRotation();
-  testOptimalLocation();
-  testGradientDecent();
-  testGradientDecentV2();
-  // test();
+  //test();
 
-  //const char *fileName = argv[1];
-  //auto video = readFile(fileName);
-  //drone flying = giveDroneExample(0, 1);
-  //BenchMark t;
-  //int n = 0;
-  //for (auto cameraFeed : video) {
-  //  flying.process_frames(cameraFeed, flying.state, false, true, false);
-  //  std::cout << flying.state.loc << "\n";
-  //  //std::cout << ++n << "," << flying.state.loc.x << "," << flying.state.loc.y << "\n";
-  //  t.cycle_Completed("location");
-  //}
-  //t.show_benchmark();
+  //testOptimalRotation();
+  //testOptimalLocation();
+  //testGradientDecent();
+  //testGradientDecentV2();
 
+  testOnRealData(argc, argv);
   return 0;
 }

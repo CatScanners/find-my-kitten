@@ -5,6 +5,18 @@
 #include "vector2D.hpp"
 #include <unordered_map>
 
+float pointSD(const std::vector<vector3D>& positions){
+    vector3D sum = EMPTY_VECTOR3D;
+    for (int i = 0; i < positions.size(); i++){
+        sum += positions[i];
+    }
+    sum *= 1.0f/positions.size();
+    float var = 0;
+    for (int i = 0; i < positions.size(); i++){
+        var += (positions[i] - sum).dot(positions[i] - sum);
+    }
+    return std::sqrt(var)/positions.size();
+}
 
 // fitness is the squared distance between the feature location on the screen and the point where 3D point would be on the screen.
 float fitness(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState) {
@@ -44,8 +56,12 @@ DroneState optimalLocation(
         return previousState;
     }
     DroneState newState = previousState;
-    
-    for (int n = 0; n < 100; n++){
+
+    bool thereIsRoomToImprove = true;
+    constexpr float someScaleHere = 100;
+    const float standardDeviationLimit = pointSD(positions)/someScaleHere; 
+
+    for (int n = 0; n < 100 && thereIsRoomToImprove; n++){
         vector3D gradientLoc = EMPTY_VECTOR3D;
         float fitness = 0.0f;
         for (int i = 0; i < positions.size(); i++){
@@ -65,12 +81,13 @@ DroneState optimalLocation(
             float dyfh =  h*(x2*z3-x3*z2)-x1*z2+x2*z1;
             float dzfh = -h*(x2*y3-x3*y2)+x1*y2-x2*y1;
             vector3D gradientLoch = { 2*fh*dxfh, 2*fh*dyfh, 2*fh*dzfh };
-            gradientLoc -= gradientLocw;
-            gradientLoc -= gradientLoch;
+            gradientLoc += gradientLocw;
+            gradientLoc += gradientLoch;
             fitness += fw*fw+fh*fh;
         }
         if (lockZ) gradientLoc.z = 0;
-        newState.loc += gradientLoc/positions.size()*0.5;
+        newState.loc -= gradientLoc/positions.size()*0.5;
+        thereIsRoomToImprove = gradientLoc.magnitude() > standardDeviationLimit;
         if (display){
             drone temp = {newState};
             temp.display(positions,features);
@@ -123,7 +140,13 @@ struct Sphere {
     }
 };
 
-DroneState optimalRotation(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ) {
+DroneState optimalRotation(
+    const std::vector<vector3D>& positions, 
+    const std::vector<vector2D>& features, 
+    const DroneState previousState, 
+    const bool lockZ, 
+    const bool display
+) {
     if (positions.size() != features.size()) {
         std::cout << "3D points and their 2D points do not match\n";
         return previousState;
@@ -152,25 +175,14 @@ DroneState optimalRotation(const std::vector<vector3D>& positions, const std::ve
         if (lockZ) step = step.z_axis_component();
         newState.rot = step*newState.rot;
         smallChanges += step.w >= 1;
+        if (display){
+            drone temp = {newState};
+            temp.display(positions,features);
+        }
     }
     return newState;
 }
 
-int mult = 1;
-int total = 0;
-
-float pointSD(const std::vector<vector3D>& positions){
-    vector3D sum = EMPTY_VECTOR3D;
-    for (int i = 0; i < positions.size(); i++){
-        sum += positions[i];
-    }
-    sum *= 1.0f/positions.size();
-    float var = 0;
-    for (int i = 0; i < positions.size(); i++){
-        var += (positions[i] - sum).dot(positions[i] - sum);
-    }
-    return std::sqrt(var)/positions.size();
-}
 
 // axisStep is most likely suboptimal.
 void axisStep(float &axis, const std::vector<vector3D>& positions, const std::vector<vector2D>& features, DroneState &previousState, float stepSize) {
@@ -195,6 +207,7 @@ void axisStep(float &axis, const std::vector<vector3D>& positions, const std::ve
 #include <chrono>
 #include <thread>
 
+// Reliably roughly correct.
 DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ , const bool display) {
     constexpr int extraIterationsV2 = 10;
     constexpr float momentumDecay =  0.8f;
@@ -243,7 +256,7 @@ DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, 
     return optimalRotation(positions, features, newState);;
 }
 
-// unreliable
+// unreliable?
 DroneState gradientDescentLocateDrone(
     const std::vector<vector3D>& positions, 
     const std::vector<vector2D>& features, 
@@ -288,7 +301,9 @@ DroneState gradientDescentLocateDrone(
     }
 
     if (lockZ){
+        std::cout << "This is horrible do not use this.\n";
         // this is horible
+        // lockZ around newState.loc = new  and newState.rot = rot didn't seem to be any better?
         newState.loc.z = previousState.loc.z;
         newState.rot = newState.rot.z_axis_component();
         return newState;

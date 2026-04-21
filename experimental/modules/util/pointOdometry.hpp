@@ -39,7 +39,8 @@ DroneState optimalRotation(
     const std::vector<vector3D>& positions, 
     const std::vector<vector2D>& features, 
     const DroneState previousState, 
-    const bool lockZ = false
+    const bool lockZ = false,
+    const bool display = false
 );
 
 

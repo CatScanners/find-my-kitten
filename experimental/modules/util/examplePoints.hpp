@@ -21,7 +21,7 @@ void printStatistics(std::vector<vector3D> error);
 
 drone giveDroneExample(int i,float distance);
 
-drone giveDroneExampleError(drone start, int i,float distance);
+//drone giveDroneExampleError(drone start, int i,float distance);
 
 drone droneRandomWalk(drone start,float distance);
 

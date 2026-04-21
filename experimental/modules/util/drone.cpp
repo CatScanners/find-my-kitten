@@ -14,8 +14,6 @@ vector2D solvePointOnPlane(const vector3D& pointOnPlain, const vector3D& wVec,co
     return {w,h};
 }
 
-constexpr float imgHFOV = 1.0;
-constexpr float imgWFOV = 1.0;
 constexpr float imgW = 800;
 constexpr float imgH = 800;
 
@@ -60,16 +58,34 @@ std::vector<vector2D> drone::render(const std::vector<vector3D> &points) const{
 
 #ifdef HAS_OPENCV
 #include <opencv2/opencv.hpp>
-void drone::display(const std::vector<vector3D> &positions,const std::vector<vector2D> &features){
+
+#ifdef MAKE_DEMO_VIDEO
+// --- Create VideoWriter once (outside your frame loop) ---
+static bool initialized = false;
+static cv::VideoWriter writer;
+#endif
+
+void drone::display(const std::vector<vector3D> &positions, const std::vector<vector2D> &features){
     std::vector<vector2D> points = render(positions);
     points.insert( points.end(), features.begin(), features.end() );
     int w = imgW;
     int h = imgH;
+    constexpr float convertRatio = 1.0f; 
     std::vector<unsigned char> vec(w*h);
     for (vector2D reltive : points){
-        auto& [x ,y ] = reltive;
-        if (-imgWFOV < x && x < imgWFOV && -imgHFOV < y && y < imgHFOV ){
-            vec[(int)(imgW*((x/imgWFOV+1)/2)) + imgW*(int)(imgH*((y/imgHFOV+1)/2))] = 255;
+        auto& [xr,yr] = reltive;
+        float x = xr;
+        float y = yr;
+        x /= convertRatio;
+        y /= convertRatio;
+        x += 1;
+        y += 1;
+        x *= imgW/2;
+        y *= imgH/2;
+        x = (int)x;
+        y = (int)y;
+        if (0 <= x && x < imgW && 0 <= y && y < imgH ){
+            vec[x + imgW*y] = 255;
         }
     }
     // Interpret the raw pointer as unsigned char*
@@ -81,6 +97,24 @@ void drone::display(const std::vector<vector3D> &positions,const std::vector<vec
     cv::imshow("Raw Image", img);
     constexpr int millisecondsWaitedPerFrame = 1000/60;
     cv::waitKey(millisecondsWaitedPerFrame);
+
+    #ifdef MAKE_DEMO_VIDEO // code is only used if MAKE_DEMO_VIDEO is explicitly enabled.
+    if (!initialized) {
+        int fps = 60;
+        int fourcc = cv::VideoWriter::fourcc('M','J','P','G');
+
+        writer.open("/src/output.avi", fourcc, fps, cv::Size(w, h), false);
+
+        if (!writer.isOpened()) {
+            std::cerr << "Failed to open VideoWriter!" << std::endl;
+        }
+
+        initialized = true;
+    }
+
+    writer.write(img);
+    #endif
+
 }
 #else
 void drone::display(const std::vector<vector3D> &positions,const std::vector<vector2D> &features){
@@ -164,7 +198,7 @@ std::optional<DroneState> drone::process_frames(
         state = locateDrone(point3D,point2D,state,lockZ,display);
     } else {
         state.rot = givenEstimate.rot;
-        state = optimalLocation(point3D,point2D,state);
+        state = optimalLocation(point3D,point2D,state,lockZ,display);
     }
     estimate3DPositions(trackedPoints);
     return std::optional<DroneState>{state};

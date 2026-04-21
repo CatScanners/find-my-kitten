@@ -6,4 +6,4 @@ mkdir -p build
 cd build
 cmake ..
 cmake --build .
-./pointOdometry_test "../testData/points.txt"  #"the wrong file >:3"
+./pointOdometry_test "../testData/points.txt" 
