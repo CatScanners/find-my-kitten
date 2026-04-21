@@ -8,18 +8,17 @@ nav_order: 2
 
 There is two ways to start developing this project further. First one is simpler and basically anybody can do it - a simulator. Second one is to build your own drone or use our existing setup, upload your code to it, and run test flights. In this page, both of these options are covered. Moreover, we have been working on a Docker development environment, information about that here as well.
 
+### Requirements
+for all the system requirements, check the [dedicated requirements page](https://github.com/CatScanners/find-my-kitten/tree/main/docs/computer_requirements.md)
+
 ## Nvidia Jetson initialization
 Please refer to our [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html).
 
 ## ---- Simulator quick start (Windows or Linux) ----
 
-This part guides the user on how to install a simulator, ROS2, find-my-kitten repository, QGroundControl, and run our main nodes on the system of consisting this software. <br/>
+This part guides the user on how to install the find-my-kitten repository, a simulator, ROS2, QGroundControl, and how to run our main nodes on the system. <br/>
 These instructions are similar to what you will find in the simulator docs at: ```docs/IsaacSim/Installing.md```
 
-### Requirements
-- The hardware and software system requirements specified in the README.md
-- If you are already using a Nvidia Jetson -computer, please refer to the [Nvidia Jetson initialization](#jetson-initialization).
-- Basic knowledge on ROS2. Please refer to our [ROS2 guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/ROS2%20Compiled%20Guide.html).
 
 ### Setup initial auxiliary software
 Install necessary Ubuntu drivers by running: `sudo ubuntu-drivers install` <br/>

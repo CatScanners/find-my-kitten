@@ -3,12 +3,7 @@ This repository contains the ROS2 packages, simulation's and the documentation w
 Documentation website here: https://catscanners.github.io/find-my-kitten/
 
 ## Minimum system requirements
-
-- Ubuntu 24, aka Ubuntu Jazzy (WMs wont be enough, you need a full dual boot)
-- 150 GB of storage (excl. the OS)
-- Nvidia GPU (required for simulator tests)
-- docker (installation instructions can be found at: https://docs.docker.com/engine/install/ubuntu/)
-- python3 version 3.12.4 or newer
+For all the system requirements, check the [dedicated requirements page](https://github.com/CatScanners/find-my-kitten/tree/main/docs/computer_requirements.md)
 
 <br/>
 
