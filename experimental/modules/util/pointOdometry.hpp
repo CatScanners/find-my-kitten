@@ -22,7 +22,11 @@ float fitness(
 // Uses gradient decent, very fast.
 // Also it is easily optimizable to work with GPU.
 DroneState optimalLocation(
-    const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState
+    const std::vector<vector3D>& positions, 
+    const std::vector<vector2D>& features, 
+    const DroneState previousState,
+    const bool lockZ = false, 
+    const bool display = false
 );
 
 // Given a location produces optimal rotation. 
@@ -32,13 +36,40 @@ DroneState optimalLocation(
 // Sphere([0...10]) + Shpere([10...20]) = Shpere([0...20]) 
 // Addition not implemented yet.
 DroneState optimalRotation(
-    const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ = false
+    const std::vector<vector3D>& positions, 
+    const std::vector<vector2D>& features, 
+    const DroneState previousState, 
+    const bool lockZ = false
 );
 
 
 // This is the current best attempt to combine rotation and location solve from 3D and 2D points.
 DroneState locateDrone(
-    const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ = false, const bool display = false
+    const std::vector<vector3D>& positions, 
+    const std::vector<vector2D>& features, 
+    const DroneState previousState, 
+    const bool lockZ = false, 
+    const bool display = false
+);
+
+
+// candidate for locateDrone
+DroneState gradientDescentLocateDroneV2(
+    const std::vector<vector3D>& positions, 
+    const std::vector<vector2D>& features, 
+    const DroneState previousState, 
+    const bool lockZ = false, 
+    const bool display = false
+);
+
+
+// candidate for locateDrone
+DroneState gradientDescentLocateDrone(
+    const std::vector<vector3D>& positions, 
+    const std::vector<vector2D>& features, 
+    const DroneState previousState, 
+    const bool lockZ = false, 
+    const bool display = false
 );
 
 #endif

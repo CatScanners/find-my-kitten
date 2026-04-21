@@ -79,7 +79,8 @@ void drone::display(const std::vector<vector3D> &positions,const std::vector<vec
     cv::Mat img(h, w, CV_8UC1, bytes);
 
     cv::imshow("Raw Image", img);
-    cv::waitKey(1);
+    constexpr int millisecondsWaitedPerFrame = 1000/60;
+    cv::waitKey(millisecondsWaitedPerFrame);
 }
 #else
 void drone::display(const std::vector<vector3D> &positions,const std::vector<vector2D> &features){

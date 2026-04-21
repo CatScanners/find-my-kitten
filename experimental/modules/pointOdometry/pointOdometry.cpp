@@ -6,29 +6,36 @@
 #include "../util/vector3D.hpp"
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include "../util/examplePoints.hpp"
 #include "../util/timer.hpp"
 
-constexpr float distance = 50;
+constexpr float scale = 1;
+constexpr bool displayTest = true; // with display on, it is recommended to set fps that suits the usecase in drone::display
+constexpr int iterations = displayTest ? 10 : 100;
+constexpr float amountOfErrorPoints = scale / 20;
+constexpr float amountOfErrorDrone = scale;
+
 
 struct TrackError{
   std::vector<vector3D> locations;
   std::vector<Quaternion> rotations;
   // There are probably better ways to represent rotation error
-  void printErrorlLcations(){
+  void printErrorLocations(){
     vector3D mean = EMPTY_VECTOR3D;
-    for ( vector3D rot : locations){
-      mean += rot;
+    for ( vector3D loc : locations){
+      mean += loc;
     }
-    mean *= 1.0f/rotations.size();
+    mean *= 1.0f/locations.size();
     vector3D standardDeviation =  EMPTY_VECTOR3D;
-    std::cout << "Lcation error mean: " << mean << "\n";
-    for ( vector3D rot : locations){
-      standardDeviation += (rot-mean).elementProduct(rot-mean);
+    std::cout << "Location error mean: " << mean << "\n";
+    for ( vector3D loc : locations){
+      standardDeviation += (loc-mean).elementProduct(loc-mean);
     }
-    standardDeviation *= 1.0f/rotations.size();
-    std::cout << "Lcation error standard deviation: " << standardDeviation << "\n";
+    standardDeviation = standardDeviation.elementSqrt();
+    standardDeviation *= 1.0f/locations.size();
+    std::cout << "Location error standard deviation: " << standardDeviation << "\n";
   }
 
   // There are probably better ways to represent rotation error
@@ -43,6 +50,7 @@ struct TrackError{
     for ( Quaternion rot : rotations){
       standardDeviation += (rot-mean).elementProduct(rot-mean);
     }
+    standardDeviation = standardDeviation.elementSqrt();
     standardDeviation *= 1.0f/rotations.size();
     std::cout << "Rotation error standard deviation: " << standardDeviation << "\n";
   }
@@ -53,7 +61,16 @@ struct TrackError{
   }
 };
 
-void testOptimalRotation_helper(const std::vector<vector3D> points, const drone real, float noiseOn3D, float noiceOn2D){
+
+void testGeneric_helper(
+  const std::vector<vector3D> points, 
+  const drone real, 
+  float noiseOn3D, 
+  float noiceOn2D,
+  bool locationError, 
+  bool rotationError,
+  int test 
+){
   // make image  
   std::vector<vector3D> pointsCopy = points;
   addRandomNoise(pointsCopy, noiceOn2D);
@@ -70,50 +87,109 @@ void testOptimalRotation_helper(const std::vector<vector3D> points, const drone 
   
   // timer
   BenchMark t; 
-  for (int i = 0; i < 1000; i += 1) {
+
+  for (int i = 0; i < iterations; i += 1) {
     // add error to rotation
-    inaccurateLocation = droneRandomWalk(inaccurateLocation, distance / 5);
-    inaccurateLocation.state.loc = real.state.loc; 
+    inaccurateLocation = droneRandomWalk(inaccurateLocation, amountOfErrorDrone);
+    if (!locationError) inaccurateLocation.state.loc = real.state.loc; 
+    if (!rotationError) inaccurateLocation.state.rot = real.state.rot; 
     // solve 
-    inaccurateLocation.state = optimalRotation(pointsCopy,cameraReal,inaccurateLocation.state);
+    if (test == 0){
+      inaccurateLocation.state = optimalRotation(pointsCopy,cameraReal,inaccurateLocation.state);
+    } else if (test == 1){
+      inaccurateLocation.state = optimalLocation(pointsCopy,cameraReal,inaccurateLocation.state,false,displayTest);
+    } else if (test == 2){
+      inaccurateLocation.state = gradientDescentLocateDrone(pointsCopy,cameraReal,inaccurateLocation.state,false,displayTest);
+    } else if (test == 3){
+      inaccurateLocation.state = gradientDescentLocateDroneV2(pointsCopy,cameraReal,inaccurateLocation.state,false,displayTest);
+    } 
     // compare 
-    tracker.rotations.push_back(real.state.rot-inaccurateLocation.state.rot);
-    t.cycle_Completed("rotation");
+    if (locationError) tracker.locations.push_back(real.state.loc-inaccurateLocation.state.loc);
+    if (rotationError) tracker.rotations.push_back(real.state.rot-inaccurateLocation.state.rot);
+    t.cycle_Completed("cycle");
   }
   t.show_benchmark();
-  tracker.printErrorRotations();
-  tracker.clear();
+  if (locationError) tracker.printErrorLocations();
+  if (rotationError) tracker.printErrorRotations();
 }
 
-void testOptimalRotation() {
+void testGeneric(std::string name, void (*test_helper)(const std::vector<vector3D>, const drone, float, float)) {
   // Test optimal rotations error free
   std::vector<vector3D> points;
   // Generates hear shape on xy plane.
-  generateHeart(points, distance * 2 / 4);
-  drone realLoc = giveDroneExample(0, distance);
-  constexpr float amountOfError = distance / 5;
+  generateHeart(points, scale * 2 / 4);
+  drone realLoc = giveDroneExample(0, scale);
+
   std::cout << "\n";
-  std::cout << "Test optimalRotation with error free data: \n";
-  testOptimalRotation_helper(points,realLoc,0,0);
+  std::cout << "Test " << name << " with error free data: \n";
+  test_helper(points,realLoc,0,0);
   std::cout << "\n";
-  std::cout << "Test optimalRotation with random noise added to the render data: \n";
-  testOptimalRotation_helper(points,realLoc,0,amountOfError);
+  std::cout << "Test " << name << " with random noise added to the render data: \n";
+  test_helper(points,realLoc,0,amountOfErrorPoints);
   std::cout << "\n";
-  std::cout << "Test optimalRotation with random noise added to the 3D points: \n";
-  testOptimalRotation_helper(points,realLoc,amountOfError,0);
+  std::cout << "Test " << name << " with random noise added to the 3D points: \n";
+  test_helper(points,realLoc,amountOfErrorPoints,0);
   std::cout << "\n";
-  std::cout << "Test optimalRotation with random noise added to the 3D points and screne data: \n";
-  testOptimalRotation_helper(points,realLoc,amountOfError,amountOfError);
+  std::cout << "Test " << name << " with random noise added to the 3D points and screne data: \n";
+  test_helper(points,realLoc,amountOfErrorPoints,amountOfErrorPoints);
 }
 
-    // Generate own test data and experiment with it.
-    // Uset the test(); to test preformance and algorithms on mathematically perfect
-    // points or point with controlled randomness. Controlled randomness can be both
-    // on display points and the 3D points.
+
+void testOptimalRotation_helper(const std::vector<vector3D> points, const drone real, float noiseOn3D, float noiceOn2D){
+  testGeneric_helper(points,real,noiseOn3D,noiceOn2D,false,true,0);
+}
+
+void testOptimalRotation() {
+  return testGeneric("optimalRotation",testOptimalRotation_helper);
+}
+
+void testOptimalLocation_helper(
+  const std::vector<vector3D> points, 
+  const drone real, 
+  float noiseOn3D, 
+  float noiceOn2D
+){
+  testGeneric_helper(points,real,noiseOn3D,noiceOn2D,true,false,1);
+}
+
+void testOptimalLocation() {
+  return testGeneric("optimalLocation",testOptimalLocation_helper);
+}
+
+void testGradientDecent_helper(
+  const std::vector<vector3D> points, 
+  const drone real, 
+  float noiseOn3D, 
+  float noiceOn2D
+){
+  testGeneric_helper(points,real,noiseOn3D,noiceOn2D,true,true,3);
+}
+
+void testGradientDecent() {
+  return testGeneric("gradientDescentLocateDrone",testGradientDecent_helper);
+}
+
+void testGradientDecentV2_helper(
+  const std::vector<vector3D> points, 
+  const drone real, 
+  float noiseOn3D, 
+  float noiceOn2D
+){
+  testGeneric_helper(points,real,noiseOn3D,noiceOn2D,true,true,3);
+}
+
+void testGradientDecentV2() {
+  return testGeneric("gradientDescentLocateDroneV2",testGradientDecentV2_helper);
+}
+
+// Generate own test data and experiment with it.
+// Uset the test(); to test preformance and algorithms on mathematically perfect
+// points or point with controlled randomness. Controlled randomness can be both
+// on display points and the 3D points.
 void test() {
   std::vector<vector3D> points;
-  generateHeart(points, distance * 2 / 4);
-  drone flying = giveDroneExample(0, distance);
+  generateHeart(points, scale * 2 / 4);
+  drone flying = giveDroneExample(0, scale);
   std::vector<vector2D> cameraReal = flying.render(points);
 
   std::vector<inputPoint> cameraFeed;
@@ -124,7 +200,7 @@ void test() {
   flying.process_frames(cameraFeed, flying.state, false, false, true);
 
   for (int i = 0; i < 100; i += 1) {
-    flying = droneRandomWalk(flying, distance / 5);
+    flying = droneRandomWalk(flying, scale / 5);
     std::cout << flying.state.loc << "\n";
     flying.process_frames(cameraFeed, flying.state, false, false, true);
     std::cout << flying.state.loc << "\n";
@@ -187,6 +263,9 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   testOptimalRotation();
+  testOptimalLocation();
+  testGradientDecent();
+  testGradientDecentV2();
   // test();
 
   //const char *fileName = argv[1];

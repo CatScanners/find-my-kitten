@@ -47,6 +47,10 @@ Quaternion Quaternion::elementProduct(const Quaternion& q) const
     );
 }
 
+Quaternion Quaternion::elementSqrt() const {
+    return {std::sqrt(w), std::sqrt(x), std::sqrt(y), std::sqrt(z)};
+}
+
 void Quaternion::operator+=(const Quaternion& q)
 {
     w += q.w;

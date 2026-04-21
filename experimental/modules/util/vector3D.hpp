@@ -22,6 +22,8 @@ struct vector3D {
 
     vector3D elementProduct(const vector3D& other) const ;
     
+    vector3D elementSqrt() const ; //statistics
+
     float dot(const vector3D& other) const ;
 
     vector3D crossProduct(const vector3D& other) const ;

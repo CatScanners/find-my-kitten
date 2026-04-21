@@ -33,16 +33,20 @@ float fitness(const std::vector<vector3D>& positions, const std::vector<vector2D
 // Given an orientation produces optimal location. 
 // Also it is easily optimizable to work with GPU.
 DroneState optimalLocation(
-    const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState
+    const std::vector<vector3D>& positions, 
+    const std::vector<vector2D>& features, 
+    const DroneState previousState,
+    const bool lockZ, 
+    const bool display
 ) {
     if (positions.size() != features.size()) {
         std::cout << "3D points and their 2D points do not match\n";
         return previousState;
     }
-    vector3D gradientLoc = EMPTY_VECTOR3D;
     DroneState newState = previousState;
     
     for (int n = 0; n < 100; n++){
+        vector3D gradientLoc = EMPTY_VECTOR3D;
         float fitness = 0.0f;
         for (int i = 0; i < positions.size(); i++){
             auto& [x,y,z] = positions[i];
@@ -65,7 +69,12 @@ DroneState optimalLocation(
             gradientLoc -= gradientLoch;
             fitness += fw*fw+fh*fh;
         }
-        newState.loc = newState.loc + gradientLoc/positions.size()*0.5;
+        if (lockZ) gradientLoc.z = 0;
+        newState.loc += gradientLoc/positions.size()*0.5;
+        if (display){
+            drone temp = {newState};
+            temp.display(positions,features);
+        }
     }
     return newState;
 }
@@ -235,7 +244,12 @@ DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, 
 }
 
 // unreliable
-DroneState gradientDescentLocateDrone(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ , const bool display) {
+DroneState gradientDescentLocateDrone(
+    const std::vector<vector3D>& positions, 
+    const std::vector<vector2D>& features, 
+    const DroneState previousState, 
+    const bool lockZ, 
+    const bool display) {
     if (positions.size() != features.size()) std::cout << "positions and their coresponding positions on camera do not match\n";
     DroneState bestState = previousState;
     float Minfitness = 340282346638528859811704183484516925440.0000000000000000f; 

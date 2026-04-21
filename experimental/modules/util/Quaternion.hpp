@@ -20,6 +20,7 @@ struct Quaternion {
     void operator*=(const float f) ;
 
     Quaternion elementProduct(const Quaternion& q) const;
+    Quaternion elementSqrt() const;
 
     void operator+=(const Quaternion& q);
 
