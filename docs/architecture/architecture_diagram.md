@@ -40,8 +40,8 @@ Gray: Files that are not compiled in CMakeList.txt (legacy code, testing, debug,
 
     %%Vision package
         
-        subgraph image_publisher
-            arducam_publisher.py:::A
+        subgraph argus-kitten
+            isaac_ros_argus_camera_mono:::A
         end
 
         subgraph object_detection_node
@@ -68,15 +68,23 @@ Gray: Files that are not compiled in CMakeList.txt (legacy code, testing, debug,
 
         /fmu/out/vehicle_local_position -->offboard_control
 
-    %%image_publisher
+    %%argus-kitten
 
-        image_publisher --video feed --> /image_topic
+        argus-kitten --video feed --> /argus/left/image_raw
 
     %%object_detection_node
 
-        /image_topic --> object_detection_node
+        /argus/left/image_raw --> object_detection_node
 
        object_detector.py --detected objects --> /detections
+
+    %% Point odometry
+        subgraph point_odometry
+            point_odometry.cpp:::A
+        end
+
+        /argus/left/image_raw --> point_odometry
+        point_odometry --> /fmu/in/vehicle_visual_odometry
 
     %%Stereo camera
         subgraph stereo_node
@@ -102,11 +110,11 @@ Gray: Files that are not compiled in CMakeList.txt (legacy code, testing, debug,
         end
         stereo_topics --> isaac_ros_visual_slam
         isaac_ros_visual_slam --pose estimates --> /visual_slam/tracking/odometry
-        /visual_slam/tracking/odometry --transform message type --> /fmu/in/vehicle_visual_odometry
+        /visual_slam/tracking/odometry --vslam_message_transform.cpp --> /fmu/in/vehicle_visual_odometry
         /fmu/in/vehicle_visual_odometry --> ekf2
 
     %%Cameras
-        camera((Downward Camera)) --/dev/video0 --> arducam_publisher.py
+        camera((Downward Camera)) --/dev/video0 --> isaac_ros_argus_camera_mono
         
         stereo_camera((OAK-D Pro Stereo Camera)) --/dev/bus/usb --> stereo_publisher.cpp
 
