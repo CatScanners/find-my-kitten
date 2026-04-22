@@ -1,6 +1,6 @@
 # Software architecture diagram
 
-This Markdown file contains different architecture diagrams for the project, and it should replace some outdated documentation by the previous team (CatScanner 2024-2025). 
+This Markdown file contains different architecture diagrams for the project, and it should replace some outdated documentation by the previous team (CatScanner 2024-2025).
 Currently, we use [Markdown Preview Mermaid Support by Matt Bierner](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid) to simplify the creation process. After installing the extension, the diagram will be shown in the preview.
 
 If you cannot install the extension for some reason, you can download another Mermaid-compatible extension and modify the code manually to match the format.
@@ -39,7 +39,7 @@ Gray: Files that are not compiled in CMakeList.txt (legacy code, testing, debug,
         end
 
     %%Vision package
-        
+
         subgraph argus-kitten
             isaac_ros_argus_camera_mono:::A
         end
@@ -83,7 +83,8 @@ Gray: Files that are not compiled in CMakeList.txt (legacy code, testing, debug,
             point_odometry.cpp:::A
         end
 
-        /argus/left/image_raw --> point_odometry
+        /detections --> point_odometry
+        /fmu/out/vehicle_odometry --> point_odometry
         point_odometry --> /fmu/in/vehicle_visual_odometry
 
     %%Stereo camera
@@ -98,7 +99,6 @@ Gray: Files that are not compiled in CMakeList.txt (legacy code, testing, debug,
                 /right/image_rect
                 /right/camera_info
                 /imu
-                /tf
                 /tf_static
             "]
         end
@@ -115,7 +115,7 @@ Gray: Files that are not compiled in CMakeList.txt (legacy code, testing, debug,
 
     %%Cameras
         camera((Downward Camera)) --/dev/video0 --> isaac_ros_argus_camera_mono
-        
+
         stereo_camera((OAK-D Pro Stereo Camera)) --/dev/bus/usb --> stereo_publisher.cpp
 
     %% Flight control / PX4
