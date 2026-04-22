@@ -22,8 +22,13 @@ isaac_run isaac_simple_obstacles.py
 ```
 
 ## Creating and editing existing scenes
-Existing scenes and objects are stored in .usd filed in the directory: `simulation/IsaacSim/scenes/`.
+Existing scenes and objects are stored in .usd filed in the directory: `simulation/IsaacSim/scenes/` <br/>
 To edit these, open them in the the IsaacSim GUI by clicking the `File` button at the top left and choosing `open`
+
+
+## Running different scenes
+To run the drone simulator in different scenes, you can either change the scene in the .py sim files, such as `isaac_simple_obstacles.py`,
+or specify a new .py file and giving it the scene. 
 
 
 ## Run inside the container
