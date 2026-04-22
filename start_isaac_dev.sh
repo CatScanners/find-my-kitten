@@ -12,31 +12,30 @@ die() {
 
 
 help() {
-    echo "
-        start_isaac_dev.sh - start the docker container.
+    cat <<EOF
+start_isaac_dev.sh - start the dev container.
 
-        Usage:
-        start_isaac_dev.sh -- [OPTIONS]
+Usage:
+start_isaac_dev.sh -- [OPTIONS]
 
-        Description:
-        Script for setting up and starting the docker container, in which you can run the drone simulator.
+Description:
+Script for setting up and starting the docker container, in which you can run the drone simulator.
 
-        Options:
-        -h, --help            Show this help message and exit
-        -s, --sim             Uses IsaacSim and builds the container from scratch.
-        -b, --no-build        Skip rebuilding the container image
-        -c, --no-check        Skips the registry check
-        -d, --docker          Add a custom docker argument to when the script start up the container
-
-    "
+Options:
+-h, --help            Show this help message and exit
+-s, --sim             Uses IsaacSim and builds the container from scratch.
+-b, --no-build        Skip rebuilding the container image
+-c, --no-check        Skips the registry check
+-d, --docker          Add a custom docker argument to when the script start up the container
+EOF
 }
 
 if getopt --test &>/dev/null; then
     die "GNU getopt required"
 fi
-SHORT_OPTS="sbcd:"
-LONG_OPTS="sim,no-build,no-check,docker:"
-PARSED_OPTS=$(getopt --options="$SHORT_OPTS" --longoptions="$LONG_OPTS" --name "$0" -- "$@") || die "getopt failed to parse"
+SHORT_OPTS="sbchd:"
+LONG_OPTS="sim,no-build,no-check,help,docker:"
+PARSED_OPTS=$(getopt --options="$SHORT_OPTS" --longoptions="$LONG_OPTS" --name "$0" -- "$@") || { help; exit 1; }
 eval set -- "$PARSED_OPTS"
 
 RUN_DEV_ARGS=()
@@ -60,7 +59,6 @@ while true; do
             shift 2
             ;;
         -h|--help)
-            echo "juu"
             help
             exit 0
             ;;
