@@ -1,8 +1,8 @@
-# UNUSED
 ---
 parent: Development
 title: ZedSDK on x86-64 Ubuntu22
 ---
+# UNUSED
 
 # ZedSDK on Ubuntu22
 
@@ -85,4 +85,3 @@ Links
 - <https://docs.luxonis.com/software/depthai/manual-install/>
 - <https://docs.anaconda.com/miniconda/miniconda-install/>
 - <https://docs.luxonis.com/software/api/python/>
-  
