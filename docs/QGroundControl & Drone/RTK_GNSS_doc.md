@@ -165,7 +165,18 @@ If your NTRIP Client software cannot resolve DNS names, point it to:  3.143.243.
 You can connect using either NTRIP Rev1 style or Rev2.
 Many low-end NTRIP Clients only support Rev1.
 
+### **4. PointPerfect Flex**
+- Used by the 2025-2026 team
+- Free for up to 40 hours a month
+- RTCM format work via mavproxy
+
+https://www.u-blox.com/en/product/pointperfectflex
+
 ---
+## Getting RTK FIX
+- Place the drone in an open enough space, the more open the better chance at getting fix
+- Start the NTRIP RTK with mavproxy, after that you can start QGroundControl
+- Might take some trial and error in finding a good spot, but open fields are a great place to start, stay away from tall buildings and trees
 
 ## Additional Resources
 ## WIP (decoder libraries; proper referencing, e.g. Harvard style)
