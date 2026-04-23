@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e 
-
-cd ./modules/camera/
-./compile.sh
-./run.sh
+cd ./modules/benchmarks_general/
+./build.sh
+./build/camera_pipe /tmp/imagepipe

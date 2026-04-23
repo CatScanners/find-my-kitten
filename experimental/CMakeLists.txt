@@ -24,6 +24,7 @@ add_executable(pointOdometry_test
 
 add_library(pointOdometry_lib
     modules/util/pointOdometry.cpp
+    modules/util/timer.cpp
     modules/util/examplePoints.cpp
     modules/util/drone.cpp
     modules/util/Quaternion.cpp

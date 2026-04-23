@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e 
-
-cd ./modules/benchmarks/FIFO
-./compile.sh
-./run.sh
+cd ./modules/benchmarks_general/
+./build.sh
+echo "this needs util/video or util/camera runing at the same time"
+./build/FIFO_test  1280 720 3 /tmp/imagepipe

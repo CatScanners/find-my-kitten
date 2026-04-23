@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e 
-
-cd ./modules/benchmarks/GPU
-./compile.sh
-./run.sh
+cd ./modules/benchmarks_general/
+./build.sh
+./build/GPU_memory_transfer 1000 1000 1
