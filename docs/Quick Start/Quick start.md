@@ -14,7 +14,7 @@ for all the system requirements, check the [dedicated requirements page](https:/
 ## Nvidia Jetson initialization
 Please refer to our [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html).
 
-## ---- Simulator quick start (Windows or Linux) ----
+## ---- Simulator quick start ----
 
 This part guides the user on how to install the find-my-kitten repository, a simulator, ROS2, QGroundControl, and how to run our main nodes on the system. <br/>
 These instructions are similar to what you will find in the simulator docs at: ```docs/IsaacSim/Installing.md```
@@ -53,7 +53,7 @@ export NVIDIA_CONTAINER_TOOLKIT_VERSION=1.18.2-1
 
 <br/>
 
-## Installing Isaac Sim
+### Installing Isaac Sim
 
 Run the following commands in terminal to install Isaac Sim:
 ```
@@ -79,7 +79,7 @@ rm isaac-sim-standalone-5.1.0-linux-x86_64.zip
 ```
 Done :+1:<br />
 
-## Setting environment variables
+### Setting environment variables
 
 Add the following to your `~/.bashrc` file.
 ```
@@ -180,7 +180,7 @@ Test the current environment by running `isaac_run` in terminal. This should ope
 Test that the Isaac Sim python interpreter path variable is correct by running in the terminal:</br> 
 `$ISAACSIM_PYTHON ${ISAACSIM_PATH}/standalone_examples/api/isaacsim.core.api/add_cubes.py`</br>
 
-## Installing Pegasus Simulator extension
+### Installing Pegasus Simulator extension
 1. Launch Isaac Sim with `isaac_run` in terminal.
 2. Open the Window->extensions on the top menubar inside Isaac Sim.
 ![Extensions Menu Bar](../assets/extensions_menu_bar.png)
@@ -191,7 +191,7 @@ Test that the Isaac Sim python interpreter path variable is correct by running i
 5. After adding the path to the extension, we can enable the Pegasus Simulator extension on the third-party tab. Enable AUTOLOAD.
 ![Extensions Menu](../assets/pegasus_inside_extensions_menu.png)
 
-## Installing the extension as a library
+### Installing the extension as a library
 
 In order to be able to use the Pegasus Simulator API from python scripts and standalone apps, we must install this extension as a pip python module for the built-in ISAACSIM_PYTHON to recognize. For that, run:
 
@@ -207,7 +207,7 @@ $ISAACSIM_PYTHON -m pip install --editable pegasus.simulator
 ```
 
 
-## Setting PX4 Path
+### Setting PX4 Path
 
 Running a simulation with Isaac Sim and Pegasus Simulator requires the path for PX4-Autopilot to be set in Pegasus Simulator configurations.
 
@@ -324,23 +324,8 @@ After the last series of commands, you should be at the path: `/workspaces/isaac
 In this folder, you can start the simulation by running the following command: <br/>
 `ros2 launch kitten_sim kitten_sim.launch.py`
 
-### Machine vision startup
-1. IMPORTANT. On drone startup make sure that all connected cameras are visible. This can be done with command `ls /dev/ | grep video`. If you have only the arducam globalshutter camera connected, you should only see /dev/Video0. 
-If you've connected the Zed depth camera, you should see three cameras: /dev/Video0 ...Video1 and ...Video2 (Depth camera has two video feeds). If you only see two or no cameras, powercycle the drone. The arducam uses custom drivers which if not loaded properly means it will not show up nor work.  
-2. Build and source our ros2 packages. Otherwise `ros2 run vision_package ...` will result in package not found. To build run `colcon build` and after building run `source install/setup.bash`. This should be done inside folders `ros2_ws` or `ros2_ws/src` to build all packages. 
-3. Run the camera publishing node. For a regular USB / CSI camera use `ros2 run vision_package image_publisher` and if you are using an arducam globalshutter camera run `ros2 run vision_package arducam_publisher.py`. These fill publish video frames to a ros2 topic called image_topic. You can check if the node is working and topic is visible with `ros2 topic list`.
-4. Run the object detection node. Command compatible with offboard_control is `ros2 run vision_package object_detector.py --ros-args -p input_topic_name:="camera" -p output_topic_name:="detections"`.
-5. To preview the image stream you can run `ros2 run vision_package image_subscriber` node. This brings up an window which displays the video feed from topic `image_topic`.
-
-### Actions startup
-1. Start a node receiving offboard messages and then sending those periodically to PX4 simulator. `ros2 run px4_handler offboard_control`. By default just sends current coordinates.
-2. Turn on offboard node from QGroundControl. Now the drone is flying with our ROS2 messges, currently just staying in its current position. Again, if you don't have QGC, please refer to the Common problems -section.
-3. If you haven't already, star vision package to detect the ball.
-`ros2 run vision_package object_detector.py --ros-args -p input_topic_name:="camera" -p output_topic_name:="detections"`
-4. a - Start ballfinder node to start searching for the ball:
-`ros2 run px4_handler ball_finder.py`, or b - Start predefined motions with two speeds: `ros2 run px4_handler hard_motions.py`.
-5. a - With default code, the drone should search an area of 8m x 12m and stop and go a bit down when it sees a **sports ball**, or b - Does a few predefined motions in two different speeds.
-
+On how to start up ROS2 nodes, refer to the vision package and visual navigation sections in the
+Development section of the docs.
 
 ## ---- Real life quick start (Jetson baseboard + PX6 + drone) ----
 
