@@ -39,3 +39,7 @@ target_link_libraries(pointOdometry_test_lib ${OPENCV_LIBRARIES})
 target_link_libraries(pointOdometry_test pointOdometry_test_lib)
 
 target_compile_definitions(pointOdometry_test_lib PRIVATE HAS_OPENCV=1)
+
+#if you want to record the display screen, uncomment this.
+#target_compile_definitions(pointOdometry_test_lib PRIVATE MAKE_DEMO_VIDEO=1)
+

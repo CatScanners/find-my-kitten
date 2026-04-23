@@ -18,7 +18,7 @@ if is_jetson; then
     docker tag $version compiler-base-base-benchmark:latest
 else
     echo "This device is not NVIDIA Jetson"
-    echo "Gambling to guess nvidia version"
+    echo "Trying to query for nvidia gpu version"
     version="nvidia/cuda:$(nvidia-smi | grep "CUDA Version" | sed 's/.*CUDA Version: \([0-9.]*\).*/\1/')-devel-ubuntu22.04"
     echo "This version may or may not be the correct docker image for this device:"
     echo $version

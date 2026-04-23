@@ -6,4 +6,11 @@ mkdir -p build
 cd build
 cmake ..
 cmake --build .
-./pointOdometry_test "../testData/points.txt" 
+./pointOdometry_test "../testData/0036_26_x.txt" > "../testData/0036_26_x.locations"
+python3 ../testData/plot.py "../testData/0036_26_x.locations"
+./pointOdometry_test "../testData/0037_26_x.txt" > "../testData/0037_26_x.locations"
+python3 ../testData/plot.py "../testData/0037_26_x.locations"
+./pointOdometry_test "../testData/0038_26_x.txt" > "../testData/0038_26_x.locations"
+python3 ../testData/plot.py "../testData/0038_26_x.locations"
+./pointOdometry_test "../testData/0039_26_x.txt" > "../testData/0039_26_x.locations"
+python3 ../testData/plot.py "../testData/0039_26_x.locations"

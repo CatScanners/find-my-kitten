@@ -210,7 +210,7 @@ void axisStep(float &axis, const std::vector<vector3D>& positions, const std::ve
 // Reliably roughly correct.
 DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ , const bool display) {
     constexpr int extraIterationsV2 = 10;
-    constexpr float momentumDecay =  0.8f;
+    constexpr float momentumDecay =  0.9f;
     if (positions.size() != features.size()) {
         std::cout << "3D points and their 2D points do not match\n";
         return previousState;
@@ -225,7 +225,7 @@ DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, 
     int n = 0;
     constexpr float d = 0.1;
     float stepSize = pointSD(positions)*d;
-    do {
+    for (int i = 0; i < 100 && count != extraIterationsV2; i++) {
         //momentum *= momentumDecay;
         newState.loc += momentum;
         vector3D start = newState.loc;
@@ -251,7 +251,7 @@ DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, 
             //    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             //}
         }
-    } while (count != extraIterationsV2);
+    } 
     newState.loc = sum*(1.0f/n);
     return optimalRotation(positions, features, newState);;
 }

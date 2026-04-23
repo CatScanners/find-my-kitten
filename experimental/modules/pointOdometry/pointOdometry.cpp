@@ -119,7 +119,7 @@ void testPointOdometry(std::string name, void (*test_helper)(const std::vector<v
   std::vector<vector3D> points;
   // Generates hear shape on xy plane.
   generateHeart(points, scale / 2);
-  Drone realLoc = giveDroneExample(0, scale*4);
+  Drone realLoc = giveDroneExample(0, scale);
 
   std::cout << "\n";
   std::cout << "Test " << name << " with error free data: \n";
@@ -226,7 +226,7 @@ std::vector<std::vector<InputPoint>> readFile(const std::string &filename) {
   for (auto frame : frames) {
     std::vector<InputPoint> resultFrame;
     for (auto [a, b, c, d] : frame) {
-      resultFrame.push_back(convertToUsableForm(3840, 2160, 170, b, c, d, true));
+      resultFrame.push_back(convertToUsableForm(3840, 2160, 170*2, b, c, d, true)); // convertToUsableForm might need some rewriting
     }
     result.push_back(resultFrame);
   }
@@ -245,7 +245,7 @@ void testOnRealData(int argc, char *argv[]) {
   BenchMark t;
   int n = 0;
   for (auto cameraFeed : video) {
-    flying.process_frames(cameraFeed, flying.state, false, true, true);
+    flying.process_frames(cameraFeed, flying.state, false, true, false);
     //plot.py
     std::cout << flying.state.loc << "\n";
     //plot2.py
@@ -261,10 +261,10 @@ void testOnRealData(int argc, char *argv[]) {
 int main(int argc, char *argv[]) {
   //test();
 
-  testOptimalRotation();
-  testOptimalLocation();
-  //testGradientDecent();
-  testGradientDecentV2();
+  //testOptimalRotation();
+  //testOptimalLocation();
+  ////testGradientDecent();
+  //testGradientDecentV2();
 
   testOnRealData(argc, argv);
   return 0;

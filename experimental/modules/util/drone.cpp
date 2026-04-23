@@ -70,7 +70,7 @@ void Drone::display(const std::vector<vector3D> &positions, const std::vector<ve
     points.insert( points.end(), features.begin(), features.end() );
     int w = imgW;
     int h = imgH;
-    constexpr float convertRatio = 4.0f; // zoom 
+    constexpr float convertRatio = 1.0f; // zoom 
     std::vector<unsigned char> vec(w*h);
     for (vector2D reltive : points){
         auto& [xr,yr] = reltive;
@@ -93,10 +93,12 @@ void Drone::display(const std::vector<vector3D> &positions, const std::vector<ve
 
     // Create an OpenCV image header around the raw data
     cv::Mat img(h, w, CV_8UC1, bytes);
-
+    
+    #ifndef MAKE_DEMO_VIDEO // during demo video making display is not needed.
     cv::imshow("Raw Image", img);
     constexpr int millisecondsWaitedPerFrame = 1000/60;
     cv::waitKey(millisecondsWaitedPerFrame);
+    #endif
 
     #ifdef MAKE_DEMO_VIDEO // code is only used if MAKE_DEMO_VIDEO is explicitly enabled.
     if (!initialized) {
