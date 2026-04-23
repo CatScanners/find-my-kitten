@@ -1,3 +1,5 @@
+// NOTE: UNUSED
+
 #include <rclcpp/rclcpp.hpp>
 #include <opencv2/opencv.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -44,7 +46,7 @@ private:
             // Display the image in a window
             cv::imshow("RGB Camera Feed", cv_ptr->image);
             cv::waitKey(1);  // Display image and wait for key press (to refresh the window)
-            std::cout << "Received" << std::endl; // Printing received message for debug purposes. 
+            std::cout << "Received" << std::endl; // Printing received message for debug purposes.
         }
         catch (const cv_bridge::Exception& e)
         {
@@ -60,4 +62,3 @@ int main(int argc, char * argv[])
     rclcpp::shutdown();
     return 0;
 }
-
