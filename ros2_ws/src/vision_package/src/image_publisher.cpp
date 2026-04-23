@@ -1,3 +1,4 @@
+// NOTE: UNUSED
 #include <rclcpp/rclcpp.hpp>
 #include <opencv2/opencv.hpp>
 #include <std_msgs/msg/string.hpp>
@@ -48,7 +49,7 @@ class ImagePublisher: public rclcpp::Node
     private:
         image_transport::Publisher _image_publisher_;
         rclcpp::TimerBase::SharedPtr _image_timer_;
-        
+
         // Opens the camera stream and sets to high resolution.
         cv::VideoCapture open_stream(int cam_id)
         {

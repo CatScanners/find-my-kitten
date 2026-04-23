@@ -3,6 +3,8 @@ parent: Jetsons & Pixhawk setup
 title: Recording ROS 2 Image Topics to Video Files Using a Python Node
 ---
 
+# 2024 Team
+
 This guide describes how to use a custom Python ROS 2 node to record image topics from a rosbag into a video file. The node subscribes to an image topic, converts incoming images to OpenCV format using `cv_bridge`, and writes them to a video file with `cv2.VideoWriter`.
 
 ## Run the Video Recorder

@@ -3,6 +3,8 @@ parent: QGroundControl & Drone setup
 title: RTK corrections via NTRIP
 ---
 
+# 2024 Team
+
 # RTK corrections via NTRIP
 
 ## This file contains a short tutorial on how to inject RTK corrections to the messaging from QGroundControl via MavProxy's builtin NTRIP client.

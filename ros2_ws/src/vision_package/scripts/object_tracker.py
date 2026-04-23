@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# NOTE: UNUSED
 
 import rclpy
 from rclpy.node import Node
@@ -10,8 +11,8 @@ from supervision.detection.core import Detections
 class ObjectTrackerNode(Node):
     def __init__(self):
         super().__init__('object_tracker_node')
-        
-        self.declare_parameter("input_topic_name", "detected_objects_topic")         
+
+        self.declare_parameter("input_topic_name", "detected_objects_topic")
         self.declare_parameter("output_topic_name", "tracked_objects_topic")
 
         self.input_topic_name = self.get_parameter("input_topic_name").value
@@ -42,24 +43,24 @@ class ObjectTrackerNode(Node):
         xyxy = []
         confidences = []
         class_ids = []
-        
+
         for detected_object in detected_objects.detections:
             if not detected_object.results:
                 continue  # Skip detections with no results
-            
+
             bbox = detected_object.bbox
             class_id = detected_object.results[0].hypothesis.class_id
             confidence = detected_object.results[0].hypothesis.score
-            
+
             x1 = bbox.center.position.x - bbox.size_x / 2
             y1 = bbox.center.position.y - bbox.size_y / 2
             x2 = bbox.center.position.x + bbox.size_x / 2
             y2 = bbox.center.position.y + bbox.size_y / 2
-            
+
             xyxy.append([x1, y1, x2, y2])
             confidences.append(confidence)
             class_ids.append(class_id)
-        
+
         if not xyxy:
             return None  # Return None if no valid detections are present
 
@@ -77,7 +78,7 @@ class ObjectTrackerNode(Node):
             class_id = tracked_detections.class_id[i]
             confidence = tracked_detections.confidence[i]
             tracker_id = tracked_detections.tracker_id[i]
-            
+
             tracked_object = Detection2D()
             tracked_object.bbox.center.position.x = float((x1 + x2) / 2.0)
             tracked_object.bbox.center.position.y = float((y1 + y2) / 2.0)
@@ -88,7 +89,7 @@ class ObjectTrackerNode(Node):
             hypothesis.hypothesis.class_id = str(class_id)
             hypothesis.hypothesis.score = float(confidence)
             tracked_object.results.append(hypothesis)
-            
+
             self.get_logger().info(f"Detected: {class_id}")
             tracked_objects_msg.detections.append(tracked_object)
 
@@ -122,4 +123,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-

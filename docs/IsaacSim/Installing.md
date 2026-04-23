@@ -129,16 +129,26 @@ Test the current environment by running `isaac_run` in terminal. This should ope
 Test that the Isaac Sim python interpreter path variable is correct by running in the terminal:</br> 
 `$ISAACSIM_PYTHON ${ISAACSIM_PATH}/standalone_examples/api/isaacsim.core.api/add_cubes.py`</br>
 
+## Installing project dependencies
+
+For this repository, do not manually install Python dependencies one by one. Use `uv` to sync the environment from the project configuration:
+
+```bash
+cd find-my-kitten
+uv sync
+source .venv/bin/activate
+```
+
 ## Installing Pegasus Simulator extension
 1. Launch Isaac Sim with `isaac_run` in terminal.
-2. Open the Window->extensions on the top menubar inside Isaac Sim.
-![Extensions Menu Bar](../assets/extensions_menu_bar.png)
-3. On the Extensions manager menu, we can enable or disable extensions. By pressing the settings button, we can add a path to the Pegasus-Simulator repository.
-![Extensions Widget](../assets/extensions_widget.png)
-4. The path inserted should be the path to the repository followed by /extensions.
-![Extensions Path](../assets/adding_extension_path.png)
-5. After adding the path to the extension, we can enable the Pegasus Simulator extension on the third-party tab. Enable AUTOLOAD.
-![Extensions Menu](../assets/pegasus_inside_extensions_menu.png)
+2. Open the Window->extensions on the top menubar inside Isaac Sim. <br>
+![Extensions Menu Bar](../assets/extensions_menu_bar.png)<br>
+3. On the Extensions manager menu, we can enable or disable extensions. By pressing the settings button, we can add a path to the Pegasus-Simulator repository.<br>
+![Extensions Widget](../assets/extensions_widget.png)<br>
+4. The path inserted should be the path to the repository followed by /extensions.<br>
+![Extensions Path](../assets/adding_extension_path.png)<br>
+5. After adding the path to the extension, we can enable the Pegasus Simulator extension on the third-party tab. Enable AUTOLOAD.<br>
+![Extensions Menu](../assets/pegasus_inside_extensions_menu.png)<br>
 
 ## Installing the extension as a library
 
@@ -155,6 +165,16 @@ cd extensions
 $ISAACSIM_PYTHON -m pip install --editable pegasus.simulator
 ```
 
+## Building PX4-Autopilot
+
+PX4-Autopilot is included in this repository at `simulation/PX4-Autopilot`.
+
+After entering that directory, build SITL with:
+
+```bash
+cd find-my-kitten/simulation/PX4-Autopilot
+make px4_sitl
+```
 
 ## Setting PX4 Path
 

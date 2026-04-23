@@ -3,6 +3,8 @@ parent: Jetsons & Pixhawk setup
 title: Jetson Orin (Baseboard & Devkit) setup
 ---
 
+# 2024 Team
+
 # Baseboard setup - deviations from tutorial
 Applicable to:
 - Baseboard

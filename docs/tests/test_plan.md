@@ -152,7 +152,7 @@ In this window, Just press the large green button at the bottom, wait for a larg
 
 <br/>
 
-#### Runnig the simulator
+#### Running the simulator
 
 After the last series of commands, you should be at the path: `/workspaces/isaac_ros-dev/ros2_ws` <br/>
 In this folder, you can start the simulation by running the following command: <br/>

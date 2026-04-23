@@ -3,6 +3,8 @@ parent: Jetsons & Pixhawk setup
 title: Isaac ROS YOLOv8
 ---
 
+# 2024 Team
+
 Note: ssh with GUI via:
 `ssh -Y usr@host`, if using XLaunch (VcXsrv), set `$env:DISPLAY="localhost:0"` in PS prior to SSH
 
