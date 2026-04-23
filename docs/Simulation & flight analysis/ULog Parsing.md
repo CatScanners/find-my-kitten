@@ -4,7 +4,25 @@ title: ULog parsing
 ---
 
 # Getting ULogs off the drone
-<mavproxy stuff here>
+The drone records ULogs according to the parameter
+[SDLOG_MODE](https://docs.px4.io/main/en/advanced_config/parameter_reference#SDLOG_MODE), and they
+exist on the Pixhawk's SD card. To interface with the Pixhawk, we've used `mavproxy.py`, which is
+installed on the Jetson:
+```bash
+# Starts the mavproxy console
+# Ignore the garbage printed to the screen
+mavproxy.py --master=/dev/ttyTHS1 --baudrate 921600
+
+# List all logs
+> log list
+
+# Download a specific log
+> log download <number>
+```
+
+This moves the log from the Pixhawk to the Jetson, but it maxes out at about 70 KiB/s because of the
+link between the Jetson and Pixhawk not being meant for fast data transfers. Alternatively you could
+take out the sd card and read from it directly.
 
 # ULog parsing
 PX4 uses ULog file format to log uORB topics. Parsing is needed to get the logs in readable format.
