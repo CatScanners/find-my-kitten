@@ -89,7 +89,7 @@ DroneState optimalLocation(
         newState.loc -= gradientLoc/positions.size()*0.5;
         thereIsRoomToImprove = gradientLoc.magnitude() > standardDeviationLimit;
         if (display){
-            drone temp = {newState};
+            Drone temp = {newState};
             temp.display(positions,features);
         }
     }
@@ -176,7 +176,7 @@ DroneState optimalRotation(
         newState.rot = step*newState.rot;
         smallChanges += step.w >= 1;
         if (display){
-            drone temp = {newState};
+            Drone temp = {newState};
             temp.display(positions,features);
         }
     }
@@ -245,7 +245,7 @@ DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, 
             n += 1;
         }
         if (display){
-            drone temp = {newState};
+            Drone temp = {newState};
             temp.display(positions,features);
             //if (count == extraIterationsV2) {
             //    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -292,7 +292,7 @@ DroneState gradientDescentLocateDrone(
         newState.loc = newState.loc + momentum;
         newState.rot = rotationSphere.toQuaternion(0.07f)*newState.rot;
         if (display){
-            drone temp = {newState};
+            Drone temp = {newState};
             temp.display(positions,features);
             //if (count == extraIterationsV2) {
             //    std::this_thread::sleep_for(std::chrono::milliseconds(1000));

@@ -88,18 +88,18 @@ void printStatistics(std::vector<vector3D> error){
 }
 
 
-drone giveDroneExample(int i,float scale){
+Drone giveDroneExample(int i,float scale){
     Quaternion startRot = {1,0,0,0};
     vector3D startLoc = {scale*std::sin(i/10.0),0,scale*std::cos(i/10.0)};
     DroneState state = {startLoc,startRot};
-    drone flying = drone(state);
+    Drone flying = Drone(state);
     flying.state.rotateTowards(EMPTY_VECTOR3D);
     return flying;
 }
 
 
-//drone giveDroneExampleError(drone start, int i,float distance){
-//    drone copyError = start;
+//Drone giveDroneExampleError(Drone start, int i,float distance){
+//    Drone copyError = start;
 //    vector3D offset = {-distance,distance,distance};
 //    vector3D offsetRot = start.state.loc.crossProduct((vector3D){-distance,-distance,-distance}).normalize()+start.state.loc;
 //    copyError.state.loc += offset;
@@ -108,8 +108,8 @@ drone giveDroneExample(int i,float scale){
 //    return copyError;
 //}
 
-drone droneRandomWalk(drone start,float scale){
-    drone copyError = start;
+Drone droneRandomWalk(Drone start,float scale){
+    Drone copyError = start;
     copyError.state.loc += random3D()*scale;
     copyError.state.rotateTowards(random3D()+copyError.state.loc);
     return copyError;

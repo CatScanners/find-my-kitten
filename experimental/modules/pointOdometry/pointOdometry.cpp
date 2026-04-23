@@ -12,7 +12,7 @@
 #include "../util/timer.hpp"
 
 constexpr float scale = 1;
-constexpr bool displayTest = false; // with display on, it is recommended to set fps that suits the usecase in drone::display
+constexpr bool displayTest = true; // with display on, it is recommended to set fps that suits the usecase in drone::display
 constexpr int iterations = displayTest ? 10 : 100;
 constexpr float amountOfErrorPoints = scale / 20;
 constexpr float amountOfErrorDrone = scale;
@@ -64,7 +64,7 @@ struct TrackError{
 
 void testPointOdometry_helper(
   const std::vector<vector3D> points, 
-  const drone real, 
+  const Drone real, 
   float noiseOn3D, 
   float noiceOn2D,
   bool locationError, 
@@ -80,7 +80,7 @@ void testPointOdometry_helper(
   pointsCopy = points;
   addRandomNoise(pointsCopy, noiseOn3D);
   
-  drone inaccurateLocation = real;
+  Drone inaccurateLocation = real;
   
   // error
   TrackError tracker;
@@ -113,12 +113,13 @@ void testPointOdometry_helper(
   if (rotationError) tracker.printErrorRotations();
 }
 
-void testPointOdometry(std::string name, void (*test_helper)(const std::vector<vector3D>, const drone, float, float)) {
+// camera zoom can be confiqured in drone.cpp
+void testPointOdometry(std::string name, void (*test_helper)(const std::vector<vector3D>, const Drone, float, float)) {
   // Test optimal rotations error free
   std::vector<vector3D> points;
   // Generates hear shape on xy plane.
-  generateHeart(points, scale * 2 / 4);
-  drone realLoc = giveDroneExample(0, scale);
+  generateHeart(points, scale / 2);
+  Drone realLoc = giveDroneExample(0, scale*4);
 
   std::cout << "\n";
   std::cout << "Test " << name << " with error free data: \n";
@@ -135,28 +136,29 @@ void testPointOdometry(std::string name, void (*test_helper)(const std::vector<v
 }
 
 
-void testOptimalRotation_helper(const std::vector<vector3D> points, const drone real, float noiseOn3D, float noiceOn2D){
+void testOptimalRotation_helper(const std::vector<vector3D> points, const Drone real, float noiseOn3D, float noiceOn2D){
   testPointOdometry_helper(points,real,noiseOn3D,noiceOn2D,false,true,0);
 }
 void testOptimalRotation() {
   return testPointOdometry("optimalRotation",testOptimalRotation_helper);
 }
 
-void testOptimalLocation_helper(const std::vector<vector3D> points, const drone real, float noiseOn3D, float noiceOn2D){
+void testOptimalLocation_helper(const std::vector<vector3D> points, const Drone real, float noiseOn3D, float noiceOn2D){
   testPointOdometry_helper(points,real,noiseOn3D,noiceOn2D,true,false,1);
 }
 void testOptimalLocation() {
   return testPointOdometry("optimalLocation",testOptimalLocation_helper);
 }
 
-void testGradientDecent_helper(const std::vector<vector3D> points, const drone real, float noiseOn3D, float noiceOn2D){
-  testPointOdometry_helper(points,real,noiseOn3D,noiceOn2D,true,true,3);
+// Highly unreliable when points are far appart in it's current form.
+void testGradientDecent_helper(const std::vector<vector3D> points, const Drone real, float noiseOn3D, float noiceOn2D){
+  testPointOdometry_helper(points,real,noiseOn3D,noiceOn2D,true,true,2);
 }
 void testGradientDecent() {
   return testPointOdometry("gradientDescentLocateDrone",testGradientDecent_helper);
 }
 
-void testGradientDecentV2_helper(const std::vector<vector3D> points, const drone real, float noiseOn3D, float noiceOn2D){
+void testGradientDecentV2_helper(const std::vector<vector3D> points, const Drone real, float noiseOn3D, float noiceOn2D){
   testPointOdometry_helper(points,real,noiseOn3D,noiceOn2D,true,true,3);
 }
 void testGradientDecentV2() {
@@ -170,10 +172,10 @@ void testGradientDecentV2() {
 void test() {
   std::vector<vector3D> points;
   generateHeart(points, scale * 2 / 4);
-  drone flying = giveDroneExample(0, scale);
+  Drone flying = giveDroneExample(0, scale);
   std::vector<vector2D> cameraReal = flying.render(points);
 
-  std::vector<inputPoint> cameraFeed;
+  std::vector<InputPoint> cameraFeed;
   for (int i = 0; i < 200; i++) {
     cameraFeed.push_back({i, cameraReal[i]});
   }
@@ -199,7 +201,7 @@ struct feature {
     float c, d;
 };
 
-std::vector<std::vector<inputPoint>> readFile(const std::string &filename) {
+std::vector<std::vector<InputPoint>> readFile(const std::string &filename) {
   std::ifstream file(filename);
   if (!file) {
     std::cerr << "Could not open file " << filename << " \n";
@@ -220,9 +222,9 @@ std::vector<std::vector<inputPoint>> readFile(const std::string &filename) {
     features.push_back({a, b, c, d});
   }
   frames.push_back(features);
-  std::vector<std::vector<inputPoint>> result;
+  std::vector<std::vector<InputPoint>> result;
   for (auto frame : frames) {
-    std::vector<inputPoint> resultFrame;
+    std::vector<InputPoint> resultFrame;
     for (auto [a, b, c, d] : frame) {
       resultFrame.push_back(convertToUsableForm(3840, 2160, 170, b, c, d, true));
     }
@@ -239,12 +241,14 @@ void testOnRealData(int argc, char *argv[]) {
 
   const char *fileName = argv[1];
   auto video = readFile(fileName);
-  drone flying = giveDroneExample(0, 1);
+  Drone flying = giveDroneExample(0, 1);
   BenchMark t;
   int n = 0;
   for (auto cameraFeed : video) {
     flying.process_frames(cameraFeed, flying.state, false, true, true);
+    //plot.py
     std::cout << flying.state.loc << "\n";
+    //plot2.py
     //std::cout << ++n << "," << flying.state.loc.x << "," << flying.state.loc.y << "\n";
     t.cycle_Completed("location");
   }
@@ -257,10 +261,10 @@ void testOnRealData(int argc, char *argv[]) {
 int main(int argc, char *argv[]) {
   //test();
 
-  //testOptimalRotation();
-  //testOptimalLocation();
+  testOptimalRotation();
+  testOptimalLocation();
   //testGradientDecent();
-  //testGradientDecentV2();
+  testGradientDecentV2();
 
   testOnRealData(argc, argv);
   return 0;

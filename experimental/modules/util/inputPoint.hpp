@@ -4,7 +4,7 @@
 #include "vector2D.hpp"
 #include <cmath>
 
-struct inputPoint {
+struct InputPoint {
   int trackID;
   vector2D point;
 };
@@ -16,7 +16,7 @@ struct inputPoint {
 // which is the degree angle between two diagonal corners.
 
 
-inline inputPoint convertToUsableForm(const int frame_dimension_x,
+inline InputPoint convertToUsableForm(const int frame_dimension_x,
                                       const int frame_dimension_y,
                                       const float camera_fov_diagonal,
                                       const int id, const float x,

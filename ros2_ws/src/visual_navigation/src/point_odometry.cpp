@@ -62,7 +62,7 @@ private:
     out.rot = quat_px4_to_point_odom(q);
 
     if (!drone_initialized_) {
-      drone_ = drone(out);
+      drone_ = Drone(out);
       drone_initialized_ = true;
       LOG(INFO, "Initialized drone struct with positions: %f, %f, %f\n", out.loc.x, out.loc.y,
           out.loc.z);
@@ -78,7 +78,7 @@ private:
     if (msg->detections.empty())
       return;
 
-    const std::vector<inputPoint> objects = objects_from_detections(msg->detections);
+    const std::vector<InputPoint> objects = objects_from_detections(msg->detections);
 
     const std::optional<DroneState> state_opt =
         drone_.process_frames(objects, internal_state_);
@@ -97,9 +97,9 @@ private:
     publisher_->publish(out);
   }
 
-  std::vector<inputPoint>
+  std::vector<InputPoint>
   objects_from_detections(const std::vector<vision_msgs::msg::Detection2D> &detections) {
-    std::vector<inputPoint> objects;
+    std::vector<InputPoint> objects;
 
     for (const vision_msgs::msg::Detection2D &detection : detections) {
       if (detection.id == "")
@@ -109,7 +109,7 @@ private:
       int id = std::stoi(detection.id);
       float x = static_cast<float>(detection.bbox.center.position.x);
       float y = static_cast<float>(detection.bbox.center.position.y);
-      inputPoint input = convertToUsableForm(1640, 1232, 170, id, x, y, true);
+      InputPoint input = convertToUsableForm(1640, 1232, 170, id, x, y, true);
       objects.push_back(input);
     }
 
@@ -140,6 +140,7 @@ private:
     // accuracy should be confiqured to match true variance with live/bag tests.
     constexpr float accuracy = 0.25f;
     out.position_variance = {accuracy*std::abs(z), accuracy*std::abs(z), accuracy*std::abs(z)}; 
+    // orientation is likely more accurate than this, and does not scale with distance.
     out.orientation_variance = {0.10, 0.10, 0.20};
     out.reset_counter = 0;
 
@@ -155,7 +156,7 @@ private:
   }
 
   DroneState internal_state_{};
-  drone drone_{DroneState{}};
+  Drone drone_{DroneState{}};
   bool drone_initialized_ = false;
   rclcpp::Subscription<vision_msgs::msg::Detection2DArray>::SharedPtr detections_sub_;
   rclcpp::Subscription<px4_msgs::msg::VehicleOdometry>::SharedPtr odometry_sub_;

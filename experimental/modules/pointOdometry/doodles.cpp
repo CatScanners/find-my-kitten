@@ -97,7 +97,7 @@ DroneState gradientDescentLocateDrone(const std::vector<vector3D>& positions, co
             newState.rot = rotationSphere.toQuaternion(0.07f)*newState.rot;
         }
         if (display){
-            drone temp = {newState};
+            Drone temp = {newState};
             temp.display(positions,features);
             //if (count == extraIterationsV2) {
             //    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -226,7 +226,7 @@ void pointSolve(std::vector<vector3D>& positions, const std::vector<instance>& f
 
 void adjust3DpointsToAllignWithTheCamera(std::vector<vector3D>& positions, const std::vector<vector2D>& features, DroneState previousState) {
     if (positions.size() != features.size()) std::cout << "positions and their coresponding positions on camera do not match\n";
-    drone temp = {previousState};
+    Drone temp = {previousState};
     //std::vector<vector2D> renderPoints = temp.render(positions);
     //for (int i = 0; i < positions.size(); i++){
     //    vector3D distance = positions[i]-previousState.loc;

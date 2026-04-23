@@ -19,11 +19,11 @@ void generateCircle(std::vector<vector3D>& points, int resolution = 200) ;
 
 void printStatistics(std::vector<vector3D> error);
 
-drone giveDroneExample(int i,float distance);
+Drone giveDroneExample(int i,float distance);
 
-//drone giveDroneExampleError(drone start, int i,float distance);
+//Drone giveDroneExampleError(Drone start, int i,float distance);
 
-drone droneRandomWalk(drone start,float distance);
+Drone droneRandomWalk(Drone start,float distance);
 
 
 #endif
