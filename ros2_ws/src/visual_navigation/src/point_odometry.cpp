@@ -136,7 +136,10 @@ private:
     out.angular_velocity = {NAN, NAN, NAN};
 
     // just set variances :D
-    out.position_variance = {1, 1, 1};
+    // location variance scales with distance to the features, the algorithm does not know if a cat is 50cm tall or 50km tall.
+    // accuracy should be confiqured to match true variance with live/bag tests.
+    constexpr float accuracy = 0.25f;
+    out.position_variance = {accuracy*std::abs(z), accuracy*std::abs(z), accuracy*std::abs(z)}; 
     out.orientation_variance = {0.10, 0.10, 0.20};
     out.reset_counter = 0;
 

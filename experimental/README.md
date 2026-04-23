@@ -1,6 +1,5 @@
 This enviroment is meant for testing theoretical approaches without the overhead of ROS2.
-The enviroment mimics ROS2 structure with minimal overhead.
-
+The enviroment can be used to mimic ROS2 structure with minimal overhead.
 
 To get started run `init_docker.sh` to pull docker base image to match your own device.
 If your device is does not have Nvidia gpu, pull your own docker base image and rename it to compiler-base-base-benchmark.
@@ -60,3 +59,5 @@ To see current resource usage use:
 sudo pip3 install -U jetson-stats
 sudo jtop
 ´
+
+

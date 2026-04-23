@@ -32,17 +32,17 @@ struct drone{
     std::unordered_map<int,vector3D> data;
     bool lost = true;
 
-    drone(DroneState s) : state(s) {};
+    drone(DroneState s) : state(s) {lost = true;};
 
     std::vector<vector2D> render(const std::vector<vector3D> &points) const;
 
     void display(const std::vector<vector3D> &positions, const std::vector<vector2D> &features);
 
 private:
-    void initEstimate3DPositions(const std::vector<inputPoint> &features);
-    void estimate3DPositions(const std::vector<inputPoint> &features);
+    void initEstimate3DPositions(const std::vector<inputPoint> &features, const bool lockZ);
+    void estimate3DPositions(const std::vector<inputPoint> &features, const bool lockZ);
 
-    std::optional<DroneState> initialize(const std::vector<inputPoint>& trackedPoints, const DroneState& start);
+    std::optional<DroneState> initialize(const std::vector<inputPoint>& trackedPoints, const DroneState& start, const bool lockZ);
 public:
     std::optional<DroneState> process_frames(
         const std::vector<inputPoint>& trackedPoints,

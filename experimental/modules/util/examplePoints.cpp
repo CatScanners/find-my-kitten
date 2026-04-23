@@ -91,7 +91,8 @@ void printStatistics(std::vector<vector3D> error){
 drone giveDroneExample(int i,float scale){
     Quaternion startRot = {1,0,0,0};
     vector3D startLoc = {scale*std::sin(i/10.0),0,scale*std::cos(i/10.0)};
-    drone flying = drone({startLoc,startRot});
+    DroneState state = {startLoc,startRot};
+    drone flying = drone(state);
     flying.state.rotateTowards(EMPTY_VECTOR3D);
     return flying;
 }
