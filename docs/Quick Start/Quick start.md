@@ -6,8 +6,8 @@ nav_order: 2
 
 # Quick start
 
-For setting up your development environment, refer to the 'Development environment' section in the
-repo README.md file.
+**For setting up your development environment, refer to the 'Development environment' section in the
+repo README.md file.**
 
 ## Nvidia Jetson initialization
 Please refer to our [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html).
