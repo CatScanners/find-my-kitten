@@ -6,7 +6,8 @@ nav_order: 2
 
 # Quick start
 
-There is two ways to start developing this project further. First one is simpler and basically anybody can do it - a simulator. Second one is to build your own drone or use our existing setup, upload your code to it, and run test flights. In this page, both of these options are covered. Moreover, we have been working on a Docker development environment, information about that here as well.
+For setting up your development environment, refer to the 'Development environment' section in the
+repo README.md file.
 
 ## Nvidia Jetson initialization
 Please refer to our [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html).
@@ -83,7 +84,3 @@ Assembly follows the [HolyBro X500v2 guide](https://docs.holybro.com/drone-devel
 3. Do all the real-life overhead related to flying a drone:
 - Refer to [this comprehensive guide](https://docs.google.com/document/d/1DUjyzkbAegfWW_M4UNErEH7ssDJYN7t6NvSwmUnFjBE/edit?pli=1&tab=t.0#heading=h.qy87xqej0dgz).
 4. Arm, takeoff and fly with position/altitude mode in QGroundControl with your controller. Then, switch to offboard mode and run the same scripts as with [machine vision](#machine vision) and [actions startup](#actions-startup).
-
-## Docker setup
-
-We provide a Dockerfile and instructions for the simulation [here](https://github.com/CatScanners/find-my-kitten/blob/main/simulation/instructions.md). The section in Isaac ROS in the [Jetson Orin setup guide](https://catscanners.github.io/find-my-kitten/Jetsons%20&%20Pixhawk/jetson-setup.html) further covers Docker usage elsewhere.

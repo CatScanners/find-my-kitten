@@ -3,10 +3,17 @@ parent: Simulation & Flight Analysis
 title: ULog parsing
 ---
 
+# Getting ULogs off the drone
+<mavproxy stuff here>
+
 # ULog parsing
 PX4 uses ULog file format to log uORB topics. Parsing is needed to get the logs in readable format.
 
 There are several choices for parsing. Here is presented ones that seem most relevant for our project.
+
+## logs.px4.io
+You can upload ULog files to https://logs.px4.io, where it will parse them and plot relevant data.
+This is the simplest way to analyze ULog files.
 
 ## pyulog
 

@@ -5,9 +5,6 @@ title: Common problems
 
 # Common problems
 
-### PX4-Autopilot/Tools/ubuntu.sh script is not working in Jetson Nano when setting up PX4 environment
-- You have to change the ```gcc-multilib``` and ```g++-multilib``` installation lines in ./PX4-Autopilot/Tools/setup/ubuntu.sh to ```gcc-arm-linux-gnueabi``` and ```g++-arm-linux-gnueabi``` respectively.
-
 ### I am not able to install QGroundControl, can I skip installing it?
 Yes, you can skip installing with some additional overhead in the development process. The main problem of not having QGC is 
 that one has to run the following (in the same order?) in the MAVLINK-console: 
