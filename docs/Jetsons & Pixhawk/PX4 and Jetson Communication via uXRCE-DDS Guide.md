@@ -2,6 +2,7 @@
 parent: Jetsons & Pixhawk setup
 title: PX4 and Jetson Communication via uXRCE-DDS Guide
 ---
+# 2024 Team
 
 # PX4 and Jetson Communication via uXRCE-DDS Guide
 
@@ -69,5 +70,3 @@ uxrQoS_t qos = {
 };
 ```
 Default ROS 2 QoS settings for publishers work with uORB topics.
-
-
