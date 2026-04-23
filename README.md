@@ -1,11 +1,42 @@
 # find-my-kitten
-
-This repository contains the ROS2 packages and the documentation website files for the Find My Kitten, AI! software project.
-
+This repository contains the ROS2 packages, simulation's and the documentation website files for the Find My Kitten, AI! software project.
 Documentation website here: https://catscanners.github.io/find-my-kitten/
 
-## Very quick start
-You have our drone and have [set up our toolchain](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Setup%20toolchain) on the drone? What should you do to get the drone running?
+## Minimum system requirements
+For all the system requirements, check the [dedicated requirements page](https://github.com/CatScanners/find-my-kitten/tree/main/docs/computer_requirements.md)
+
+<br/>
+
+**NOTE: Make sure to have installed git-lfs, after which you should clone the repository. <br/>
+If you have already cloned the repository, run the following commands:**
+
+```bash
+git lfs fetch
+git lfs pull
+```
+
+
+## General terminology
+
+|     term     | shortened name |                  description                  | doc link |
+| ------------ | -------------- | --------------------------------------------- | ------- |
+| ROS 2        | ROS 2          | Software libraries that for developing robots | https://docs.ros.org/en/kilted/index.html |
+| PX4          | PX4            | Autopilot software for drone that can be integrated with ROS 2 | https://docs.px4.io/main/en/ |
+| Isaac ROS    | Isaac          | Nvidia's version of ROS that supports Nvidia GPU acceleration | https://developer.nvidia.com/isaac/ros |
+| ROS 2 Humble | Humble         | ROS 2 version compatible with Ubuntu 22 | https://docs.ros.org/en/humble/index.html |
+| ROS 2 Jazzy  | Jazzy          | ROS 2 version compatible with Ubuntu 24 | https://docs.ros.org/en/jazzy/Installation.html |
+
+<br/>
+
+**For Quick start, follow the document at the location:** ```docs/Quick Start/Quick Start.md```,
+**or you can find it [by clicking this link](https://github.com/CatScanners/find-my-kitten/blob/main/docs/Quick%20Start/Quick%20start.md)**
+
+**For a simple setup of the environment and tools, follow the rest of the README**
+
+## Shortened Quick Start for setting up the drone
+After receiving the drone, set up the toolchain on the drone by [following these instructions](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Setup%20toolchain)
+
+After the drone's toolchain is set up, what should you do to get the drone running?
 - Pull this repository and ``cd ros2_ws``
 - The run operation can be divided into two parts: **drone pilot part** and **ROS2 packages part**.
   - **Drone pilot part**
@@ -15,6 +46,7 @@ You have our drone and have [set up our toolchain](https://catscanners.github.io
       - **vision_package**: get the camera input and enable object detection by referring to [Machine vision guide](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Machine%20vision%20startup)
       - **px4_handler**: once the drone is flying and offboard-mode is enabled, refer to [Actions startup](https://catscanners.github.io/find-my-kitten/Quick%20Start/Quick%20start.html#:~:text=Actions%20startup)
 - Want to make any changes? Make your changes on the packages in ``ros2_ws``, ``colcon build --packages-select <your-package>``, ``source install/setup.bash``.
+
 
 ## Development environment
 ### Development Container
@@ -62,3 +94,9 @@ Shortly explained the directory structure:
 | `/ros2_ws/src/launch`                          | Some ROS2 launch files, have not really used.                              |
 | `/simulation`                           | Some files for the simulation, refer to [this](https://catscanners.github.io/find-my-kitten/Simulation%20&%20flight%20analysis/Simulation%20setup.html)                                                    |
 | `/docs/`                            | Documentation files.                                                             |
+
+
+
+## Contributing 
+Contributions are mainly introduced and added through PRs, which require at least one project member's approval. <br/>
+Commits cannot be added directly to main.
