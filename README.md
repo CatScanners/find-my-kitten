@@ -17,12 +17,6 @@ You have our drone and have [set up our toolchain](https://catscanners.github.io
 - Want to make any changes? Make your changes on the packages in ``ros2_ws``, ``colcon build --packages-select <your-package>``, ``source install/setup.bash``.
 
 ## Development environment
-### Python
-This project uses UV dependency management for python dependencies. To get started:
-* Install UV using: `pip install uv`
-* Setup venv using `uv sync` in project root directory
-* Activate venv: `source .venv/bin/activate`
-
 ### Development Container
 This project uses a development container from `isaac_ros_common`. There is a
 wrapper script to build and start the container in [`start_isaac_dev.sh`](start_isaac_dev.sh).
@@ -35,7 +29,7 @@ the script, which installs extra dependencies only required for running IsaacSim
 
 The container will also install Python dependencies via uv. ROS2 installs some
 python modules into the system's Python, so the container installs the
-dependencies into the systme's Python as well. A virtual environment will bypass
+dependencies into the system's Python as well. A virtual environment will bypass
 the system Python, and should not be used inside the container.
 
 > [!Note]
@@ -44,6 +38,16 @@ the system Python, and should not be used inside the container.
 > `-c|--no-check` flag, which is a lot faster. You can also skip building
 > entirely with `-b|--no-build`, but this also won't take into account any
 > possible changes.
+
+### Python
+> [!Warning]
+> Do not use a venv if using the development container! (Container is recommended)
+
+This project uses UV dependency management for python dependencies. To get started:
+* Install UV using: `pip install uv`
+* Setup venv using `uv sync` in project root directory
+* Activate venv: `source .venv/bin/activate`
+
 
 ## Directory structure
 
