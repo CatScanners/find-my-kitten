@@ -2,6 +2,7 @@
 parent: Development
 title: Information about hardware and licensing
 ---
+# 2024 Team
 
 # Information about hardware, licensing and possible libraries
 
@@ -30,4 +31,3 @@ This project is licensed under MIT in order to be as permissive as possible. Not
 [Apache 2.0 License](<https://pitt.libguides.com/openlicensing/apache2>):
 
 [ASF 3rd Party License Policy](<https://www.apache.org/legal/resolved.html>)
-
