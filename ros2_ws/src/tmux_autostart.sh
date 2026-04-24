@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Made by the 2024 team for running ball_finder on the drone, a similar script could be made for
+# running e.g. VSLAM or point odometry on the drone
+
 SESSION="offboard_control"
 
 tmux new-session -d -s $SESSION

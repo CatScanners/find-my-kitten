@@ -1,5 +1,7 @@
-# Documentation for visual_navigation
-
+---
+parent: Development
+title: Documentation for visual_navigation
+---
 ## Introduction
 
 Visual navigation is the package responsible for stereo camera, Isaac ROS VSLAM, and point odometry. It contains multiple launch files for launching different configurations. The package integrates visual SLAM for odometry estimation and stereo vision for depth perception, bridging to PX4 for drone navigation.

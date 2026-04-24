@@ -75,7 +75,7 @@ You're best off having only 1 SSH session open, and using [tmux](https://github.
 (learn the controls for it too!) inside the container to start multiple things at once.
 
 The following assumes you're in `ros2_ws` with the install script sourced.
-##### VSLAM
+#### VSLAM
 ```bash
 # Starting VSLAM + stereo camera
 ros2 launch visual_navigation stereo_vslam.launch.py
@@ -83,24 +83,24 @@ ros2 launch visual_navigation stereo_vslam.launch.py
 ros2 run visual_navigation vslam_message_transform
 ```
 
-##### Downwards camera
+#### Downwards camera
 ```bash
 ros2 launch argus-kitten isaac_ros_argus_camera_mono.launch.py
 ```
 
-##### YOLO
+#### YOLO
 ```bash
 # Requires a camera stream, e.g. the downwards camera from above
 ros2 run vision_package object_detector.py --ros-args -p yolo_file:=/path/to/yolo/model
 ```
 
-##### Point odometry
+#### Point odometry
 ```bash
 # Requires YOLO
 ros2 run visual_navigation point_odometry
 ```
 
-##### Recording bags
+#### Recording bags
 There is a script `record-bag.sh` in the `drone` directory that can be used to record ROS2 bags
 easier. It takes as argument a file with a newline separated list of topics to record (make sure
 there are no empty lines!). When you've recorded what you wanted, just CTRL+C the recording script.
