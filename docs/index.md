@@ -11,6 +11,12 @@ This site serves as documentation for the Find My Kitten project, available at <
 
 Hardware includes a HolyBro X500 V2 development kit with a HolyBro Jetson Pixhawk baseboard (with Orin NX and PX6), running JetPack 6.2 with ISAAC ROS 3.2.
 
+**NOTE:**  
+This project has been ran by two teams, from 2024-2025 and 2025-2026. Some documentation has been
+made by the 2024 team, but those parts may have been unused by the 2025 team. Such parts have been
+tagged as '2024 Team'. **But** this does not mean it is necessarily useless, just that it hasn't
+been used for what the 2025 team has done, and may still be useful in the future.
+
 ## Why?
 
 Drones have the potential to revolutionize search and rescue (S&R) operations by saving lives, gathering critical information, and navigating hazardous environments. However, the challenge lies in determining whether current technologies can enable drones to autonomously perform these tasks in complex, GNSS-free environments.

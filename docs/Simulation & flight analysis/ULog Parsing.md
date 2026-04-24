@@ -7,7 +7,7 @@ title: ULog parsing
 The drone records ULogs according to the parameter
 [SDLOG_MODE](https://docs.px4.io/main/en/advanced_config/parameter_reference#SDLOG_MODE), and they
 exist on the Pixhawk's SD card. To interface with the Pixhawk, we've used `mavproxy.py`, which is
-installed on the Jetson:
+installed on the Jetson (but not in the devcontainer!):
 ```bash
 # Starts the mavproxy console
 # Ignore the garbage printed to the screen

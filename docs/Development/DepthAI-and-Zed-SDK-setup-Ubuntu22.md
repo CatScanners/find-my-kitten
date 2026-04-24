@@ -3,8 +3,8 @@ parent: Development
 title: ZedSDK on x86-64 Ubuntu22
 ---
 # UNUSED
-
-# 2024 Team
+As of 2026 the ZED camera is unused, we instead use the [OAK-D
+Pro](https://docs.luxonis.com/hardware/products/OAK-D%20Pro) camera.
 
 # ZedSDK on Ubuntu22
 

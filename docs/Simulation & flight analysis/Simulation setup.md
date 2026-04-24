@@ -3,17 +3,12 @@ parent: Simulation & Flight Analysis
 title: Custom simulation setup
 ---
 # 2024 TEAM
+The 2025 team mainly worked on getting IsaacSim up, and didn't use Gazebo much. For what it's worth,
+try first running Gazebo in the devcontainer before installing everything on the host machine.
 
 # Custom simulation setup
 
 **Note:** It is assumed that **QGroundControl** is installed. This guide uses version **v4.4.2**.
-
-## Clone 'final-demo' branch from main repository
-```bash
-git clone -b final-demo --single-branch --recursive git@github.com:CatScanners/find-my-kitten.git
-```
-
----
 
 ## Install ROS2 Gazebo Bridge
 
