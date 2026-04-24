@@ -59,7 +59,6 @@ ament_python_install_package(scripts)
 install(PROGRAMS
   scripts/object_detector.py
   scripts/video_publisher.py
-  scripts/object_tracker.py
   scripts/track_publisher.py
   scripts/arducam_publisher.py
   DESTINATION lib/${PROJECT_NAME}
