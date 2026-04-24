@@ -37,11 +37,9 @@ set(EXPERIMENTAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../experimental)
 
 add_library(experimental_util STATIC
   ${EXPERIMENTAL_DIR}/modules/util/pointOdometry.cpp
-  ${EXPERIMENTAL_DIR}/modules/util/examplePoints.cpp
   ${EXPERIMENTAL_DIR}/modules/util/drone.cpp
   ${EXPERIMENTAL_DIR}/modules/util/Quaternion.cpp
   ${EXPERIMENTAL_DIR}/modules/util/vector3D.cpp
-  ${EXPERIMENTAL_DIR}/modules/util/pipe.cpp
 )
 target_compile_options(experimental_util PRIVATE -w)
 
