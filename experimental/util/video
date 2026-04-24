@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e 
+cd ./modules/benchmarks_general/
+./build.sh
+./build/video_pipe /tmp/imagepipe ./testData/DroneTest.mp4

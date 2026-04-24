@@ -24,6 +24,7 @@ dependencies = [
     "seaborn",
     "torchvision",
     "torch==2.10.0",
+    "lap",
 ]
 
 [dependency-groups]

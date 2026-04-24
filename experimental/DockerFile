@@ -1,0 +1,24 @@
+# REMEMBER TO PULL DOCKER IMAGE FIRST TO SAVE TIME
+#FROM nvidia/cuda:13.0.0-devel-ubuntu22.04 AS compiler-base-base-benchmark
+#FROM nvcr.io/nvidia/l4t-cuda:12.2.12-runtime AS compiler-base-base-benchmark
+
+FROM compiler-base-base-benchmark AS compiler-base
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    git \
+    pkg-config \
+    python3 \
+    python3-pip \
+    python3-dev \
+    libopencv-dev \
+    g++ \
+    cmake \
+    tmux
+
+FROM compiler-base AS main
+    # It might be helpful if non criticals helpers are sepparated here.
+    RUN apt-get install -y python3.6 python3-matplotlib
+WORKDIR /src
