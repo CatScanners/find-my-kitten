@@ -87,7 +87,6 @@ def generate_launch_description():
             'enable_slam_visualization': True,
             'enable_landmarks_view': True,
             'enable_observations_view': True,
-            'gravitational_force': [-9.8, 0.0, 0.0],
             'camera_optical_frames': [
                 'oak_left_camera_optical_frame',
                 'oak_right_camera_optical_frame',
@@ -112,11 +111,3 @@ def generate_launch_description():
     )
 
     return launch.LaunchDescription([visual_slam_launch_container]) #, realsense_camera_node])
-
-
-
-
-
-
-
-

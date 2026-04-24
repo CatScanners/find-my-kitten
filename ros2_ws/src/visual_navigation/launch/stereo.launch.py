@@ -246,4 +246,3 @@ def generate_launch_description():
     # ld.add_action(point_cloud_node)
     # ld.add_action(rviz_node)
     return ld
-
