@@ -1,136 +1,165 @@
 #include <cmath>
 #include <memory>
+#include <optional>
 #include <px4_msgs/msg/detail/vehicle_odometry__struct.hpp>
+#include <px4_msgs/msg/vehicle_local_position.hpp>
 #include <string>
 
 #include <px4_msgs/msg/vehicle_odometry.hpp>
+#include <rclcpp/qos.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <tf2/LinearMath/Quaternion.hpp>
 #include <vision_msgs/msg/detail/detection2_d__struct.hpp>
 #include <vision_msgs/msg/detail/detection2_d_array__struct.hpp>
 #include <vision_msgs/msg/detection2_d_array.hpp>
+
+#include "Quaternion.hpp"
+#include "drone.hpp"
+#include "inputPoint.hpp"
+
+// Algorithm (drone.cpp) uses camera-RUB body + ENU (Z-up) world; PX4 uses FRD body + NED world.
+// Both quaternions are (w,x,y,z) and rotate body -> world.
+// Q_NED_ENU: NED<->ENU world basis change (180° about (1,1,0)/sqrt(2), self-inverse).
+// Q_CAM_BODY: down-facing camera mount, cam-RUB<->body-FRD (also 180° about (1,1,0)/sqrt(2), self-inverse).
+// Composition: q_alg = Q_NED_ENU * q_px4 * Q_CAM_BODY, and the reverse uses the same formula.
+static const Quaternion Q_NED_ENU  = {0.0f, std::sqrt(0.5f), std::sqrt(0.5f), 0.0f};
+static const Quaternion Q_CAM_BODY = {0.0f, std::sqrt(0.5f), std::sqrt(0.5f), 0.0f};
 
 #define LOG(severity, fmt, ...) RCLCPP_##severity(this->get_logger(), fmt, ##__VA_ARGS__)
 
 using std::placeholders::_1;
 
-// #include "lassi koodi"
-
-struct TrackedObject {
-  int id;
-  float x;
-  float y;
-};
-
-struct Quaternion {
-  float w, x, y, z;
-};
-
-struct DroneState {
-  float x, y, z;
-  Quaternion q;
-};
-
 class PointOdometry : public rclcpp::Node {
 public:
   PointOdometry() : Node("point_odometry") {
-    // callback lamba function
-    // tämän sisään tulee Lassin koodi, msg tyypit täytyy vielä muuttaa oikeiksi
-
-    subscription_ = this->create_subscription<vision_msgs::msg::Detection2DArray>(
+    detections_sub_ = this->create_subscription<vision_msgs::msg::Detection2DArray>(
         "detections", 10, std::bind(&PointOdometry::detection_callback, this, _1));
+    odometry_sub_ = this->create_subscription<px4_msgs::msg::VehicleOdometry>(
+        "/fmu/out/vehicle_odometry", rclcpp::SensorDataQoS(),
+        std::bind(&PointOdometry::odometry_callback, this, _1));
+
     // publisher that publishes point odometry messages to point_odometry
-    publisher_ = this->create_publisher<px4_msgs::msg::VehicleOdometry>("point_odometry", 10);
+    publisher_ = this->create_publisher<px4_msgs::msg::VehicleOdometry>(
+        "/fmu/in/vehicle_visual_odometry", 10);
 
     LOG(INFO, "Initialized");
   }
 
 private:
+  // PX4 position is NED (x=N, y=E, z=D). Algorithm world is ENU (x=E, y=N, z=U).
+  // Assumes incoming odometry uses pose_frame = POSE_FRAME_NED.
+  void odometry_callback(const px4_msgs::msg::VehicleOdometry::SharedPtr msg) {
+    DroneState out{};
+    out.loc.x = msg->position[1];  // Y
+    out.loc.y = msg->position[0];  // X
+    out.loc.z = -msg->position[2]; // Z
+
+    Quaternion q;
+    q.w = msg->q[0];
+    q.x = msg->q[1];
+    q.y = msg->q[2];
+    q.z = msg->q[3];
+
+    out.rot = quat_px4_to_point_odom(q);
+
+    if (!drone_initialized_) {
+      drone_ = Drone(out);
+      drone_initialized_ = true;
+      LOG(INFO, "Initialized drone struct with positions: %f, %f, %f\n", out.loc.x, out.loc.y,
+          out.loc.z);
+    }
+    internal_state_ = out;
+  };
+
   void detection_callback(const vision_msgs::msg::Detection2DArray::SharedPtr msg) {
+    // drone not initialized with its state, can't run
+    if (!drone_initialized_)
+      return;
+
     if (msg->detections.empty())
       return;
 
-    const std::vector<TrackedObject> objects = objects_from_detections(msg->detections);
+    const std::vector<InputPoint> objects = objects_from_detections(msg->detections);
 
-    DroneState state{}; // = lassin_kood(objects);
-
+    const std::optional<DroneState> state_opt =
+        drone_.process_frames(objects, internal_state_);
+    if (!state_opt)
+      return;
+    const DroneState state = state_opt.value();
     px4_msgs::msg::VehicleOdometry out = odom_from_drone_state(state);
     out.timestamp = now().nanoseconds() / 1'000;
     out.timestamp_sample = static_cast<uint64_t>(msg->header.stamp.sec) * 1'000'000 +
                            static_cast<uint64_t>(msg->header.stamp.nanosec) / 1'000;
 
+    LOG(INFO, "Internal state: %f, %f, %f\n", internal_state_.loc.x, internal_state_.loc.y,
+        internal_state_.loc.z);
+    LOG(INFO, "Publishing position: %f, %f, %f\n", out.position[0], out.position[1],
+        out.position[2]);
     publisher_->publish(out);
   }
 
-  std::vector<TrackedObject>
+  std::vector<InputPoint>
   objects_from_detections(const std::vector<vision_msgs::msg::Detection2D> &detections) {
-    std::vector<TrackedObject> objects;
+    std::vector<InputPoint> objects;
 
     for (const vision_msgs::msg::Detection2D &detection : detections) {
       if (detection.id == "")
         continue;
 
-      TrackedObject obj{};
       // trust it will be parseable :D
-      obj.id = std::stoi(detection.id);
-      obj.x = static_cast<float>(detection.bbox.center.position.x);
-      obj.y = static_cast<float>(detection.bbox.center.position.y);
-      objects.push_back(std::move(obj));
+      int id = std::stoi(detection.id);
+      float x = static_cast<float>(detection.bbox.center.position.x);
+      float y = static_cast<float>(detection.bbox.center.position.y);
+      InputPoint input = convertToUsableForm(1640, 1232, 170, id, x, y, true);
+      objects.push_back(input);
     }
 
     return objects;
   }
 
-  // RFU coordinates
-  // x = Right
-  // y = Forward
-  // z = Up
-  // Need FRD
-  // x = Forward
-  // y = Right
-  // z = Down
-  px4_msgs::msg::VehicleOdometry odom_from_drone_state(DroneState state) {
+  // Algorithm world is ENU (x=E, y=N, z=U); PX4 position is NED (x=N, y=E, z=D).
+  px4_msgs::msg::VehicleOdometry odom_from_drone_state(const DroneState &state) {
     px4_msgs::msg::VehicleOdometry out{};
     out.pose_frame = out.POSE_FRAME_FRD;
 
-    float x = state.y;
-    float y = state.x;
-    float z = -state.z;
+    float x = state.loc.y;
+    float y = state.loc.x;
+    float z = -state.loc.z;
     out.position = {x, y, z};
 
-    // These rotations are probably wrong :D
+    const Quaternion rotated = quat_point_odom_to_px4(state.rot);
 
-    // Change quaternion basis from RFU to FRD:
-    // [x_frd, y_frd, z_frd] = [y_rfu, x_rfu, -z_rfu]
-    tf2::Quaternion attitude(state.q.x, state.q.y, state.q.z, state.q.w);
-    const double sqrt_half = std::sqrt(0.5);
-    tf2::Quaternion basis_change;
-    basis_change.setValue(sqrt_half, sqrt_half, 0.0, 0.0);
-    attitude = basis_change * attitude * basis_change.inverse();
-
-    // Fixed camera mounting offset: convert down-facing camera attitude to
-    // vehicle body attitude (identity = drone forward/level).
-    tf2::Quaternion camera_mount_to_body;
-    camera_mount_to_body.setRPY(0.0, M_PI_2, 0.0);
-    attitude = attitude * camera_mount_to_body;
-    attitude.normalize();
-
-    out.q = {static_cast<float>(attitude.getW()), static_cast<float>(attitude.getX()),
-             static_cast<float>(attitude.getY()), static_cast<float>(attitude.getZ())};
+    out.q = {static_cast<float>(rotated.w), static_cast<float>(rotated.x),
+             static_cast<float>(rotated.y), static_cast<float>(rotated.z)};
 
     out.velocity_frame = out.VELOCITY_FRAME_UNKNOWN;
     out.velocity = {NAN, NAN, NAN};
     out.angular_velocity = {NAN, NAN, NAN};
 
     // just set variances :D
-    out.position_variance = {1, 1, 1};
+    // location variance scales with distance to the features, the algorithm does not know if a cat is 50cm tall or 50km tall.
+    // accuracy should be confiqured to match true variance with live/bag tests.
+    constexpr float accuracy = 0.25f;
+    out.position_variance = {accuracy*std::abs(z), accuracy*std::abs(z), accuracy*std::abs(z)}; 
+    // orientation is likely more accurate than this, and does not scale with distance.
     out.orientation_variance = {0.10, 0.10, 0.20};
     out.reset_counter = 0;
 
     return out;
   }
 
-  rclcpp::Subscription<vision_msgs::msg::Detection2DArray>::SharedPtr subscription_;
+  Quaternion quat_px4_to_point_odom(Quaternion q_px4) {
+    return Q_NED_ENU * q_px4 * Q_CAM_BODY;
+  }
+
+  Quaternion quat_point_odom_to_px4(Quaternion q_alg) {
+    return Q_NED_ENU * q_alg * Q_CAM_BODY;
+  }
+
+  DroneState internal_state_{};
+  Drone drone_{DroneState{}};
+  bool drone_initialized_ = false;
+  rclcpp::Subscription<vision_msgs::msg::Detection2DArray>::SharedPtr detections_sub_;
+  rclcpp::Subscription<px4_msgs::msg::VehicleOdometry>::SharedPtr odometry_sub_;
   rclcpp::Publisher<px4_msgs::msg::VehicleOdometry>::SharedPtr publisher_;
 };
 

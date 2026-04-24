@@ -33,9 +33,20 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+set(EXPERIMENTAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../experimental)
+
+add_library(experimental_util STATIC
+  ${EXPERIMENTAL_DIR}/modules/util/pointOdometry.cpp
+  ${EXPERIMENTAL_DIR}/modules/util/drone.cpp
+  ${EXPERIMENTAL_DIR}/modules/util/Quaternion.cpp
+  ${EXPERIMENTAL_DIR}/modules/util/vector3D.cpp
+)
+target_compile_options(experimental_util PRIVATE -w)
+
 include_directories(
   include
   ${ament_INCLUDE_DIRS}
+  ${EXPERIMENTAL_DIR}/modules/util
 )
 
 
@@ -50,13 +61,14 @@ add_executable(vslam_message_transform
 add_executable(point_odometry
   src/point_odometry.cpp
 )
+target_link_libraries(point_odometry experimental_util)
 
 install(
   DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
 )
 
-install(TARGETS 
+install(TARGETS
   stereo_node
   vslam_message_transform
   point_odometry
