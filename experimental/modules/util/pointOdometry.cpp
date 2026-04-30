@@ -218,7 +218,7 @@ void axisStep(float &axis, const std::vector<vector3D>& positions, const std::ve
 // __global__ void gradientDescentLocateDroneV2(const float* vector3Dpositions, const float* vector2Dfeatures, const float* fitnessStoredTemp, const DroneState center, const bool lockZ, const bool display){
 //      vector3D offset = {threadIdx.x,threadIdx.y,threadIdx.z};
 //      offset += {blockIdx.x,blockIdx.y,blockIdx.z} * block_size_choosen;
-//      location_to_check = offset+ current location;
+//      location_to_check = offset*scale + current location;
 //      optimal rotation on location_to_check
 //      evaluate fintess function and store it onto fitness  
 //      newState = previousState;
