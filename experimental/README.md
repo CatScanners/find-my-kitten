@@ -8,6 +8,15 @@ After pulling the docker image run `develop.sh` to get started.
 
 Inside docker container run util/pointOdometry to build and run point odometry tests.
 
+The main point odometry is interacted with through the drone struct in .cpp/.hpp
+It has functoins `render` and `display` are for debugging and `process_frames` functoin for point odometry. `process_frames` is the only function that ros2 needs to interact with besides convertting points with `inputPoint`.
+
+To get startted on point odmetry check out and try out all test functions in `\experimental\modules\pointOdometry\pointOdometry.cpp` 
+
+You can develop your own point odometry implementations into `\experimental\modules\util\pointOdometry.cpp` and if you want to test it out on the drone, replace the function named 
+
+instructions related to `experimental\modules\benchmarks_general`:
+
 Runing two scripts like util/video and util/display at the same time using tmux is recomended.
 This example will display the video from `testData/DroneTest.mp4` using two different binaeirs with video passed thorugh a FIFO pipe.
 `

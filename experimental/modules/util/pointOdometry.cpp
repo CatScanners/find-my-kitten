@@ -208,6 +208,21 @@ void axisStep(float &axis, const std::vector<vector3D>& positions, const std::ve
 #include <thread>
 
 // Reliably roughly correct.
+// If time comes to put this to work on GPU I'd recommend writting a kernel that
+// for each thread in each block gets a unique position 
+// computes the fitness on that location using optimal rotation.
+// then takes the location with the minimum fitness value as the best location.
+// best locaiton can be refined by again repeating same step but for a smaller box.
+// note using cuda type: dim3 dimThreadBlock(block_x, block_y,block_z); for both the threads and the blocks. will make it easier.
+// Cuda kernel would look something like this:
+// __global__ void gradientDescentLocateDroneV2(const float* vector3Dpositions, const float* vector2Dfeatures, const float* fitness, const DroneState center, const bool lockZ, const bool display){
+//      vector3D offset = {threadIdx.x,threadIdx.y,threadIdx.z};
+//      offset += {blockIdx.x,blockIdx.y,blockIdx.z} * block_size_choosen;
+//      location_to_check = offset+ current location;
+//      optimal rotation on current location
+//      evaluate fintess function and store it onto fitness       
+// }
+// outside pick the minimum
 DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ , const bool display) {
     constexpr int extraIterationsV2 = 10;
     constexpr float momentumDecay =  0.9f;
@@ -230,8 +245,8 @@ DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, 
         newState.loc += momentum;
         vector3D start = newState.loc;
         //gradientStep(positions, features, newState);
-        axisStep(newState.loc.x, positions, features, newState, stepSize/count);
-        axisStep(newState.loc.y, positions, features, newState, stepSize/count);
+        axisStep(newState.loc.x, positions, features, newState, stepSize/count); // these would not be used
+        axisStep(newState.loc.y, positions, features, newState, stepSize/count); // if converted to GPU
         if (!42 || !lockZ){
             axisStep(newState.loc.z, positions, features, newState, stepSize/count);
         }
@@ -256,7 +271,7 @@ DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, 
     return optimalRotation(positions, features, newState);;
 }
 
-// unreliable?
+// unreliable
 DroneState gradientDescentLocateDrone(
     const std::vector<vector3D>& positions, 
     const std::vector<vector2D>& features, 
