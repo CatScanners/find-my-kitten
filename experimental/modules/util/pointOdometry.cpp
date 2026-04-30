@@ -215,12 +215,17 @@ void axisStep(float &axis, const std::vector<vector3D>& positions, const std::ve
 // best locaiton can be refined by again repeating same step but for a smaller box.
 // note using cuda type: dim3 dimThreadBlock(block_x, block_y,block_z); for both the threads and the blocks. will make it easier.
 // Cuda kernel would look something like this:
-// __global__ void gradientDescentLocateDroneV2(const float* vector3Dpositions, const float* vector2Dfeatures, const float* fitness, const DroneState center, const bool lockZ, const bool display){
+// __global__ void gradientDescentLocateDroneV2(const float* vector3Dpositions, const float* vector2Dfeatures, const float* fitnessStoredTemp, const DroneState center, const bool lockZ, const bool display){
 //      vector3D offset = {threadIdx.x,threadIdx.y,threadIdx.z};
 //      offset += {blockIdx.x,blockIdx.y,blockIdx.z} * block_size_choosen;
 //      location_to_check = offset+ current location;
-//      optimal rotation on current location
-//      evaluate fintess function and store it onto fitness       
+//      optimal rotation on location_to_check
+//      evaluate fintess function and store it onto fitness  
+//      newState = previousState;
+//      newState.loc = location_to_check;
+//      newState = optimalRotation(positions, features, newState);
+//      fitnessStoredTemp[thead +block unique] = fitness(positions, features, newState);  
+//      
 // }
 // outside pick the minimum
 DroneState gradientDescentLocateDroneV2(const std::vector<vector3D>& positions, const std::vector<vector2D>& features, const DroneState previousState, const bool lockZ , const bool display) {
