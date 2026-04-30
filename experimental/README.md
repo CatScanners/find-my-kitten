@@ -13,7 +13,7 @@ It has functoins `render` and `display` are for debugging and `process_frames` f
 
 To get startted on point odmetry check out and try out all test functions in `\experimental\modules\pointOdometry\pointOdometry.cpp` 
 
-You can develop your own point odometry implementations into `\experimental\modules\util\pointOdometry.cpp` and if you want to test it out on the drone, replace the function named 
+You can develop your own point odometry implementations into `\experimental\modules\util\pointOdometry.cpp` and if you want to test it out on the drone, replace the function in locateDrone() which contains the current best version of point odometry.
 
 instructions related to `experimental\modules\benchmarks_general`:
 
