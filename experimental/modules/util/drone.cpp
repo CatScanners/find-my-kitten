@@ -66,6 +66,8 @@ static cv::VideoWriter writer;
 #endif
 
 void Drone::display(const std::vector<vector3D> &positions, const std::vector<vector2D> &features){
+    // You want to see only 2D positions then swap out commneted section with the line bellow
+    //std::vector<vector2D> points;
     std::vector<vector2D> points = render(positions);
     points.insert( points.end(), features.begin(), features.end() );
     int w = imgW;

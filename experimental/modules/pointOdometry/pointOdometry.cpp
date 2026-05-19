@@ -245,7 +245,7 @@ void testOnRealData(int argc, char *argv[]) {
   BenchMark t;
   int n = 0;
   for (auto cameraFeed : video) {
-    flying.process_frames(cameraFeed, flying.state, false, true, false);
+    flying.process_frames(cameraFeed, flying.state, false, true, true);
     //plot.py
     std::cout << flying.state.loc << "\n";
     //plot2.py
