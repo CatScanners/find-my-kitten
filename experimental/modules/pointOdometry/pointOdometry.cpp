@@ -301,15 +301,16 @@ void println(T... a){print(a...);printNewLine();}
 
 int main(int argc, char *argv[]) {
   //test();
+  //test how print functions work:
   //vector3D a = {1,3,2};
-  std::vector<vector3D> a = {{1,3,2},{1,3,4},{5,3,2}};
-  println(a);
+  //std::vector<vector3D> a = {{1,3,2},{1,3,4},{5,3,2}};
+  //println(a);
 
   //testOptimalRotation();
   //testOptimalLocation();
   ////testGradientDecent();
   //testGradientDecentV2();
 //
-  //testOnRealData(argc, argv);
+  testOnRealData(argc, argv);
   return 0;
 }
