@@ -8,6 +8,8 @@ set -e
 docker pull ubuntu:22.04
 docker tag  ubuntu:22.04 compiler-base-base-benchmark:latest
 
+xhost +local:docker
+
 docker build -f DockerFile --target main -t jetson_benchmark:main .
 
 docker run --rm -it $DEVICES --volume ./:/src -e DISPLAY=$DISPLAY  -v /tmp/.X11-unix:/tmp/.X11-unix jetson_benchmark:main 
