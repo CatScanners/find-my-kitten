@@ -258,14 +258,58 @@ void testOnRealData(int argc, char *argv[]) {
 #include <iostream>
 #include <vector>
 
+//print templates, proper new location recomended
+
+void printNewLine(){std::cout << "\n";}
+template<typename T, typename... Ts>
+std::tuple<Ts...> tail(std::tuple<T,Ts...> as){
+    return std::apply([](T &a, Ts... b){return std::make_tuple(b...);},as);
+}
+ 
+template<typename T>
+void print(T a){std::cout << a;}
+template<typename... T>
+void println(T... a);
+ 
+template<typename T, typename Ts>
+void print(std::tuple<T,Ts> a){
+    print(std::get<0>(a));
+    print(" ");
+    print(std::get<1>(a));
+}
+ 
+template<typename T, typename... Ts>
+void print(std::tuple<T,Ts...> a){
+    print(std::get<0>(a));
+    print(" ");
+    print(tail(a));
+}
+ 
+template<typename T>
+void print(const std::vector<T> &arr, long long width = -1){
+    if (width == -1) width = arr.size();
+    for (long long i = 0; i < (long long)arr.size(); i++){
+        print(arr[i]);
+        if (i+1 == (long long)arr.size()) continue;
+        if ((i%width) == width-1) printNewLine();
+        if ((i%width) != width-1) print(" ");
+    }    
+}
+template<typename... T>
+void println(T... a){print(a...);printNewLine();}
+
+
 int main(int argc, char *argv[]) {
   //test();
+  //vector3D a = {1,3,2};
+  std::vector<vector3D> a = {{1,3,2},{1,3,4},{5,3,2}};
+  println(a);
 
   //testOptimalRotation();
   //testOptimalLocation();
   ////testGradientDecent();
   //testGradientDecentV2();
-
-  testOnRealData(argc, argv);
+//
+  //testOnRealData(argc, argv);
   return 0;
 }
