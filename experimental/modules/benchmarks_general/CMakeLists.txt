@@ -9,11 +9,15 @@ pkg_check_modules(OPENCV REQUIRED opencv4)
 include_directories(${OPENCV_INCLUDE_DIRS})
 link_directories(${OPENCV_LIBRARY_DIRS})
 
+# When there is no gpu commnent out these 
 find_package(CUDAToolkit REQUIRED)
 enable_language(CUDA)
+# up to here
 
 add_library(benchmark_lib
+# When there is no gpu commnent out these 
     util/GPU.cu
+# up to here
     util/pipe.cpp
     util/image.cpp
     util/camera.cpp
@@ -47,7 +51,7 @@ target_link_libraries(camera_pipe benchmark_lib)
 #cmake_minimum_required(VERSION 3.18)
 #project(MyProject LANGUAGES CXX CUDA)
 
-
+# When there is no gpu commnent out these 
 add_executable(GPU_memory_transfer
     GPU_memory_transfer/dataTransfer.cu
 )
@@ -56,6 +60,7 @@ target_link_libraries(GPU_memory_transfer
     CUDA::cudart
     CUDA::cublas
 )
+# up to here
 
 
 
